@@ -1,0 +1,79 @@
+<?php
+echo "<div class='schmuck-detail block'>\n";
+  //<!-- Überschrift -->
+  /*
+  if ($this->headline!="") {
+    echo "<" . $this->hl . ">" . $this->headline . "</" . $this->hl . ">\n";
+  }
+  */
+  $objFile = \FilesModel::findByUuid($this->singleSRC);
+  if ($objFile !== null)
+	{
+	  $path = $objFile->path;
+    $im = "<figure class='image_container'>";
+    $im .=  "<img src='$path'></img>";
+    $im .= "</figure>";
+    echo $im;
+    //echo "<br>" . $this->caption;
+  }
+ 
+  //<!-- Beschreibung -->
+  echo "<div class='detail_beschreibung'>\n";
+  if ($this->text) {
+    echo "<div class='detail_beschreibung_main'>\n";
+      echo $this->text;
+    echo "</div>\n";
+  }
+  if ($this->artikelzusatz) {
+    echo "<div class='detail_beschreibung_zusatz'>\n";
+      echo $this->artikelzusatz;
+    echo "</div>\n";
+  }
+  echo "</div>\n";
+ 
+  //<!-- Preisliste -->
+  //echo "Artikelname: " . $this->schmuckartikelname . "<br>";
+  $preisliste = array($this->schmuckartikelname);
+  if (is_array($this->arrpreisliste) && count($this->arrpreisliste)) {
+    $preisliste =  array_merge($preisliste,$this->arrpreisliste);
+  }
+  echo "<div class='preistabelle'>";
+  echo "{{file::heike/get-preis.php?artikel=" . implode(':',$preisliste) . "}}";
+  echo "</div>";
+  if ($this->myurl) {
+    echo "<div class='popupurl'>";
+    $opnstr='window.open("' . $this->myurl . '", "Popup", "width=300,height=400,left=500,location=no,menubar=no,status=no,titlebar=no,toolbar=no")';
+    echo "<button  onClick='$opnstr'> Weitere Information</button><br>";
+    echo "</div>";
+  }
+  echo "<div class='detail-linkback'>";
+  echo "<br>";
+  echo "{{insert_article::linkback}}";
+  echo "</div>";
+echo "</div>\n";
+
+/*
+ Wir können im Template einfach über 
+ $this gefolgt vom Feldnamen auf die im Inhaltselement eingegebenen Werte zugreifen 
+ (z.B. $this->productdescription für die Produktbeschreibung). 
+ Die Eigenschaften haben wir ja in unserer Ausgabeklasse deserialisiert und in der Variable arrProperties gespeichert. 
+ Nun gehen wir das Array in Zeile 18 durch und geben die Texte in Zeile 19 aus.
+
+  Das war schon der ganze Zauber. Hier zum Abschluss noch eine Übersicht der erstellte Dateien. 
+  esitcontent/
+├── classes
+│   └── elements
+│       └── ContentProduct.php
+├── config
+│   ├── autoload.php
+│   └── config.php
+├── dca
+│   └── tl_content.php
+├── languages
+│   └── de
+│       ├── default.php
+│       └── tl_content.php
+└── templates
+    └── ce_product.html5
+*/
+?>

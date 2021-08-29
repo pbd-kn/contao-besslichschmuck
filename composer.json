@@ -1,0 +1,53 @@
+{
+    "name": "pbd-kn/contao-besslichschmuck",
+    "type": "contao-bundle",
+    "description": "Private CE Element for Besslich-Schmuck",
+    "homepage": "https://contao.org",
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "pbd-kn",
+            "email": "pb-contao@gmx.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.2 || ^8.0",
+        "contao/core-bundle": "^4.9",
+        "pbd-kn/contao-efg-bundle": "^1.",
+        "symfony/dependency-injection": "^4.4 || ^5.1",
+        "symfony/http-kernel": "^4.4 || ^5.1"
+    },
+    "conflict": {
+        "contao/manager-plugin": "<2.0 || >=3.0"
+    },
+    "require-dev": {
+        "contao/manager-plugin": "^2.0",
+        "contao/easy-coding-standard": "^2.0",
+        "phpunit/phpunit": "^8.4 || ^9",
+        "symfony/phpunit-bridge": "^4.4 || ^5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PBDKN\\ContaoBesslichschmuck\\":"src/"
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": "PBDKN\\ContaoBesslichschmuck\\ContaoManager\\Plugin"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PBDKN\\ContaoBesslichschmuck\\Tests\\": "tests/"
+        }
+    },
+    "support": {
+        "email":  "pb-contao@gmx.de",
+        "issues": "https://github.com/pbd-kn/contao-besslichschmuck/issues",
+        "source": "https://github.com/pbd-kn/contao-besslichschmuck"
+    },
+    "scripts": {
+        "cs-fixer": [
+            "vendor/bin/ecs check src/ tests/ --fix --ansi"
+        ]
+    }
+}
