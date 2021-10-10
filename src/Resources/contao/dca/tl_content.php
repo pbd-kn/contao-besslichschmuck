@@ -178,9 +178,9 @@ class checkSchmuck extends Backend {
     $GLOBALS['TL_DCA'][$strName]['fields']['singleSRC']['load_callback'] = array(array('checkSchmuck', 'loadsingleSRC'));
 
     if ($varValue) {
-      //\System::log("PBD Besslich loadSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
+      \System::log("PBD Besslich loadSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
     } else {
-      //\System::log("PBD Besslich loadSchmuckartikel no Value", __METHOD__, TL_GENERAL);
+      \System::log("PBD Besslich loadSchmuckartikel no Value", __METHOD__, TL_GENERAL);
     }
     
     $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
@@ -194,7 +194,7 @@ class checkSchmuck extends Backend {
       if ($varValue=="") {
         $this->uuid='';
       }
-      //\System::log("PBD Besslich loadSchmuckartikel pic " . $objPicElement->path, __METHOD__, TL_GENERAL);
+      \System::log("PBD Besslich loadSchmuckartikel pic " . $objPicElement->path, __METHOD__, TL_GENERAL);
     }
     return $varValue;
   }
@@ -252,7 +252,7 @@ class checkSchmuck extends Backend {
   public function checkPreise ($varValue, DataContainer $dc) {  
     $pr = deserialize($varValue, true);
     $l=  count($pr);
-    //\System::log("PBD Besslich checkPreise checkSchmuckartikel gerufen count $l", __METHOD__, TL_GENERAL);
+    \System::log("PBD Besslich checkPreise checkSchmuckartikel gerufen count $l", __METHOD__, TL_GENERAL);
 
     if (count($pr) > 0) {
       foreach ($pr as $a) {
@@ -290,16 +290,16 @@ class checkSchmuck extends Backend {
     if ($this->uuid != "") { 
       //$schmuckartikelname = $this->schmuckartikelname;
       //$uu= \StringUtil::binToUuid($this->uuid);
-      //\System::log("PBD Besslich setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname uu $uu", __METHOD__, TL_GENERAL);
+      \System::log("PBD Besslich setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname uu $uu", __METHOD__, TL_GENERAL);
       return $this->uuid;
     } else {
-      //\System::log("PBD Besslich no uuid setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname", __METHOD__, TL_GENERAL);
+      \System::log("PBD Besslich no uuid setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname", __METHOD__, TL_GENERAL);
      return $varValue;
     }
    }
   public function loadsingleSRC ($varValue, DataContainer $dc) {
     //$strName = 'tl_content';
-    //\System::log("PBD Besslich loadsingleSRC varValue", __METHOD__, TL_GENERAL);
+    \System::log("PBD Besslich loadsingleSRC varValue", __METHOD__, TL_GENERAL);
 /*
     $image = new \stdClass();
     \Controller::addImageToTemplate($image, [
@@ -326,7 +326,7 @@ class checkSchmuck extends Backend {
     $values = array("");
     $objArticle = $this->Database->prepare("SELECT $select FROM tl_article $where ORDER BY title")->execute();
     while($objArticle ->next()){
-//\System::log("PBD Besslich getzusatzlist add alias " . $objArticle->alias, __METHOD__, TL_GENERAL);
+\System::log("PBD Besslich getzusatzlist add alias " . $objArticle->alias, __METHOD__, TL_GENERAL);
       $values[$objArticle->alias] = $objArticle->alias;     //[Rueckgabewert] angezeigter wert
     }
     return $values; 
@@ -458,7 +458,7 @@ class comment extends Contao\FileTree
     {
        $txt = "";
        $arrData = $GLOBALS['TL_DCA']['tl_content']['fields']['singleSRC']['inputType'];
-//System::log("PBD besslich tl_content.php 362 arrData $arrData", __METHOD__, TL_GENERAL); 
+System::log("PBD besslich tl_content.php 362 arrData $arrData", __METHOD__, TL_GENERAL); 
        if ($arrData == 'comment') {
          // Kommentar ausgeben
          $displaytext = $GLOBALS['TL_DCA']['tl_content']['fields']['singleSRC']['displaytext'];

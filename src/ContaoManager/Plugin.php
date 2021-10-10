@@ -16,9 +16,10 @@ class Plugin implements BundlePluginInterface
 {
     public function getBundles(ParserInterface $parser)
     {
+    echo "ContaoBesslichschmuck gerufen";
         return [
             BundleConfig::create(ContaoBesslichschmuck::class)
-                ->setLoadAfter([ContaoCoreBundle::class])
-                ,        ];
+                ->setLoadAfter([ContaoCoreBundle::class]),
+                ];
     }
 }
