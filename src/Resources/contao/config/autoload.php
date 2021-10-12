@@ -36,6 +36,9 @@ ClassLoader::addClasses(array
     $strNamespace . '\\classes\\elements\\ContentSchmuckartikel' => "system/modules/$strFolder/classes/elements/ContentSchmuckartikel.php"
 ));    
 */ 
+class_alias(PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements\ContentSchmuckartikel::class, 'ContentSchmuckartikel');
+
+
 /**
  * Register the templates
  */

@@ -170,7 +170,7 @@ class checkSchmuck extends Backend {
   public function loadSchmuckartikel ($varValue, DataContainer $dc) {
 
     $strName = 'tl_content';
-    // dca element singleSRC aus test dy namisch anpassen
+    // dca element singleSRC aus test dynamisch anpassen
     $GLOBALS['TL_DCA'][$strName]['fields']['singleSRC']['inputType'] = 'comment';   // Ändere Dynamisch den InputType, damit kein Bild ausgewählt werden kann
     //$GLOBALS['TL_DCA'][$strName]['fields']['singleSRC']['displaylabel'] = "Mein label";
     //$GLOBALS['TL_DCA'][$strName]['fields']['singleSRC']['displaytext'] = "Mein textle";
@@ -182,19 +182,21 @@ class checkSchmuck extends Backend {
     } else {
       \System::log("PBD Besslich loadSchmuckartikel no Value", __METHOD__, TL_GENERAL);
     }
-    
+    $objPicElement=$this->getPicture2Name($varValue);
+/*    PBD
     $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
       array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
       );
+*/
     if ($objPicElement === null){
-        //throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_image'], $varValue));       
+        throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_image'], $varValue));       
     } else {
       // schmuckartikelname merken
       $this->schmuckartikelname=$varValue;
       if ($varValue=="") {
         $this->uuid='';
       }
-      \System::log("PBD Besslich loadSchmuckartikel pic " . $objPicElement->path, __METHOD__, TL_GENERAL);
+      //\System::log("PBD Besslich loadSchmuckartikel pic " . $objPicElement->path, __METHOD__, TL_GENERAL);
     }
     return $varValue;
   }
@@ -207,9 +209,14 @@ class checkSchmuck extends Backend {
     $strName = 'tl_content';
     $id = $dc->id;
     // prüfen ob Bild im Galery Creator vorhanden
+\System::log("PBD Besslich checkSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
+
+    $objPicElement=$this->getPicture2Name($varValue);
+/*    
     $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
       array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
       );
+*/      
     if ($objPicElement === null){
         throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_image'], $varValue));       
     } 
@@ -252,7 +259,7 @@ class checkSchmuck extends Backend {
   public function checkPreise ($varValue, DataContainer $dc) {  
     $pr = deserialize($varValue, true);
     $l=  count($pr);
-    \System::log("PBD Besslich checkPreise checkSchmuckartikel gerufen count $l", __METHOD__, TL_GENERAL);
+    //\System::log("PBD Besslich checkPreise checkSchmuckartikel gerufen count $l", __METHOD__, TL_GENERAL);
 
     if (count($pr) > 0) {
       foreach ($pr as $a) {
@@ -290,16 +297,16 @@ class checkSchmuck extends Backend {
     if ($this->uuid != "") { 
       //$schmuckartikelname = $this->schmuckartikelname;
       //$uu= \StringUtil::binToUuid($this->uuid);
-      \System::log("PBD Besslich setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname uu $uu", __METHOD__, TL_GENERAL);
+      //\System::log("PBD Besslich setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname uu $uu", __METHOD__, TL_GENERAL);
       return $this->uuid;
     } else {
-      \System::log("PBD Besslich no uuid setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname", __METHOD__, TL_GENERAL);
+      //\System::log("PBD Besslich no uuid setsingleSRC varValue $varValue id $id schmuckartikelname $schmuckartikelname", __METHOD__, TL_GENERAL);
      return $varValue;
     }
    }
   public function loadsingleSRC ($varValue, DataContainer $dc) {
     //$strName = 'tl_content';
-    \System::log("PBD Besslich loadsingleSRC varValue", __METHOD__, TL_GENERAL);
+    //\System::log("PBD Besslich loadsingleSRC varValue", __METHOD__, TL_GENERAL);
 /*
     $image = new \stdClass();
     \Controller::addImageToTemplate($image, [
@@ -326,12 +333,42 @@ class checkSchmuck extends Backend {
     $values = array("");
     $objArticle = $this->Database->prepare("SELECT $select FROM tl_article $where ORDER BY title")->execute();
     while($objArticle ->next()){
-\System::log("PBD Besslich getzusatzlist add alias " . $objArticle->alias, __METHOD__, TL_GENERAL);
+//\System::log("PBD Besslich getzusatzlist add alias " . $objArticle->alias, __METHOD__, TL_GENERAL);
       $values[$objArticle->alias] = $objArticle->alias;     //[Rueckgabewert] angezeigter wert
     }
     return $values; 
   } 
-   
+  /* überprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
+  */
+  public function getPicture2Name ($name) {
+\System::log("PBD Besslich getPicture2Name name $name", __METHOD__, TL_GENERAL);
+
+    $objAlbums = $this->Database->prepare('SELECT * FROM tl_gallery_creator_albums WHERE pid=? AND published=? ')->execute(0, 1);
+    foreach ($objAlbums as $key => $albumId)
+    {
+\System::log("PBD Besslich getPicture2Name objAlbums[$key]:$albumId", __METHOD__, TL_GENERAL);
+
+        $objAlbum = $this->Database->prepare('SELECT * FROM tl_gallery_creator_albums WHERE (SELECT COUNT(id) FROM tl_gallery_creator_pictures WHERE pid = ? AND published=?) > 0 AND id=? AND published=?')->execute($albumId, 1, $albumId, 1);
+
+        // if the album doesn't exist
+        if (!$objAlbum->numRows && !GalleryCreatorAlbumsModel::hasChildAlbums($objAlbum->id) && !$this->gc_hierarchicalOutput)
+        {
+            unset($this->arrSelectedAlbums[$key]);
+            continue;
+        }
+        // remove id from $this->arrSelectedAlbums if user is not allowed
+        if (TL_MODE == 'FE' && $objAlbum->protected == true)
+        {
+            if (!$this->authenticate($objAlbum->alias))
+            {
+                unset($this->arrSelectedAlbums[$key]);
+                continue;
+            }
+        }
+    }
+
+    return null;
+  } 
 }
 
 /**
@@ -458,7 +495,7 @@ class comment extends Contao\FileTree
     {
        $txt = "";
        $arrData = $GLOBALS['TL_DCA']['tl_content']['fields']['singleSRC']['inputType'];
-System::log("PBD besslich tl_content.php 362 arrData $arrData", __METHOD__, TL_GENERAL); 
+//System::log("PBD besslich tl_content.php 362 arrData $arrData", __METHOD__, TL_GENERAL); 
        if ($arrData == 'comment') {
          // Kommentar ausgeben
          $displaytext = $GLOBALS['TL_DCA']['tl_content']['fields']['singleSRC']['displaytext'];
