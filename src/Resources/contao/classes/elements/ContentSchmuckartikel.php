@@ -1,7 +1,6 @@
 <?php
 
-namespace PBDKN\ContaoBesslichschmuck\classes\elements;
- 
+namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements;
 /**
  * @package   Besslich-Schmuck
  * @author    Peter Broghammer
