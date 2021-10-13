@@ -1,7 +1,8 @@
 <?php
 // config/config.php
 //$GLOBALS['TL_CTE']['esit']['myproduct'] = '\\esit\\esitcontent\\classes\\elements\\ContentProduct';
-$GLOBALS['TL_CTE']['besslichschmuck']['schmuckartikel'] = 'PBDKN/ContaoBesslichschmuck/classes/elements/ContentSchmuckartikel';
+$GLOBALS['TL_CTE']['besslichschmuck']['schmuckartikel'] = 'PBDKN/ContaoBesslichschmuck/Resources/classes/elements/ContentSchmuckartikel';
+
 /*
 Der zweite Key des Arrays (besslichschmuck) ist die Gruppe, in der der Eintrag angezeigt wird. 
 Der dritte Key gibt den Namen des objektes an (schmuckartikel).
