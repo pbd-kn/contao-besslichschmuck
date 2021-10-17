@@ -13,7 +13,7 @@ namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements;
  * Diese ist für die Ausgabe zuständig. 
  * Ich splitte an dieser Stelle immer in zwei Methoden auf, eine für die Backend- und eine für die Frontend-Ausgabe. 
  * Die Methode genBeOutput ist für die Ausgabe im Backend zuständig. 
- * Uns interessiert aber mehr die Methode genFeOutput. 
+ * Es interessiert aber mehr die Methode genFeOutput. 
  * Diese erstellt die Ausgabe für das Frontend. 
  * Die Eigenschaften werden von Contao als serialisiertes Array gespeichert. 
  * In Zeile 60 werden sie deshalb deserialisiert, damit wir sie nutzen können. 
