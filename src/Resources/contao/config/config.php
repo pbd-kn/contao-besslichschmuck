@@ -1,7 +1,7 @@
 <?php
-// config/config.php
+// config/autoload.php
 //$GLOBALS['TL_CTE']['esit']['myproduct'] = '\\esit\\esitcontent\\classes\\elements\\ContentProduct';
-$GLOBALS['TL_CTE']['besslichschmuck']['schmuckartikel'] = 'PBDKN/ContaoBesslichschmuck/Resources/classes/elements/ContentSchmuckartikel';
+$GLOBALS['TL_CTE']['besslichschmuck']['schmuckartikel'] = 'PBDKN\ContaoBesslichschmuck\Resources\classes\elements\ContentSchmuckartikel';
 
 /*
 Der zweite Key des Arrays (besslichschmuck) ist die Gruppe, in der der Eintrag angezeigt wird. 
