@@ -219,7 +219,8 @@ class checkSchmuck extends Backend {
       );
 */      
     if ($objPicElement === null){
-        throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_image'], $varValue));       
+        //throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_image'], $varValue));  
+        $varValue="";     
     } 
     
     // Prüfen ob in der Preisliste vorhanden    
