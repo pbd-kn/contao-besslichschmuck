@@ -19,7 +19,7 @@ namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements;
  * In Zeile 60 werden sie deshalb deserialisiert, damit wir sie nutzen können. 
  * Wir speichern das Array in $this->Template->arrProperties und haben dann im Template über $this->arrProperties zugriff darauf.
  */
-class ContentSchmuckartikel extends \Contao\ContentElement
+class ContentSchmuckartikel extends Contao\ContentElement
 {
  
     /**
