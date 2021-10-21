@@ -392,44 +392,47 @@ class schmuckartikel extends Contao\TextField
      */
     public function generate()
     {
-
-       if ($this->varValue != "") {
-         $albumname="Kein Album vorhanden";
-         $imgpath="Kein Image Pfad vorhanden";
-         $txt .= "<div><table style='border-collapse: collapse'>";
-         $varValue =  $this->varValue;
-         $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
-           array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
-         );
-         if ($objPicElement === null){
-         } else {
-           $imgpath = $objPicElement->path;
-           $objAlbumlement = \GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement->pid);
-           if ($objAlbumlement !== null) {
-            $albumname =   $objAlbumlement->name;
-           }
-         } 
+      if ($this->varValue != "") {
+        $albumname="Kein Album vorhanden";
+        $imgpath="Kein Image Pfad vorhanden";
+        $txt .= "<div><table style='border-collapse: collapse'>";
+        $varValue =  $this->varValue;
+        $objPicElement=$this->getPicture2Name($varValue);
+/*
+        $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
+          array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
+        );
+*/
+        if ($objPicElement === null){
+          $varValue="";
+        } else {
+          $imgpath = $objPicElement->path;
+          $objAlbumlement = \GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement->pid);
+          if ($objAlbumlement !== null) {
+           $albumname =   $objAlbumlement->name;
+          }
+        } 
              // Prüfen ob in der Preisliste vorhanden 
-         $err_result = ""; 
-         $rowPrice = ""; 
-         $this->import('Database'); 
-         $objForm = $this->Database->prepare( "SELECT alias,efgAliasField FROM tl_form where alias='artikelliste'")->execute();
-         if($objForm->numRows == 0 ) {
-            $err_result = sprintf($GLOBALS['TL_LANG'][$strName]['no_artikellist'], 'artikelliste') . "<br>";       
-         } else {
-           $tablealias = $objForm->alias;
-           $tableEfgAliasField = $objForm->efgAliasField;
-           $rowPrice = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='$tableEfgAliasField' AND value='$varValue'");
-           if( $rowPrice->numRows == 0 ) {
-             //$txt .= sprintf($GLOBALS['TL_LANG'][$strName]['no_artikelexist'], $varValue) . "<br>";
-           } else {
-             $err_result = "<strong>$varValue</strong> in Preisliste vorhanden<br>"; 
-           }
-         }
-       }
-       // Aufbau des Ergebnisses
-        // schmuckartikel
-        $txt = parent::generate();
+        $err_result = ""; 
+        $rowPrice = ""; 
+        $this->import('Database'); 
+        $objForm = $this->Database->prepare( "SELECT alias,efgAliasField FROM tl_form where alias='artikelliste'")->execute();
+        if($objForm->numRows == 0 ) {
+           $err_result = sprintf($GLOBALS['TL_LANG'][$strName]['no_artikellist'], 'artikelliste') . "<br>";       
+        } else {
+          $tablealias = $objForm->alias;
+          $tableEfgAliasField = $objForm->efgAliasField;
+          $rowPrice = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='$tableEfgAliasField' AND value='$varValue'");
+          if( $rowPrice->numRows == 0 ) {
+            //$txt .= sprintf($GLOBALS['TL_LANG'][$strName]['no_artikelexist'], $varValue) . "<br>";
+          } else {
+            $err_result = "<strong>$varValue</strong> in Preisliste vorhanden<br>"; 
+          }
+        }
+      }
+      // Aufbau des Ergebnisses
+      // schmuckartikel
+      $txt = parent::generate();
 /*
            '<input type="text" name="%s" id="ctrl_%s" value="%s">',
             $this->strName,
@@ -438,38 +441,38 @@ class schmuckartikel extends Contao\TextField
 
         );
 */
-       if ($this->varValue != "" && $objPicElement !== null) {
-         $tdstyle= "style='border: 1px solid #dddddd;text-align:left;padding:2px;'";
-         // Bild ausgeben
-         $txt .= "<table>";
-         $txt .= "<tr><td colspan='2' $tdstyle><img class='gimage' src='$imgpath' width='80' height='60' ></td></tr>";
-         $txt .= "<tr><td $tdstyle>Album</td><td $tdstyle>$albumname</td></tr>";
-         $txt .= "<tr><td $tdstyle>Pfad</td><td $tdstyle>$imgpath</td></tr>";
-         if ($err_result == "") {
-           $txt .= "<tr><td $tdstyle>Artikelbeschreibung</td><td $tdstyle>nicht vorhanden</td></tr>";
-         } else {
-           $pid = $rowPrice->pid;
-           //$txt .= "<tr><td $tdstyle>Id</td><td $tdstyle>" . $rowPrice->id . "</td></tr>";
-           //$txt .= "<tr><td $tdstyle>pid</td><td $tdstyle>" . $rowPrice->pid . "</td></tr>";
-           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Kategorie' AND pid='$pid'");
-           $txt .= "<tr><td $tdstyle>Kategorie</td><td $tdstyle>" . $rowval->value . "</td></tr>";
-           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Subkategorie' AND pid='$pid'");
-           $txt .= "<tr><td $tdstyle>Subkategorie</td><td $tdstyle>" . $rowval->value . "</td></tr>";
-           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Beschreibung' AND pid='$pid'");
-           $txt .= "<tr><td $tdstyle>Beschreibung</td><td $tdstyle>" . $rowval->value . "</td></tr>";
-           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis1' AND pid='$pid'");
-           $txt .= "<tr><td $tdstyle>Stückpreis</td><td $tdstyle>" . $rowval->value . "</td></tr>";
-           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis2' AND pid='$pid'");
-           $txt .= "<tr><td $tdstyle>Paarpreis</td><td $tdstyle>" . $rowval->value . "</td></tr>";
-           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis3' AND pid='$pid'");
-           $txt .= "<tr><td $tdstyle>Stückpreis2.3</td><td $tdstyle>" . $rowval->value . "</td></tr>";
-           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis4' AND pid='$pid'");
-           $txt .= "<tr><td $tdstyle>Paarpreis2.3</td><td $tdstyle>" . $rowval->value . "</td></tr>";
-         }
+      if ($this->varValue != "" && $objPicElement !== null) {
+        $tdstyle= "style='border: 1px solid #dddddd;text-align:left;padding:2px;'";
+        // Bild ausgeben
+        $txt .= "<table>";
+        $txt .= "<tr><td colspan='2' $tdstyle><img class='gimage' src='$imgpath' width='80' height='60' ></td></tr>";
+        $txt .= "<tr><td $tdstyle>Album</td><td $tdstyle>$albumname</td></tr>";
+        $txt .= "<tr><td $tdstyle>Pfad</td><td $tdstyle>$imgpath</td></tr>";
+        if ($err_result == "") {
+          $txt .= "<tr><td $tdstyle>Artikelbeschreibung</td><td $tdstyle>nicht vorhanden</td></tr>";
+        } else {
+          $pid = $rowPrice->pid;
+          //$txt .= "<tr><td $tdstyle>Id</td><td $tdstyle>" . $rowPrice->id . "</td></tr>";
+          //$txt .= "<tr><td $tdstyle>pid</td><td $tdstyle>" . $rowPrice->pid . "</td></tr>";
+          $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Kategorie' AND pid='$pid'");
+          $txt .= "<tr><td $tdstyle>Kategorie</td><td $tdstyle>" . $rowval->value . "</td></tr>";
+          $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Subkategorie' AND pid='$pid'");
+          $txt .= "<tr><td $tdstyle>Subkategorie</td><td $tdstyle>" . $rowval->value . "</td></tr>";
+          $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Beschreibung' AND pid='$pid'");
+          $txt .= "<tr><td $tdstyle>Beschreibung</td><td $tdstyle>" . $rowval->value . "</td></tr>";
+          $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis1' AND pid='$pid'");
+          $txt .= "<tr><td $tdstyle>Stückpreis</td><td $tdstyle>" . $rowval->value . "</td></tr>";
+          $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis2' AND pid='$pid'");
+          $txt .= "<tr><td $tdstyle>Paarpreis</td><td $tdstyle>" . $rowval->value . "</td></tr>";
+          $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis3' AND pid='$pid'");
+          $txt .= "<tr><td $tdstyle>Stückpreis2.3</td><td $tdstyle>" . $rowval->value . "</td></tr>";
+          $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Preis4' AND pid='$pid'");
+          $txt .= "<tr><td $tdstyle>Paarpreis2.3</td><td $tdstyle>" . $rowval->value . "</td></tr>";
+        }
          
-         $txt .= "</table>";
-       }
-       return  $txt;
+        $txt .= "</table>";
+      }
+      return  $txt;
 
     }
 

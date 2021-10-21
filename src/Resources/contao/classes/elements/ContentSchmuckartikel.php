@@ -56,11 +56,13 @@ class ContentSchmuckartikel extends \Contao\ContentElement
         //$this->Template->title      = $this->headline;
         //$objFile = \FilesModel::findByUuid($this->singleSRC);
         $imgtxt="";
+/*
         $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
           array('column' => "tl_gallery_creator_pictures.name like '" . $this->schmuckartikelname . ".%'"),"" 
         );
-        
-        $wi = "";
+*/      
+        $objPicElement=null;  
+        $wi = "PBD Bild wird noch nicht ausgewertet";
         
         if ($objPicElement !== null)
 			  {
