@@ -182,7 +182,7 @@ class checkSchmuck extends Backend {
     } else {
       \System::log("PBD Besslich loadSchmuckartikel no Value", __METHOD__, TL_GENERAL);
     }
-    $objPicElement=$this->getPicture2Name($varValue);
+    $objPicElement=Picture::getPicture2Name($varValue);
 /*    PBD
     $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
       array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
@@ -212,7 +212,7 @@ class checkSchmuck extends Backend {
     // prüfen ob Bild im Galery Creator vorhanden
 \System::log("PBD Besslich checkSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
 
-    $objPicElement=$this->getPicture2Name($varValue);
+    $objPicElement=Picture::getPicture2Name($varValue);
 /*    
     $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
       array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
@@ -340,37 +340,6 @@ class checkSchmuck extends Backend {
     }
     return $values; 
   } 
-  /* überprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
-  */
-  public function getPicture2Name ($name) {
-\System::log("PBD Besslich getPicture2Name name $name", __METHOD__, TL_GENERAL);
-
-    $objAlbums = $this->Database->prepare('SELECT * FROM tl_gallery_creator_albums WHERE pid=? AND published=? ')->execute(0, 1);
-    foreach ($objAlbums as $key => $albumId)
-    {
-\System::log("PBD Besslich getPicture2Name objAlbums[$key]:$albumId", __METHOD__, TL_GENERAL);
-
-        $objAlbum = $this->Database->prepare('SELECT * FROM tl_gallery_creator_albums WHERE (SELECT COUNT(id) FROM tl_gallery_creator_pictures WHERE pid = ? AND published=?) > 0 AND id=? AND published=?')->execute($albumId, 1, $albumId, 1);
-
-        // if the album doesn't exist
-        if (!$objAlbum->numRows && !GalleryCreatorAlbumsModel::hasChildAlbums($objAlbum->id) && !$this->gc_hierarchicalOutput)
-        {
-            unset($this->arrSelectedAlbums[$key]);
-            continue;
-        }
-        // remove id from $this->arrSelectedAlbums if user is not allowed
-        if (TL_MODE == 'FE' && $objAlbum->protected == true)
-        {
-            if (!$this->authenticate($objAlbum->alias))
-            {
-                unset($this->arrSelectedAlbums[$key]);
-                continue;
-            }
-        }
-    }
-
-    return null;
-  } 
 }
 
 /**
@@ -397,7 +366,7 @@ class schmuckartikel extends Contao\TextField
         $imgpath="Kein Image Pfad vorhanden";
         $txt .= "<div><table style='border-collapse: collapse'>";
         $varValue =  $this->varValue;
-        $objPicElement=$this->getPicture2Name($varValue);
+        $objPicElement=Picture::getPicture2Name($varValue);
 /*
         $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
           array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
