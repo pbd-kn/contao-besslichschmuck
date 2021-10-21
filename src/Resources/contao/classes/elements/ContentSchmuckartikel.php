@@ -21,7 +21,7 @@
  
 namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements;
 
-use PBDKN\ContaoBesslichschmuck\Resources\contao\classes\Picture;
+use PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper;
 
 class ContentSchmuckartikel extends \Contao\ContentElement
 {
