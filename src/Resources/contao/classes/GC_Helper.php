@@ -11,7 +11,7 @@ class GC_Helper extends \contao\System
 {
   public function __construct()
   {
-\System::log("PBD Besslich constructor GC_Helper", __METHOD__, TL_GENERAL);
+\System::log("PBD Besslich constructor GC_Helper ", __METHOD__, TL_GENERAL);
       $this->import('Database');
   }
 
