@@ -7,12 +7,13 @@
  
 namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes;
 
-class Picture
+class GC_Helper
 {
-  /* überprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
+  /* ueberprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
   */
-  public static function getPicture2Name ($name) {
+  public static function getPicture ($name) {
 \System::log("PBD Besslich getPicture2Name name $name", __METHOD__, TL_GENERAL);
+    if(empty($name)||strlen($name)==0) return null;
     $this->import('Database');
 
     $objAlbums = $this->Database->prepare('SELECT * FROM tl_gallery_creator_albums WHERE pid=? AND published=? ')->execute(0, 1);
