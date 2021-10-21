@@ -7,7 +7,7 @@
  
 namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes;
 
-class GC_Helper
+class GC_Helper extends System
 {
   /* ueberprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
   */
