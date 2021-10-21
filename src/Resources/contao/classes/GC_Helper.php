@@ -12,7 +12,7 @@ class GC_Helper extends \contao\System
   public function __construct()
   {
 \System::log("PBD Besslich constructor GC_Helper ", __METHOD__, TL_GENERAL);
-      $this->import('Database');
+      //$this->import('Database');
   }
 
   /* ueberprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
@@ -20,7 +20,7 @@ class GC_Helper extends \contao\System
   public static function getPicture ($name) {
 \System::log("PBD Besslich getPicture2Name name $name", __METHOD__, TL_GENERAL);
     if(empty($name)||strlen($name)==0) return null;
-
+    $this->import('Database');
 
     $objAlbums = $this->Database->prepare('SELECT * FROM tl_gallery_creator_albums WHERE pid=? AND published=? ')->execute(0, 1);
     foreach ($objAlbums as $key => $albumId)
