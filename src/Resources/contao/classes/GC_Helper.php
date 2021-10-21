@@ -17,7 +17,7 @@ class GC_Helper extends \contao\System
 
   /* ueberprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
   */
-  public static function getPicture ($name) {
+  public function getPicture ($name) {
 \System::log("PBD Besslich getPicture2Name name $name", __METHOD__, TL_GENERAL);
     if(empty($name)||strlen($name)==0) return null;
     $this->import('Database');

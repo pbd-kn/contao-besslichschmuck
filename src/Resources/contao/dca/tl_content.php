@@ -182,7 +182,8 @@ class checkSchmuck extends Backend {
     } else {
       \System::log("PBD Besslich loadSchmuckartikel no Value", __METHOD__, TL_GENERAL);
     }
-    $objPicElement=PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper::getPicture($varValue);
+    $gch=new PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
+    $objPicElement=$gch->getPicture($varValue);
 /*    PBD
     $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
       array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
@@ -212,7 +213,8 @@ class checkSchmuck extends Backend {
     // prüfen ob Bild im Galery Creator vorhanden
 \System::log("PBD Besslich checkSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
 
-    $objPicElement=PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper::getPicture($varValue);
+    $gch=new PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
+    $objPicElement=$gch->getPicture($varValue);
 /*    
     $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
       array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
@@ -366,7 +368,8 @@ class schmuckartikel extends Contao\TextField
         $imgpath="Kein Image Pfad vorhanden";
         $txt .= "<div><table style='border-collapse: collapse'>";
         $varValue =  $this->varValue;
-        $objPicElement=PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper::getPicture($varValue);
+        $gch=new PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
+        $objPicElement=$gch->getPicture($varValue);
 /*
         $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
           array('column' => "tl_gallery_creator_pictures.name like '$varValue.%'"),"" 
