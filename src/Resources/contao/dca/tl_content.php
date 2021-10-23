@@ -242,17 +242,18 @@ class checkSchmuck extends Backend {
     //\System::log("PBD Besslich checkSchmuckartikel varValue $varValue id $id path $schmuckartikelname " . $objPicElement->path, __METHOD__, TL_GENERAL);
     */
 
-    $objFile = \FilesModel::findByPath($objPicElement->path);
-    $uuid="";
-    if ($objFile !== null) {
-      if ($objFile->uuid) {
-        $this->uuid=$objFile->uuid;
+//    $objFile = \FilesModel::findByPath($objPicElement->path);
+//    $uuid="";
+//    if ($objFile !== null) {
+//      if ($objFile->uuid) {
+      if(!isempty($objPicElement['uuid']){
+        $this->uuid=$objPicElement['uuid'];
       } else {
         throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['invalid_uuid'], $varValue));
       }
-    } else {
-      throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['invalid_uuid'], $varValue));
-    }
+//    } else {
+//      throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['invalid_uuid'], $varValue));
+//    }
     return $varValue;
   }
 
@@ -368,6 +369,8 @@ class schmuckartikel extends Contao\TextField
         $imgpath="Kein Image Pfad vorhanden";
         $txt .= "<div><table style='border-collapse: collapse'>";
         $varValue =  $this->varValue;
+System::log("PBD besslich tl_content.php generate $varValue", __METHOD__, TL_GENERAL); 
+
         $gch=new PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
         $objPicElement=$gch->getPicture($varValue);
 /*
@@ -376,10 +379,11 @@ class schmuckartikel extends Contao\TextField
         );
 */
         if ($objPicElement === null){
+System::log("PBD besslich tl_content.php generate picelement NULL", __METHOD__, TL_GENERAL); 
           $varValue="";
         } else {
-          $imgpath = $objPicElement->path;
-          $objAlbumlement = \GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement->pid);
+          $imgpath = $objPicElement['path'];
+          $objAlbumlement = \GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement['pid']);
           if ($objAlbumlement !== null) {
            $albumname =   $objAlbumlement->name;
           }
@@ -426,6 +430,7 @@ class schmuckartikel extends Contao\TextField
           $pid = $rowPrice->pid;
           //$txt .= "<tr><td $tdstyle>Id</td><td $tdstyle>" . $rowPrice->id . "</td></tr>";
           //$txt .= "<tr><td $tdstyle>pid</td><td $tdstyle>" . $rowPrice->pid . "</td></tr>";
+System::log("PBD besslich tl_content.php generate query SELECT * FROM tl_formdata_details where ff_name='Kategorie' AND pid='$pid'", __METHOD__, TL_GENERAL); 
           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Kategorie' AND pid='$pid'");
           $txt .= "<tr><td $tdstyle>Kategorie</td><td $tdstyle>" . $rowval->value . "</td></tr>";
           $rowval = @$this->Database->execute( "SELECT * FROM tl_formdata_details where ff_name='Subkategorie' AND pid='$pid'");
