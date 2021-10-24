@@ -23,6 +23,7 @@ namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements;
 
 use PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper;
 
+
 class ContentSchmuckartikel extends \Contao\ContentElement
 {
  
@@ -63,17 +64,20 @@ class ContentSchmuckartikel extends \Contao\ContentElement
           array('column' => "tl_gallery_creator_pictures.name like '" . $this->schmuckartikelname . ".%'"),"" 
         );
 */      
-        $objPicElement=null;  
-        $wi = "PBD Bild wird noch nicht ausgewertet";
+        //$objPicElement=null;  
+        $gch=new PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
+        $objPicElement=$gch->getPicture($varValue);
+
+        $wi = "";
         
         if ($objPicElement !== null)
 			  {
-				  $path = $objPicElement->path;
+				  $path = $objPicElement['path'];
           //$wi .= $this->Template->wildcard   = "single: " . $path . "<br>";
           //$imgtxt="";
           $imgtxt .= "Schmuckartikel: " . $this->schmuckartikelname . "<br>";
           $imgtxt .= "Pfad: $path<br>";
-          $objAlbumlement = \GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement->pid);
+          $objAlbumlement = \GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement['pid']);
           if ($objAlbumlement !== null) {
             $imgtxt .=  "Album: " .  $objAlbumlement->name . "<br>";
           } else {
