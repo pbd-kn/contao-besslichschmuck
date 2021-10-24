@@ -65,8 +65,8 @@ class ContentSchmuckartikel extends \Contao\ContentElement
         );
 */      
         //$objPicElement=null;  
-        $gch=new PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
-        $objPicElement=$gch->getPicture($varValue);
+        $gch=new GC_Helper();
+        $objPicElement=$gch->getPicture($this->schmuckartikelname);
 
         $wi = "";
         
