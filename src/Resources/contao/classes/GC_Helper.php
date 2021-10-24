@@ -66,7 +66,6 @@ class GC_Helper extends \contao\System
     foreach ($pictures as $k=>$value)
     {
       $file = \FilesModel::findByUuid($value->uuid);
-      $teile = explode(" ", $pizza);
       $arrbasename=explode(".",basename($file->path));
       if (count($arrbasename) == 0) continue;
       if (trim(strtolower($name)) == $arrbasename[0]) {
@@ -76,7 +75,7 @@ class GC_Helper extends \contao\System
          $res[pid]=$value->pid;
          return $res;
       }
-\System::log("PBD Besslich pictures array[$k] pid ".$value->pid.' basename ' . $basename, __METHOD__, TL_GENERAL);
+//\System::log("PBD Besslich pictures array[$k] pid ".$value->pid.' basename ' . $basename, __METHOD__, TL_GENERAL);
     }
 
 

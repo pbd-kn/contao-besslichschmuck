@@ -246,7 +246,7 @@ class checkSchmuck extends Backend {
 //    $uuid="";
 //    if ($objFile !== null) {
 //      if ($objFile->uuid) {
-      if(!isempty($objPicElement['uuid'])){
+      if(!empty($objPicElement['uuid'])){
         $this->uuid=$objPicElement['uuid'];
       } else {
         throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['invalid_uuid'], $varValue));
