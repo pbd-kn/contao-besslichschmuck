@@ -14,7 +14,6 @@
     "require": {
         "php": "^7.2 || ^8.0",
         "contao/core-bundle": "^4.9",
-        "pbd-kn/contao-efg-bundle": "^1.",
         "markocupic/gallery-creator-bundle": "^1.2",
         "symfony/dependency-injection": "^4.4 || ^5.1",
         "symfony/http-kernel": "^4.4 || ^5.1"
