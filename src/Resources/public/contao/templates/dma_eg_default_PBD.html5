@@ -1,0 +1,60 @@
+<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+
+<ul>
+  <?php echo $this->fields; ?>
+</ul>
+<?php      
+/*
+
+foreach ($this as $k=>$v) {
+  echo "this[$k]: $v<br>";
+  if (is_array ( $v )) {
+    foreach ($v as $k1=>$v1) {
+
+      echo "    $k " . "[$k1]: $v1<br>";
+      if (is_array ( $v1 )) {
+        foreach ($v1 as $k2=>$v2) {
+          echo "            $k1 " . "[$k2]: $v2<br>";
+        }
+      }
+    }
+  }
+}
+   Beispiel von Seite
+   https://de.contaowiki.org/Dma_elementgenerator
+<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?>
+<?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+ 
+ 
+ 
+ 
+	<h1><?php echo $this->elements['titel']; ?></h1>
+ 
+ 
+		<div class="left">
+			<table>
+				<tbody>
+					<tr><td class="first"><?php if ($this->elements['titel']): ?><?php echo $this->labels['titel']; ?>:</td><td class="last"><?php echo $this->elements['titel']; ?><?php endif; ?></td></tr>
+					<tr><td class="first"><?php if ($this->elements['autor']): ?><?php echo $this->labels['autor']; ?>:</td><td class="last"><?php echo $this->elements['autor']; ?><?php endif; ?></td></tr>
+					<tr><td class="first"><?php if ($this->elements['verlag']): ?><?php echo $this->labels['verlag']; ?>:</td><td class="last"><?php echo $this->elements['verlag']; ?><?php endif; ?></td></tr>
+					<tr><td class="first"><?php if ($this->elements['alter']): ?><?php echo $this->labels['alter']; ?>:</td><td class="last"><?php echo $this->elements['alter']; ?><?php endif; ?></td></tr>
+					<tr><td class="first"><?php if ($this->elements['form']): ?><?php echo $this->labels['form']; ?>:</td><td class="last"><?php echo $this->elements['form']; ?><?php endif; ?></td></tr>
+				</tbody>
+			</table>
+		</div>
+ 
+		<?php if ($this->elements['bild']): ?>
+	<div class="right">
+			<!-- teaserstart --><div class="image_container">
+				<img src="<?php echo $this->elements['bild']; ?>" alt="<?php echo $this->elements['name']; ?>" width="150" />
+ 
+<div class="caption"><?php if ($this->elements['titel']): ?><?php echo $this->elements['titel']; ?><?php endif; ?></div>
+		</div><!-- teaserend --></div></div>
+		<?php endif; ?>
+ 
+		<div class="twocol"><!-- teaserstart --> <?php if ($this->elements['beschreibung']): ?><?php echo nl2br($this->elements['beschreibung']); ?><?php endif; ?><!-- teaserend --></div>
+	</div>
+  */
+?>
+</div>
+

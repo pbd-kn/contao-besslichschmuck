@@ -1,0 +1,501 @@
+<?php
+//echo "ce_gc_galerie_heike.html5 <br>";
+/* CSS for the frontend-output */
+
+use Markocupic\GalleryCreatorBundle\GcHelpers;
+
+//$GLOBALS['TL_CSS'][] = 'system/modules/gallery_creator/assets/css/gallery_creator_fe.css';
+$GLOBALS['TL_CSS'][] = 'bundles/markocupicgallerycreator/css/gallery_creator_fe.css';
+
+/* javascript for the frontend-output */
+$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/gallery_creator/assets/js/gallery_creator_fe.js';
+global $objPage;
+$palias=$objPage->alias;
+  $mystyle = "";
+  global $jsexist;
+  if (!isset ( $jsexist )) {   // ist das js schon ausgegeben bzw function displayImages schon definiert??
+    //echo "jsexist false <br>";
+    $jsexist=true;
+    $mein_init_txt = <<< EOT
+    <script>
+    var oldzoom;
+    var oldicon;
+    function reloadImages() {
+    var imgDefer = document.getElementsByTagName('img');
+    for (var i=0; i<imgDefer.length; i++) {
+       if(imgDefer[i].getAttribute('data-src')) {
+         imgDefer[i].setAttribute('src',imgDefer[i].getAttribute('data-src'));
+       } 
+      } 
+    }
+    
+    jQuery(document).ready(function(){
+      reloadImages();                 // Bilder verspätet nachladen
+      jQuery('.detail-img-zoom').hover(function() {
+        if ( typeof oldicon !== 'undefined') {
+          jQuery(oldicon).removeClass('iconborder');  // wenn noch ein icon vorhanden ist lösche es
+        }
+        jQuery(this).addClass('iconborder');
+        oldicon=this;
+//console.log("-> hover");
+        
+        var acl=jQuery(this).closest('.image_container');
+        var ul=jQuery(this).closest('ul');  // zugehoeriges ul
+          
+        
+        // position bestimmen
+        var ct=jQuery(this).closest('#main');
+        var containerRect = jQuery(ct)[0].getBoundingClientRect();
+        var elemRect = jQuery(ul)[0].getBoundingClientRect();
+        var offset   = elemRect.top - containerRect.top;        
+console.log("offset " + offset);
+        var at = jQuery(acl).find('.article-detail').html();
+//alert ('at' + at);        
+        if (at.indexOf('existiert leider nicht') !== -1 ) {   // duerfte eigentlich nicht mhr passiern, da jetzt das Imgage als default drinn ist
+          var res = at.split('"');
+          at = '<br>Für Element "' + res[3] + '" existiert noch keine Detailbeschreibung"' ;
+        }
+        var container=jQuery(this).closest('#main');
+        //var logo =  jQuery(container).find('.logo').css("border","2px solid blue");
+        //at = at.replace("schmuck-detail", "schmuck-detail-inside"); 
+        var logo =  jQuery(container).find('.logo').html(at);        // schreibe an die Stelle von Logo html at
+        var l = jQuery(container).find('.logo');
+        l.css('position', 'relative');
+        l.css('top', offset+'px');
+        //alert ("at " + at );
+
+        var img = jQuery(logo).find('img');   //image im Logobereich auf Zoom eistellen
+        l.focus();
+//debugger;
+        if ( typeof oldzoom !== 'undefined') { // alten zoom löschen
+                oldzoom.removeData(oldzoom, 'elevateZoom');//remove zoom instance from image
+                jQuery('.zoomContainer').remove();// remove zoom container from DOM
+//console.log("gelöscht");
+        }
+        oldzoom=img;
+//console.log("img.elevateZoom" + img);
+//                        zoomWindowHeight:300,
+//                        zoomWindowWidth:300
+        img.elevateZoom({cursor: "crosshair",
+                        zoomLevel: 0.9,
+                        zoomWindowPosition:10,
+                        //zoomType: "inner",
+                        scrollZoom : true,
+                        borderSize: 2,borderColour: "#888",
+                        easing : false,
+                        zoomWindowOffetx: -40,
+                        zoomWindowOffety: 25
+                        }); 
+        //img.focus();
+        /* Tooltipp einstellen (info-button)  */
+        var options = {
+          html:true 
+          //,placement:"left", 
+          //show: { effect: "drop", duration: 800, direction:"down" },
+          //position: { my: "right bottom", at: "left bottom" }
+        }; 
+        // derzeit wird der tooltip an der falschen position dargestellt und auch nicht mehr gelöscht warumm muss noch untersucht werden
+        //jQuery('[data-toggle="tooltip"]').tooltip(options);       // tooltipp jQuery einschalten  (geht nur wenn jQuery ui geladen und element sichtbarist)
+        
+//console.log("<- hover");
+        },                                       
+        function() {
+          //jQuery(this).removeClass('iconborder');
+          //jQuery(".article-detail").css("display","none");
+        });
+        jQuery(".article-detail").css("display","none");
+      // options allgemein s. https://api.jqueryui.com/1.10/tooltip/
+      // options position siehe https://api.jqueryui.com/1.10/position/
+      // funktion z.b open überschreiben http://stackoverflow.com/questions/16283615/add-a-link-inside-jquery-tooltip-function
+      // Beispiel link im tooltipp http://stackoverflow.com/questions/18231315/jquery-ui-tooltip-html-with-links
+      // Tooltipp einstellen 
+      var options = {
+        html:true 
+        //,placement:"left"
+        //,show: { effect: "drop", duration: 800, direction:"down" }
+        //,position: { my: "left+40px bottom", at: "left bottom" }
+      }; 
+      //jQuery('[data-toggle="tooltip"]').tooltip(options);       // tooltipp jQuery einschalten  (geht nur wenn jQuery ui geladen ist)
+    });
+  </script>
+EOT;
+ 
+    echo  $mein_init_txt;
+    
+$this->getMetaContent = function($id) {
+  return NULL;
+  }; 
+function displayImages($arrPictures,$detailseite,$colsPerRow=-1,$imagemargin) { 
+  //---------------------------  Bilder Ausgeben ----------------------------------------
+//echo "displayImages detailseite $detailseite<br>";
+  if ($arrPictures) {
+    //echo 'PBD hallo galerie |{{env::host}}| |{{page::id}}| |{{date}}| . |{{env::path}}|';    
+    $col=0;
+    echo "<div id='galleryContainer' class='block col_first'>\n";
+      // untersuchen ob Detailseite da ist
+    $ps="{{link::" . $detailseite . "}}";                // inserttag davon bilden
+    $urldetail =\Controller::replaceInsertTags( $ps );   // insertag umwandeln
+    $detailseite_da = true;
+    if ( $urldetail == "") {
+      $detailseite_da = false;
+    }
+
+//echo "urldetail $urldetail detailseite_da $detailseite_da<br>";
+    echo "<ul class='album_preview'>\n";
+    foreach ($arrPictures as $Picture){  
+//foreach ($Picture as $k=>$v) { echo "Picture[$k]: $v<br>";} 
+      $colfirst = ($col == 0 ? ' col_first' : '');
+      if ($colsPerRow != -1) {
+        $collast = ($col == $colsPerRow - 1) ? ' col_last' : '';
+      } else {
+        $collast = "";                   // wird alles per css Boottrap und spaltenbreite gemacht
+      }
+      $picid = (strlen($Picture['cssID'])) ? ' id="' . $Picture['cssID'] . '"' : '';
+      $picclass = (strlen($Picture['cssClass'])) ? ' ' . $Picture['cssClass'] : '';
+      $a = explode (".",$Picture['filename']);              
+      $artikel_detail =  \Controller::replaceInsertTags("{{insert_article::" . $a[0] . "}}",false);
+      if (strlen($artikel_detail) == 0) continue;     // keine Artikelbeschreibung da
+      echo "<li class='col_$col $colfirst $collast'>\n";
+//echo "Picture['filename'] " . $Picture['filename'] . "  <br>";  
+        echo "<div $picid class='image_container  $picclass' style='$imagemargin' >\n"; 
+          $artikel_da = true;  // voreinstellung
+//echo "Picture['href'] " . $Picture['href'] . " Picture['filename'] " . $Picture['filename'] . "  <br>";  
+          if ($Picture['href']) {  // PBD link auf Bild vorhanden
+            $poserr = strpos($artikel_detail, "existiert leider nicht");
+            if($poserr !== FALSE) {
+              $artikel_da = false;    // keine artikelbeschreibung da dann Bild als schmuck-detail ausgeben
+              $artikel_detail = "<div class='schmuck-detail schmuck-detail-inside' hallo du da<br>";
+              $artikel_detail .= "<img  class='detail-img-zoom' src='" . $Picture['path'] . "' />";
+              $artikel_detail .= "</div>";
+//echo " fuer $name artikeldetail umgestellt<br>";
+            }
+            $s="";
+//echo "<br>|name: " . $a[0] . "|<br>href: " . basename($Picture['href']). "<br>a: $artikel_da<br>d:$detailseite_da<br>";
+            $name = $a[0];                                   // Name des Schmuckartikels
+//echo "Name: $name detailseite_da $detailseite_da artikel_da $artikel_da<br>";
+            $urldetail="";
+            if ($detailseite_da && $artikel_da) {            // seite und artikel vorhanden info Button ausgeben
+              $albuminfo = $Picture['albuminfo'];
+              $albumalias = $albuminfo['alias'];
+              $imgurl = $Picture['single_image_url'];
+              $pid = $Picture['id'];
+              $parameter = "?name=$name&page=full" ;   // fuer link Detail-seitenaufruf
+//echo "<br>p = $parameter<br>detailseite $detailseite<br><br>urldetail $urldetail";
+              $urldetail = "{{link_url::$detailseite}}$parameter";
+//echo "<br>p = $parameter<br>urldetail $urldetail<br>";
+              // Text der bei hover ausgeben wird (data-toggle)
+              $titletxt = "<ul><li>fahren sie mit der maus über ein vorschaubild um den artikel darzustellen.</li><li>um ihn dauerhaft darzustellen ziehen sie das vorschaubild nach rechts.</li><li>vergrößern/verkleinern des zoomauschnitts mit dem mausrad.</li><li>klick auf „i“ oder das vorschaubild,<br> öffnen des anfrageformulars.</li></ul>" ;
+              $titletxt = "fahren sie mit der maus über ein vorschaubild um den artikel darzustellen.\n\num ihn dauerhaft darzustellen ziehen sie das vorschaubild nach rechts.\n\nvergrößern/verkleinern des zoomauschnitts mit dem mausrad.\n\nklick auf „i“ oder das vorschaubild,\n öffnen des anfrageformulars.\n" ;
+              // Info Button als Link auf die Detailseite ausgeben
+              $s= "<a class='infoButton' title='$titletxt' class='info-button'  data-toggle='tooltip'  href='$urldetail' >";
+              $s.="<img src='files/heike-files/content/fotos-allgemein/details.gif' width='16' height='16'>";
+              $s.="</a>";
+            } else {  // kein info Button ausgeben, statt desses ein leeres Bild ausgeben
+              $s.="<img class='infoButton' src='files/heike-files/content/fotos-allgemein/nodetails.gif' width='16' height='16' title='Keine Detailinformation vorhanden'>";
+            }
+            echo $s;
+          }          // pic mit href
+          // picture ausgeben   data-zoom-image="large/image1.jpg" Verweis auf large Image   Picture[path]
+          // Text der bei hover ausgeben wird (data-toggle)
+//echo "urldetail " . $urldetail . "<br>";
+          $titletxt = "<ul><li>fahren sie mit der maus über ein vorschaubild um das bild vergrößert darzustellen.</li></ul>" ;
+          $onc = "";   // onClick au image
+          if ($urldetail != "") {
+            $onc="onClick='location.href=\"$urldetail\"'";
+          }
+//echo "onc $onc<br>";  
+//$hourglass='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAMAAADDpiTIAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAOu0AADrtAFPh+HXAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAwBQTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACyO34QAAAP90Uk5TAAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+6wjZNQAAGF5JREFUGBntwQmclWW9B/Dfec4MwzLAoAwyw74LKuKCSoCaaIUKqagZollCXS21cr2p3Q/u10gT1wBFCRSF0rBU1NwgXBAEZZVFRWQGGWBYhmGWc363y/UaFM//Ocyc98x53+f//cZQX6WHQDWUjW1RTwbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKawbKazmoryWlsOlUAJut66D21qkANlvXwaYMWW06rR6H2sd0Wj2OABkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkorxkEKAGrONQ+4rBKIEAGAdoEqw5Q++gAq00IkEGANsCqK9Q+usKqFAEyCFAJrNrlQe2leSGsShAggwBtgJXpDLWXrrArQYAMAlQCu25Qe+kGuxIEyCBAG2DXFWovXWFXigAZBKi8Ela9oPbSC1YVOxBaa2j1MdRe1tFqFYJkEKT1sOrRE+pr/TrA6gsEySBI82E3DOprw2H3HoJkEKS5sBsG9bVhsJuL8GpNu5oCqK8UJ2mVPBhBMghS2QpY5QyF+sqZMVgt34wgGQRqDuzOhPrKcNjNQaAMAjUHdkNzoPZoOgR2cxFmXSgYArXHCAo6IdTW024a1B4v0m4dwm06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nY9Iu5+y8Yi4ngmKPowh0op2UVTZFtH2OGVnI+LGUTYOkdalhqIFiLrCHRTtbI2MiiOjbhkA0ZhViLhd+YMhabTrTURXq50UvYPoa1VO0cbGiK4bKPsWPHAzZWMQWblfUDQHPmheRtHyGKLqYspOhheuo+wMRNUiil6DH5qWUvQ6IupUygbCE1dRdjSi6QWKXoIv8j6naBoiqU+SouPgjZ9QVNMBUTSJoufhj9y1FP0GEXTIbkqSR8Ejl1C0rTmi5xaK/gifxFdS9EtETpNNlCQPh1e+T9FnOYia0RRNh1/MRxSdi6h5l5LEofDM2RS9gog5kqIp8M4CSpJdES0PUFLTHd45naI7ESlNyil5FB6aR0lpLqLkB5RUd4aHhlB0LqJkLiUT4KW3KHkZEdKHkmRPeOlMSpJdER33UvIc/BRbSskdiIy8zZQMgqd+RElpLqJiJCVvw1eNNlAyAlHxOiUj4K3rKZmNiOhJyWoDbxVspyDZBcEzCN4oSO5JwlvlEyGIjUI0LKegrAk81qGGgsWIhMMpGQuv/YGSnoiCsRRUFsJrfSm5EVGwlIJH4LnZFCxCBPShpA88N5SSHgiaQdDOg2DeMnhu9joIzkP4LaHgh/DezRR8gNDrTcG2ZvBeu1oKuiNgBgE7D4KnKuC9L16A4DyE3UcUHAuFMylYgJDrRcEHUED8cwq6IlgGwToVgklQQOJRCIYg3KbTblcB1D90SNBuCsJtPe2mQO3xF9qtRah1oeBkqD3OoqAdwuwi2pXFofZosot230OgDAI1GHYvJqD2qPwb7AYjUAaBGgy756G+8jzsBiHEWtOuuiXUV9rRLtESQTII0iDYzdkG9ZUvFsLKDESQDII0CHZ/gfraX2A3CEEyCFJ/2D0P9bXnYdcf4bWGVsuh/im2gVbLECSDIBXD6mWof+IrsCpGkAwC1KoxrD6G2stKWLVsggAZBKgIdmug9rIadsUIkEGAimG3Fmovq2FXhAAZBKgYVslPofayGnbFCJBBgIpg9Xk11F62l8GqGAEyCFAxrNZC7WM1rIoQIIMAFcJqPdQ+PodVIQJkECADqyTUPpKwMgiQgfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfKagfJaDPU1vxA2hU1hU1EGtbfCprCpKIPNpv6opxjqq/QQqIaysS3qyUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB5zUB57X8AF2gj1S5H/gYAAAAASUVORK5CYII=';
+$hourglass='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+          //echo "<img   class='detail-img-zoom' src='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' data-src='" . $Picture['path'] . "' alt='" . $Picture['alt'] . "' width='150px' height='150px' $onc/>\n";
+          echo "<img   class='detail-img-zoom' src='$hourglass' data-src='" . $Picture['path'] . "' alt='" . $Picture['alt'] . "' width='150px' height='150px' $onc/>\n";
+//          echo '<img src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="https://seo-1b3df.kxcdn.com/wp-content/uploads/2020/04/sichtbarer-bereich-wird-geladen.png">'."\n";
+
+          echo "<div class='bildunterschrift'>$name</div>" ;
+          // versteckter div für die Detail Darstellung ausgeben div wird per hover js s. oben auf .logo eingeblendet
+          $atd=str_replace ( "schmuck-detail" , "schmuck-detail-inside" , $artikel_detail );   //  dient dazu, dass durch die versteckten divs kein zoom ausgelöst wird
+          echo "<div class='article-detail' style='display:none'>$atd</div>";
+        echo "</div>\n";				
+      echo "</li>\n";
+      $col++;
+      if ($colsPerRow !=-1 && $col == $colsPerRow) { $col=0; }
+    }  // foreach pictures
+    echo "</ul>\n";
+
+    echo "</div>\n"; // end galleryContainer
+  } // end arrPictures
+}
+
+  } else {
+    //echo "jsexist true <br>";
+  }
+
+
+  if (!\Input::get('items')) { 
+//echo "PDB no items gallery_creator - album list page alias " . $objPage->alias . "<br>";
+     $this->import('Database');
+    // gallery_creator - album list
+    if ($this->style) {
+      $mystyle = "style='" . $this->style . "'";
+    }
+    echo "<div class='" . $this->class . " gallery_creator block " . $this->cssID . "' " . $mystyle . ">\n";
+
+      if ($this->headline) {
+        echo "<" . $this->hl . ">" . $this->headline . "</" . $this->hl . ">";
+      }
+
+//      echo $this->pagination;
+      $albumId = $this->arrAlbumdata['id'];
+//      $arrSubalbums = \GcHelpers::getSubalbumsInformationArray($albumId,$this->objElement);
+
+      $col=0; 
+//echo "PBD count arrAlbums: " . count($this->arrAlbums) . " arrsubalbums: " . count($arrSubalbums) . "<br>";
+      $colsPerRow=  $this->colsPerRow;     // Anzahl Bilder pro Zeile
+      $colsPerRow = -1;                     // Angabe -1 bedeutet soviel wie möglich im Container
+      if (count($this->arrAlbums)>0){
+        echo "<ul class='list_albums'>\n";
+        foreach ($this->arrAlbums as $Album) {
+          echo "<li>";
+          $atext =  $Album['comment'] != "" ? $Album['comment']:$Album['name'];
+          echo "<strong>" . mb_strtolower ($atext) . "</strong><br>";
+//foreach ($Album as $k=>$v) {echo "album[$k]: $v<br>";}     
+          echo "<div class='album-detail' style='display:block;'>";
+//echo "<p>Albumname:     " . $Album['name']. "</p>";
+//echo "<p>Albumcomentar: " . $Album['comment'] . "</p>";
+
+          $str_sorting = $this->gc_picture_sorting == '' || $this->gc_picture_sorting_direction == '' ? 'sorting ASC' : $this->gc_picture_sorting . ' ' . $this->gc_picture_sorting_direction;
+//echo "sorting: " . $this->gc_picture_sorting . " direction " . $this->gc_picture_sorting_direction . " $sorting str_sorting $str_sorting<br>";
+//echo " db " . $this->Database->prepare . "<br>";
+          $str_sorting = str_replace('name', 'id', $str_sorting);
+          $objPictures = $this->Database->prepare('SELECT * FROM tl_gallery_creator_pictures WHERE published=? AND pid=? ORDER BY ' . $str_sorting);
+//echo "nach prepare album " . $Album['id'] . " " . $Album['name'] . $Album['title'] . "<br>";
+          $objPictures = $objPictures->execute('1', $Album['id']);
+          // build up $arrPictures
+          $arrPictures = array();
+          while ($objPictures->next()) {
+//echo "id " . $objPictures->id . "<br>";
+        // arraypictur zum Album erstellen
+            $objPicture = \Database::getInstance()->prepare('SELECT * FROM tl_gallery_creator_pictures WHERE id=?')
+               ->execute($objPictures->id);
+
+            //$xx = \GcHelpers::getPictureInformationArray($objPictures->id, $this);  // da getmetacontent nicht in this bekannt das geht nicht
+            // code übernommen aus GcHelpers.php Zeile 596 da metadaten nicht gesetz werden können
+            //Bild-Besitzer
+            $objOwner = \Database::getInstance()->prepare('SELECT name FROM tl_user WHERE id=?')->execute($objPicture->owner);
+            $strImageSrc = $objPictures->path;
+//echo "strImageSrc " . $objPictures->path . " $strImageSrc<br>";
+
+//echo "deatilview " . $this->gc_size_detailview . "<br>";
+            $arrSize = unserialize($this->gc_size_detailview);
+            $thumbSrc = \Image::get($strImageSrc, $arrSize[0], $arrSize[1], $arrSize[2]);
+
+//echo "strImageSrc $strImageSrc thumbSrc $thumbSrc arrSize $arrSize"  . "<br>";
+            $objFile = new \File(rawurldecode($thumbSrc), true);
+//echo "thumsrc decode $objFile<br>" ;
+            $arrSize[0] = $objFile->width;
+            $arrSize[1] = $objFile->height;
+            $thumbSrc = \Image::get($strImageSrc, $arrSize[0], $arrSize[1], $arrSize[2]);
+//echo "thumsrc geladen<br>" ;
+            $objFile = new \File($strImageSrc, true);
+            $arrFile["thumb_width"] = $objFile->width;
+            $arrFile["thumb_height"] = $objFile->height;
+            $arrFile["basename"] = $objFile->basename;
+            // filename without extension
+//echo "strImageSrc $strImageSrc"  . "<br>";
+            $objFile = new \File($strImageSrc, true);
+            $arrFile["filename"] = $objFile->filename;
+            $arrFile["extension"] = $objFile->extension;
+            $arrFile["dirname"] = $objFile->dirname;
+            $arrFile["image_width"] = $objFile->width;
+            $arrFile["image_height"] = $objFile->height;
+//echo "build arrPicture " . $objPictures->path . "<br>";
+            $href = \System::urlEncode($strImageSrc);
+
+            $arrPicture = array( //[int] id picture_id
+                  'id'               => $objPicture->id,    //[int] pid parent Album-Id
+                  'pid'              => $objPicture->pid,   //[int] das Datum, welches fuer das Bild gesetzt werden soll (= in der Regel das Upload-Datum)
+                  'date'             => $objPicture->date,  //[int] id des Albumbesitzers
+                  'owner'            => $objPicture->owner, //Name des Erstellers
+                  'owners_name'      => $objOwner->name,
+                  'album_id'         => $objPicture->pid,  //[int] album_id oder pid                             
+                  'name'             => specialchars($objPicture->name),  //[string] name (basename/filename of the file)
+                  'filename'         => $arrFile["filename"],  //[string] filename without extension
+                  'path'             => $objPicture->path,   //[string] Pfad zur Datei
+                  'basename'         => $arrFile["basename"], //[string] basename similar to name
+                  'dirname'          => $arrFile["dirname"],  //[string] dirname
+                  'extension'        => $arrFile["extension"], //[string] file-extension
+                  'alt'              => specialchars($objPicture->title ? $objPicture->title : $objPicture->name),//[string] alt-attribut
+                  'title'            => specialchars($objPicture->title), //[string] title-attribut
+                  'comment'          => specialchars($objPicture->comment),//[string] Bildkommentar oder Bildbeschreibung
+                  'caption'          => specialchars($objPicture->comment),
+                  'href'             => TL_FILES_URL . $href, //[string] path to media (video, picture, sound...)
+                             // single image url
+                  'single_image_url' => \Controller::generateFrontendUrl($objPage->row(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ? '/' : '/items/') . \Input::get('items') . '/img/' . $arrFile["filename"], $objPage->language),
+                  'image_src'        => $strImageSrc, //[string] path to the image,
+                  'media_src'        => $strMediaSrc, //[string] path to the other selected media
+                  'socialMediaSRC'   => $objPicture->socialMediaSRC, //[string] path to a media on a social-media-plattform
+                  'localMediaSRC'    => $objPicture->localMediaSRC, //[string] path to a media stored on the webserver
+                  'addCustomThumb'   => $objPicture->addCustomThumb, //[string] Pfad zu einem benutzerdefinierten Thumbnail
+                  'thumb_src'        => isset($thumbSrc) ? TL_FILES_URL . $thumbSrc : '',  //[string] Thumbnailquelle
+                  'size'             => $arrSize, //[array] Thumbnail-Ausmasse Array $arrSize[Breite, Hoehe, Methode]
+                  'thumb_width'      => $arrFile["thumb_width"],  //[int] thumb-width in px
+                  'thumb_height'     => $arrFile["thumb_height"], //[int] thumb-height in px
+                  'image_width'      => $arrFile["image_width"],  //[int] image-width in px
+                  'image_height'     => $arrFile["image_height"], //[int] image-height in px
+                             //[int] das rel oder data-lightbox Attribut fuer das Anzeigen der Bilder in der Lightbox
+                  'lightbox'         => $objPage->outputFormat == 'xhtml' ? 'rel="lightbox[lb' . $objPicture->pid . ']"' : 'data-lightbox="lb' . $objPicture->pid . '"',
+                  'tstamp'           => $objPicture->tstamp, //[int] Zeitstempel der letzten Aenderung
+                  'sorting'          => $objPicture->sorting,//[int] Sortierindex
+                  'published'        => $objPicture->published, //[boolean] veroeffentlicht (true/false)
+                  'exif'             => $exif,   //[array] Array mit exif metatags
+                  'albuminfo'        => $arrAlbumInfo,  //[array] Array mit allen Albuminformation (albumname, owners_name...)
+                  // funktioniert so nicht 'metaData'         => $this->getMetaContent($objPicture->id), //[array] Array mit Bildinfos aus den meta-Angaben der Datei, gespeichert in tl_files.meta
+                  'metaData'         => NULL, //[array] Array mit Bildinfos aus den meta-Angaben der Datei, gespeichert in tl_files.meta
+                  'cssID'            => $cssID[0] != '' ? $cssID[0] : '',   //[string] css-ID des Bildcontainers
+                  'cssClass'         => $cssID[1] != '' ? $cssID[1] : '',  //[string] css-Klasse des Bildcontainers
+                             //[bool] true, wenn es sich um ein Bild handelt, das nicht in files/gallery_creator_albums/albumname gespeichert ist
+                  'externalFile'     => $objPicture->externalFile,
+        );
+        //echo "Picture src name: " . $arrPicture['name'] . " single image url " . $arrPicture['single_image_url'] . "<br>"; 
+
+            $arrPictures[$objPictures->id] = $arrPicture;
+
+          } // foreach images
+          if ($arrPictures) {
+             // detail seite bestimmen
+             $detailseite = "detail-$palias";
+//echo "PBD Pictures da detailseite $detailseite<br>";
+             $colsPerRow=  $this->colsPerRow;     // Anzahl Bilder pro Zeile  aus Backend
+             $colsPerRow = -1;                    // Angabe -1 bedeutet soviel wie möglich im Container
+             displayImages($arrPictures,$detailseite,$colsPerRow,$this->imagemargin);
+          } else { 
+            //echo "keine Pictures"; 
+          }
+          echo "</div>";  // class album-detail
+          echo "</li>\n";
+        }          // foreach album
+      echo "</ul>\n";
+    }   // if count album
+    echo "</div>\n";
+  }  // if no items
+
+
+//--------------ITEMs vorhanden---------------------------------------------------------------- 
+  if (\Input::get('items')) {
+    //  gallery_creator - album preview -->
+//echo "PBD items:" . \Input::get('items') . "<br>";
+    $style = "";
+    if ($this->style){ $style=$this->style;}
+    echo "<div class='" . $this->class . " gallery_creator block " . $this->cssID . "' " .  $style ."> ";
+
+    if ($this->insertArticlePre) {
+      // articleBoxPre-->
+      echo "<div id='articleBoxPre' class='block'>\n";
+        echo $this->insertArticlePre; 
+      echo "</div>\n";
+      // end articleBoxPre-->
+    }
+
+    if ($this->headline){
+      echo "<div class='headline'><" . $this->hl .">" . $this->headline . "<" . $this->hl . "></div>\n";
+    }
+
+	
+    if ($this->Albumname) {
+      echo "<div class='albumname'><h2>" . $this->Albumname . "</h2></div>\n";  
+    }
+    $albumId = $this->arrAlbumdata['id'];
+    $arrSubalbums = GcHelpers::getSubalbumsInformationArray($albumId,$this->objElement);
+    //echo "PBD albumname: " . $this->Albumname . " albumID: $albumId Anzahl: " . count($arrSubalbums) . " " . count($this->arrAlbums) . "<br>";
+    $col=0;
+    //if (count($this->arrAlbums)>0)
+    if (count($arrSubalbums)>0) 
+    {
+echo "PBD subalbums<br>";
+      echo "<div class='subalbums'>\n";
+	    echo "<h3>" . $GLOBALS['TL_LANG']['gallery_creator']['subalbums_of'] . ": " . $this->Albumname . "</h3>\n";
+      echo "<ul class='list_albums'>";
+      $colsPerRow=  $this->colsPerRow;     // Anzahl Bilder pro Zeile
+      $colsPerRow = 5;                     // Angabe -1 bedeutet soviel wie möglich im Container
+      //foreach ($this->arrAlbums as $Subalbum) 
+      foreach ($arrSubalbums as $Subalbum) 
+      {
+//foreach ($Subalbum as $k=>$v) {echo "subalbum[$k]: $v<br>";}
+//echo "PBD subalbum:" . $Subalbum['name'] . " thumb_src: " . $Subalbum['thumb_src'] . "<br>";
+        $colfirst = ($col == 0 ? ' col_first' : '');
+        if ($colsPerRow != -1) {
+          $collast = ($col == $colsPerRow - 1) ? ' col_last' : '';
+        } else {
+          $collast = "";                   // wird alles per css Boottrap und spaltenbreite gemacht
+        }
+        $colclass= "collist_$col " . $colfirst . $collast;
+        $col++;
+        if ($colsPerRow !=-1 && $col == $colsPerRow) { $col=0; }
+        echo "<li class='level_1 block $colclass' style='$imagemargin' >\n";
+          echo "<div class='tstamp block'><p>[" . $Subalbum['event_date'] . "]</p></div>\n";
+          echo "<div class='col_1'>\n";
+            echo "<div class='image_container' onmouseover='" . $Subalbum['thumbMouseover'] ."'>\n";
+              if ($Subalbum['href']){
+                echo "<a href='" . $Subalbum['href'] . "' title='" . $Subalbum['title'] . "'>\n";
+              }
+              echo "<img src='" . $Subalbum['thumb_src'] . "' width='" . $Subalbum['size'][0] . "' height='" . $Subalbum['size'][1] . "' alt='" . $Subalbum['alt'] . "' class='" . $Subalbum['class'] . "' />\n";
+              if ($Subalbum['href']){
+                echo"</a>\n";
+              }
+            echo "</div>\n";
+          echo "</div>\n";
+          echo "<div class='col_2'>\n";
+            echo "<h2>" . $Subalbum['name'] . "</h2>\n";
+            if ($Subalbum['count']) {       			
+              echo "<p class='count_pics'>" . $Subalbum['count'] . " " .     $GLOBALS['TL_LANG']['gallery_creator']['pictures'] . "</p>\n";
+              echo "<p class='visitors'>" .   $Subalbum['visitors'] . " " .  $GLOBALS['TL_LANG']['gallery_creator']['visitors'] . "</p>\n";
+            }
+            if ($Subalbum['count_subalbums']) {				
+              echo "<p class='count_pics'>" . $Subalbum['count_subalbums'] . " " . $GLOBALS['TL_LANG']['gallery_creator']['subalbums'] . "</p>\n";
+            }		
+            if ($Subalbum['comment']) {
+              echo "<p class='album_comment'>" . $Subalbum['comment'] . "</p>\n";
+            }
+          echo "</div>\n";
+        echo "</li>\n";
+      }
+      echo "</ul>\n";
+    echo "</div>\n";
+  }
+
+  if ($this->albumComment) {
+    echo "<div class='albumComment col_first'>\n";
+      echo "<p>" . $this->albumComment . "</p>";
+    echo "</div>\n";
+  }
+
+  //echo $this->pagination; 
+
+  if ($this->backLink) {
+    echo "<div class='backLink'><a href='" . $this->backLink . "' title='zurück' >« " . $GLOBALS['TL_LANG']['gallery_creator']['back_to_general_view'] . "</a></div>\n";
+  }
+  
+    if ($this->arrPictures) {
+//echo "PBD Pictures da<br>";
+      // detail seite bestimmen
+      $detailseite = "detail-$palias";
+      $colsPerRow=  $this->colsPerRow;     // Anzahl Bilder pro Zeile  aus Backend
+      $colsPerRow = -1;                    // Angabe -1 bedeutet soviel wie möglich im Container
+
+      displayImages($this->arrPictures,$detailseite,$colsPerRow,$this->imagemargin);
+     } else { 
+//echo "keine Pictures"; 
+     }
+    if ($this->insertArticlePost) {
+      echo "<div id='articleBoxPost' class='block'>";
+      echo $this->insertArticlePost;
+      echo "</div>\n";
+    // end articleBoxPost-->
+
+    }
+
+  echo  "</div>\n";  // end gallery_creator
+
+  }
+ 
+
+?>

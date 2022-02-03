@@ -1,0 +1,336 @@
+<?php
+/* CSS for the frontend-output */
+$GLOBALS['TL_CSS'][] = 'system/modules/gallery_creator/assets/css/gallery_creator_fe.css';
+
+/* javascript for the frontend-output */
+$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/gallery_creator/assets/js/gallery_creator_fe.js';
+
+  $mystyle = "";
+  if (!\Input::get('items')) { 
+//echo "PDB no items <br>";
+
+    // gallery_creator - album list
+    if ($this->style) {
+      $mystyle = "style='" . $this->style . "'";
+    }
+    echo "<div class='" . $this->class . " gallery_creator block " . $this->cssID . "' " . $mystyle . ">\n";
+    if ($this->headline) {
+       echo "<" . $this->hl . ">" . $this->headline . "<" . $this->hl . ">";
+    }
+    echo $this->pagination;
+    $albumId = $this->arrAlbumdata['id'];
+    $arrSubalbums = \GcHelpers::getSubalbumsInformationArray($albumId,$this->objElement);
+
+    $col=0; 
+    $image_style = $this->imagemargin ? 'style="' . $this->imagemargin . '"' : '';
+//echo "PBD count arrAlbums: " . count($this->arrAlbums) . " arrsubalbums: " . count($arrSubalbums) . "<br>";
+    if (count($this->arrAlbums)>0){
+  $mein_init_txt = <<< EOT
+  <script>
+  jQuery(document).ready(function(){
+    jQuery('.detail-img-zoom').hover(function() {
+        //jQuery(this).addClass('transition');
+        var acl=$(this).closest('.image_container');
+        var at = jQuery(acl).find('.album-detail').html();
+        
+        if (at.indexOf('existiert leider nicht') !== -1 ) {
+          var res = at.split('"');
+          at = '<br>Für Element "' + res[3] + '" existiert nocht keine Detailbeschreibung"' ;
+        }
+        var container=$(this).closest('#main');
+        //var logo =  jQuery(container).find('.logo').css("border","2px solid blue");
+        var logo =  jQuery(container).find('.logo').html(at);
+        
+        //alert ("at " + at );
+    },                                       
+    function() {
+        //jQuery(this).removeClass('transition');
+        //jQuery(".article-detail").css("display","none");
+    });
+    //alert ("Dok ready");
+    jQuery(".article-detail").css("display","none");
+    //alert (".article set"); 
+  });
+  </script>
+EOT;
+ 
+    echo  $mein_init_txt;
+
+      echo "<ul class='list_albums'>\n";
+        foreach ($this->arrAlbums as $Album){ 
+          $colfirst = ($col == 0 ? ' col_first' : '');
+          $collast = ($col == $this->colsPerRow - 1) ? ' col_last' : '';
+          $colclass= "collist_$col " . $colfirst . $collast;
+          $col++;
+          if ($col == $this->colsPerRow) { $col=0; }
+          echo "<li class='level_1 block $colclass'" . $image_style . ">\n";
+            echo "<div class='tstamp block'><p>[" . $Album['event_date']. "]</p></div>\n";
+            echo "<div class='col_1'>\n";      
+              echo "<div class='image_container' onmouseover='" .  $Album['thumbMouseover'] ."' >\n"; 
+//foreach ($Album as $k=>$v) {echo "album[$k]: $v<br>";}     
+                if ($Album['href']) { 
+                  echo "<a href='" . $Album['href'] . "' title='" . $Album['title'] . "' >\n"; 
+                }
+                echo "<img class='detail-img-zoom' src='" . $Album['thumb_src'] . "' width='" . $Album['size'][0] . "' height='" . $Album['size'][1] . "' alt='" . $Album['alt'] . "' class='" . $Album['class'] . "' />\n";
+                if ($Album['href']){ echo "</a>\n"; }
+                echo "<div class='album-detail' style='display:none;'>";
+                  if ($Album['comment'] != "") {
+                    echo "<p><b>            " . $Album['caption'] . "</b></p><p> </p>";
+                  }
+                  else {
+                    echo "<p><b>            " . $Album['name'] . "</b></p><p> </p>";
+                  }
+                  echo "<p>Das Album enthält " . $Album['count'] . " Artikel.</p>";
+                  //echo "<p>Albumname:     " . $Album['name']. "</p>";
+                  //echo "<p>Albumcomentar: " . $Album['comment'] . "</p>";
+                echo "</div>";
+              echo "</div>\n";
+            echo "</div>\n";
+            echo "<div class='col_2'>\n";
+              echo "<h2>" . $Album['name'] . "</h2>\n";
+              if ($Album['count']){			       // Bilder im Album vorhanden ??	
+                echo "<p class='count_pics'>" . $Album['count'] . " " . $GLOBALS['TL_LANG']['gallery_creator']['pictures'];     // Text bilder
+                echo "</p>";
+                echo "<p class='visitors'>" . $Album['visitors'] . " " . $GLOBALS['TL_LANG']['gallery_creator']['visitors'];
+                echo "</p>\n";
+              }
+              if ($Album['count_subalbums']){				
+                echo "<p class='count_pics'>" . $Album['count_subalbums'] . " ";
+                echo $GLOBALS['TL_LANG']['gallery_creator']['subalbums'];
+                echo "</p>\n";
+              }		
+              if ($Album['comment']){
+                echo "<p class='album_comment'>" . $Album['comment'] . "</p>\n";
+              }
+            echo "</div>\n";
+
+          echo "</li>\n";
+        }          // foreach album
+      echo "</ul>\n";
+    }   // if count album
+    echo "</div>\n";
+  }  // if no items
+
+
+//--------------ITEMs vorhanden---------------------------------------------------------------- 
+  if (\Input::get('items')) {
+    //  gallery_creator - album preview -->
+//echo "PBD items:" . \Input::get('items') . "<br>";
+    $style = "";
+    if ($this->style){ $style=$this->style;}
+    echo "<div class='" . $this->class . " gallery_creator block " . $this->cssID . "' " .  $style ."> ";
+
+    if ($this->insertArticlePre) {
+      // articleBoxPre-->
+      echo "<div id='articleBoxPre' class='block'>\n";
+        echo $this->insertArticlePre; 
+      echo "</div>\n";
+      // end articleBoxPre-->
+    }
+
+    if ($this->headline){
+      echo "<div class='headline'><" . $this->hl .">" . $this->headline . "<" . $this->hl . "></div>\n";
+    }
+
+	
+    if ($this->Albumname) {
+      echo "<div class='albumname'><h2>" . $this->Albumname . "</h2></div>\n";  
+    }
+    $albumId = $this->arrAlbumdata['id'];
+    $arrSubalbums = \GcHelpers::getSubalbumsInformationArray($albumId,$this->objElement);
+    //echo "PBD albumname: " . $this->Albumname . " albumID: $albumId Anzahl: " . count($arrSubalbums) . " " . count($this->arrAlbums) . "<br>";
+    $col=0;
+    //if (count($this->arrAlbums)>0)
+    if (count($arrSubalbums)>0) 
+    {
+      //echo "PBD subalbums<br>";
+      echo "<div class='subalbums'>\n";
+	    echo "<h3>" . $GLOBALS['TL_LANG']['gallery_creator']['subalbums_of'] . ": " . $this->Albumname . "</h3>\n";
+      echo "<ul class='list_albums'>";
+      //foreach ($this->arrAlbums as $Subalbum) 
+      foreach ($arrSubalbums as $Subalbum) 
+      {
+//foreach ($Subalbum as $k=>$v) {echo "subalbum[$k]: $v<br>";}
+//echo "PBD subalbum:" . $Subalbum['name'] . " thumb_src: " . $Subalbum['thumb_src'] . "<br>";
+        $imagemargin = $this->imagemargin ? 'style="' . $this->imagemargin . '"' : '';
+        $colfirst = ($col == 0 ? ' col_first' : '');
+        $collast = ($col == $this->colsPerRow - 1) ? ' col_last' : '';
+        $colclass= "collist_$col " . $colfirst . $collast;
+        $col++;
+        if ($col == $this->colsPerRow) { $col=0; }
+        echo "<li class='level_1 block $colclass'  $imagemargin >\n";
+          echo "<div class='tstamp block'><p>[" . $Subalbum['event_date'] . "]</p></div>\n";
+          echo "<div class='col_1'>\n";
+            echo "<div class='image_container' onmouseover='" . $Subalbum['thumbMouseover'] ."'>\n";
+              if ($Subalbum['href']){
+                echo "<a href='" . $Subalbum['href'] . "' title='" . $Subalbum['title'] . "'>\n";
+              }
+              echo "<img src='" . $Subalbum['thumb_src'] . "' width='" . $Subalbum['size'][0] . "' height='" . $Subalbum['size'][1] . "' alt='" . $Subalbum['alt'] . "' class='" . $Subalbum['class'] . "' />\n";
+              if ($Subalbum['href']){
+                echo"</a>\n";
+              }
+            echo "</div>\n";
+          echo "</div>\n";
+          echo "<div class='col_2'>\n";
+            echo "<h2>" . $Subalbum['name'] . "</h2>\n";
+            if ($Subalbum['count']) {       			
+              echo "<p class='count_pics'>" . $Subalbum['count'] . " " .     $GLOBALS['TL_LANG']['gallery_creator']['pictures'] . "</p>\n";
+              echo "<p class='visitors'>" .   $Subalbum['visitors'] . " " .  $GLOBALS['TL_LANG']['gallery_creator']['visitors'] . "</p>\n";
+            }
+            if ($Subalbum['count_subalbums']) {				
+              echo "<p class='count_pics'>" . $Subalbum['count_subalbums'] . " " . $GLOBALS['TL_LANG']['gallery_creator']['subalbums'] . "</p>\n";
+            }		
+            if ($Subalbum['comment']) {
+              echo "<p class='album_comment'>" . $Subalbum['comment'] . "</p>\n";
+            }
+          echo "</div>\n";
+        echo "</li>\n";
+      }
+      echo "</ul>\n";
+    echo "</div>\n";
+  }
+
+  if ($this->albumComment) {
+    echo "<div class='albumComment col_first'>\n";
+      echo "<p>" . $this->albumComment . "</p>";
+    echo "</div>\n";
+  }
+
+  echo $this->pagination; 
+  $col=0;
+  //if ($this->arrPictures) { echo "PBD Pictures da<br"; } else { echo "keine Pictures"; }
+  //---------------------------ITEMS Bilder Ausgeben ----------------------------------------
+  if ($this->arrPictures) {
+    //echo 'PBD hallo galerie xhtml |{{env::host}}| |{{page::id}}| |{{date}}| . |{{env::path}}|';    
+    //echo "cols per row: " . $this->colsPerRow . "<br>"; 
+  $mein_init_txt = <<< EOT
+  <script>
+  jQuery(document).ready(function(){
+    jQuery('.detail-img-zoom').hover(function() {
+        //jQuery(this).addClass('transition');
+        var acl=$(this).closest('.image_container');
+        var at = jQuery(acl).find('.article-detail').html();
+        
+        if (at.indexOf('existiert leider nicht') !== -1 ) {
+          var res = at.split('"');
+          at = '<br>Für Element "' + res[3] + '" existiert nocht keine Detailbeschreibung"' ;
+        }
+        var container=$(this).closest('#main');
+        //var logo =  jQuery(container).find('.logo').css("border","2px solid blue");
+        //at = at.replace("schmuck-detail", "schmuck-detail-inside"); 
+        var logo =  jQuery(container).find('.logo').html(at);
+        
+        //alert ("at " + at );
+    },                                       
+    function() {
+        //jQuery(this).removeClass('transition');
+        //jQuery(".article-detail").css("display","none");
+    });
+    //alert ("Dok ready");
+    jQuery(".article-detail").css("display","none");
+    //alert (".article set"); 
+  });
+  </script>
+EOT;
+ 
+    echo  $mein_init_txt;
+     //class='detail-img-zoom'
+    echo "<div id='galleryContainer' class='block col_first'>\n";
+      echo "<ul class='album_preview'>\n";
+      // untersuchen ob Detailseite da ist
+      $palias = $this->replaceInsertTags("{{page::alias}}");
+      $detailseite = "detail-$palias";
+      $detaillbseite = "detaillb-$palias";                            // fuer Ligthbox eine ander seite aufrufen wg anderem Layout
+//echo "palias: $palias detailseite $detailseite detaillbseite $detaillbseite<br>";
+      $ps="{{link::" . $detailseite . "}}";                // inserttag davon bilden
+      $urldetail = $this->replaceInsertTags( $ps );                // insertag umwandeln
+      $detailseite_da = true;
+      if ( $urldetail == "") {
+        $detailseite_da = false;
+        echo "<p>Detailseite(alias))<br>'$detailseite'<br>nicht vorhanden</p>";
+      }
+      foreach ($this->arrPictures as $Picture){      
+        $colfirst = ($col == 0 ? ' col_first' : '');
+        $collast = ($col == $this->colsPerRow - 1) ? ' col_last' : '';
+        echo "<li class='col_$col $colfirst $collast'>\n";
+          $picid = (strlen($Picture['cssID'])) ? ' id="' . $Picture['cssID'] . '"' : '';
+          $picclass = (strlen($Picture['cssClass'])) ? ' ' . $Picture['cssClass'] : '';
+          $imagemargin = $this->imagemargin ? ' style="'.$this->imagemargin.'"' : '';
+          echo "<div $picid class='image_container  $picclass' $imagemargin >\n";                                                       // vollständige url der detailseite
+          if ($Picture['href']) {
+              // PBD link auf eine evtl. vorhandene Seite einfügen
+              $a = explode (".",$Picture['filename']);
+              $artikel_da = true;
+              unset($_GET['name']);
+              $_GET['name'] = $a[0];    // damit beim insertarticle die Variable name gesetzt ist
+              $artikel_detail =  $this->replaceInsertTags("{{insert_article::" . $a[0] . "}}",false);
+/*
+if (isset($this->arrCache) ) {
+echo "this->arrCache gesetzt<br>";
+foreach ($this->arrCache as $k=>$v) { echo "this->arrCache['$k']: $v <br>"; };
+};
+echo "arrcache " . count($this->arrCache) . "<br>";
+*/
+//foreach ($_GET as $k=>$v) { echo "_GET['$k']: $v <br>"; };
+              $poserr = strpos($artikel_detail, "existiert leider nicht");
+              if($poserr !== FALSE) {
+                $artikel_da = false;    // keine artikelbeschreibung da
+              }
+              $s="";
+              //echo "<br>|name: " . $a[0] . "| href: " . basename($Picture['href']). " a: $artikel_da d:$detailseite_da<br>";
+              $name = $a[0];
+              if ($detailseite_da && $artikel_da) {            // seite vorhanden info ausgeben
+                $albuminfo = $Picture['albuminfo'];
+                $albumalias = $albuminfo['alias'];
+                $imgurl = $Picture['single_image_url'];
+                $pid = $Picture['id'];
+                $parameter =  "?pid=$pid&name=$name&alias=$albumalias&imgurl=$imgurl" ;
+              //echo "<br>p = $parameter<br>";
+                $urldetail = "{{link_url::$detailseite}}$parameter";
+                $s= "<a title='Detailinformation: $name'  href='$urldetail&page=full' >";
+                $s.="<img src='files/heike-files/content/fotos-allgemein/details.gif' width='16' height='16'>";
+                $s.="</a>";
+              } else {  // leeres Image statt dessen ausgeben
+                $s.="<img src='files/heike-files/content/fotos-allgemein/nodetails.gif' width='16' height='16' title='Keine Detailinformation vorhanden'>";
+              }
+              echo $s;
+            }
+          // picture ausgeben
+          if ($Picture['href'] != "") {  
+              $urldetail = "{{link_url::$detaillbseite}}$parameter";
+//echo "detaillbseite $detaillbseite<br>----<br>";
+//echo $urldetail . "<br>---<br>";
+              //$pictitle = $Picture['comment'] ? $Picture['comment'] : ($Picture['title'] ? $Picture['title'] : $Picture['filename']); 
+              echo "<a href='$urldetail&page=small'  rel='lightbox[lb1 600 310]'  title='artikel:  $name' >\n";
+          } 
+          echo "<img  class='detail-img-zoom' src='" . $Picture['thumb_src'] . "' width='" . $Picture['size'][0] . "' height='" . $Picture['size'][1] . "' height='" . $Picture['thumb_height'] . "' alt='" . $Picture['alt'] . "' />\n";
+          if ($Picture['href'] != "") {
+              echo "</a>\n";
+          }
+          $atd=str_replace ( "schmuck-detail" , "schmuck-detail-inside" , $artikel_detail );   //  dient dazu, dass durch die versteckten divs kein zoom ausgelöst wird
+          echo "<div class='article-detail' style='display:none'>$atd</div>";
+        echo "</div>\n";				
+        echo "</li>\n";
+        $col++;
+        if ($col == $this->colsPerRow) { $col=0; }
+      }
+      echo "</ul>\n";
+    echo "</div>\n";
+  }
+
+  if ($this->backLink) {
+    echo "<div class='backLink'><a href='" . $this->backLink . "' title='zurück' >« " . $GLOBALS['TL_LANG']['gallery_creator']['back_to_general_view'] . "</a></div>\n";
+  }
+
+  if ($this->insertArticlePost) {
+    // articleBoxPre-->
+    echo "<div id='articleBoxPost' class='block'>";
+    echo $this->insertArticlePost;
+    echo "</div>\n";
+    // end articleBoxPost-->
+  }
+
+  echo  "</div>\n";
+
+}
+?>

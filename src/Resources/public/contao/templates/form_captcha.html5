@@ -1,0 +1,33 @@
+<?php 
+  $this->extend('form_row'); 
+
+  $this->block('label'); 
+  if ($this->label) {
+    $class = "";
+    if ($this->class) $class = $this->class;
+    echo "<label for='ctrl_" . $this->id  . "' class='$class'>";
+      echo "<span class='invisible'>";
+      echo $this->mandatoryField;
+      echo "</span>" ;
+      echo $this->label;
+      echo "<span class='mandatory'>*</span>";
+    echo "</label>";
+  }
+  $this->endblock();
+  $this->block('field');
+  if ($this->hasErrors()) {
+    echo "<p class='error'>" . $this->getErrorAsString() . "</p>";
+  }
+  
+  $class = "";
+  if ($this->class) $class = $this->class;
+
+  echo "<span id='captcha_text_" . $this->id . "' class='captcha_text $class'>" . $this->getQuestion() . "</span>";
+
+  echo "<input type='text' name='" . $this->name . "' id='ctrl_" . $this->id . "' class='captcha mandatory $class ' value='' aria-describedby='captcha_text_" . $this->id  . "'" . $this->getAttributes() . "'>";
+  //echo "<span id='captcha_text_" . $this->id . "' class='captcha_text $class'>" . $this->getQuestion() . "</span>";
+  if ($this->addSubmit) {
+    echo "<input type='submit' id='ctrl_" . $this->id . "_submit' class='submit' value=' " . $this->slabel . "'>";
+  }
+  $this->endblock(); 
+?>
