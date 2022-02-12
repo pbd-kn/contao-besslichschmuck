@@ -5,11 +5,14 @@
 use Markocupic\GalleryCreatorBundle\GcHelpers;
 
 //$GLOBALS['TL_CSS'][] = 'system/modules/gallery_creator/assets/css/gallery_creator_fe.css';
-$GLOBALS['TL_CSS'][] = 'bundles/markocupicgallerycreator/css/gallery_creator_fe.css';
 
 /* javascript for the frontend-output */
 $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/gallery_creator/assets/js/gallery_creator_fe.js';
 global $objPage;
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::setEfgDebugmode(255);
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::EfgwriteLog(1, 'ce_gc_galerie_heike', 4711, 'start ' . $objPage->alias);
+
+
 $palias=$objPage->alias;
   $mystyle = "";
   global $jsexist;
@@ -20,17 +23,9 @@ $palias=$objPage->alias;
     <script>
     var oldzoom;
     var oldicon;
-    function reloadImages() {
-    var imgDefer = document.getElementsByTagName('img');
-    for (var i=0; i<imgDefer.length; i++) {
-       if(imgDefer[i].getAttribute('data-src')) {
-         imgDefer[i].setAttribute('src',imgDefer[i].getAttribute('data-src'));
-       } 
-      } 
-    }
     
     jQuery(document).ready(function(){
-      reloadImages();                 // Bilder verspätet nachladen
+      reloadImages();                 // Bilder verspätet nachladen s. Hilfsfunktionen
       jQuery('.detail-img-zoom').hover(function() {
         if ( typeof oldicon !== 'undefined') {
           jQuery(oldicon).removeClass('iconborder');  // wenn noch ein icon vorhanden ist lösche es
@@ -63,9 +58,10 @@ console.log("offset " + offset);
         l.css('position', 'relative');
         l.css('top', offset+'px');
         //alert ("at " + at );
-
-        var img = jQuery(logo).find('img');   //image im Logobereich auf Zoom eistellen
         l.focus();
+
+/*
+        var img = jQuery(logo).find('img');   //image im Logobereich auf Zoom eistellen
 //debugger;
         if ( typeof oldzoom !== 'undefined') { // alten zoom löschen
                 oldzoom.removeData(oldzoom, 'elevateZoom');//remove zoom instance from image
@@ -74,8 +70,6 @@ console.log("offset " + offset);
         }
         oldzoom=img;
 //console.log("img.elevateZoom" + img);
-//                        zoomWindowHeight:300,
-//                        zoomWindowWidth:300
         img.elevateZoom({cursor: "crosshair",
                         zoomLevel: 0.9,
                         zoomWindowPosition:10,
@@ -84,9 +78,12 @@ console.log("offset " + offset);
                         borderSize: 2,borderColour: "#888",
                         easing : false,
                         zoomWindowOffetx: -40,
-                        zoomWindowOffety: 25
+                        zoomWindowOffety: 25,
+                        zoomWindowHeight:300,
+                        zoomWindowWidth:300
                         }); 
         //img.focus();
+*/
         /* Tooltipp einstellen (info-button)  */
         var options = {
           html:true 
@@ -131,7 +128,7 @@ function displayImages($arrPictures,$detailseite,$colsPerRow=-1,$imagemargin) {
   if ($arrPictures) {
     //echo 'PBD hallo galerie |{{env::host}}| |{{page::id}}| |{{date}}| . |{{env::path}}|';    
     $col=0;
-    echo "<div id='galleryContainer' class='block col_first'>\n";
+    echo "<div class='block col_first galleryContainer'>\n";
       // untersuchen ob Detailseite da ist
     $ps="{{link::" . $detailseite . "}}";                // inserttag davon bilden
     $urldetail =\Controller::replaceInsertTags( $ps );   // insertag umwandeln
@@ -232,6 +229,8 @@ $hourglass='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
   if (!\Input::get('items')) { 
 //echo "PDB no items gallery_creator - album list page alias " . $objPage->alias . "<br>";
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::setEfgDebugmode(255);
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::EfgwriteLog(1, 'ce_gc_galerie_heike', 4711, 'list page alias ' . $objPage->alias);
      $this->import('Database');
     // gallery_creator - album list
     if ($this->style) {
@@ -245,7 +244,6 @@ $hourglass='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
 //      echo $this->pagination;
       $albumId = $this->arrAlbumdata['id'];
-//      $arrSubalbums = \GcHelpers::getSubalbumsInformationArray($albumId,$this->objElement);
 
       $col=0; 
 //echo "PBD count arrAlbums: " . count($this->arrAlbums) . " arrsubalbums: " . count($arrSubalbums) . "<br>";
@@ -256,7 +254,7 @@ $hourglass='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
         foreach ($this->arrAlbums as $Album) {
           echo "<li>";
           $atext =  $Album['comment'] != "" ? $Album['comment']:$Album['name'];
-          echo "<strong>" . mb_strtolower ($atext) . "</strong><br>";
+          echo "<h2>" . mb_strtolower ($atext) . "</h2>";
 //foreach ($Album as $k=>$v) {echo "album[$k]: $v<br>";}     
           echo "<div class='album-detail' style='display:block;'>";
 //echo "<p>Albumname:     " . $Album['name']. "</p>";
@@ -273,6 +271,8 @@ $hourglass='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
           $arrPictures = array();
           while ($objPictures->next()) {
 //echo "id " . $objPictures->id . "<br>";
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::EfgwriteLog(1, 'ce_gc_galerie_heike', 4711, 'objPictures->id ' . $objPictures->id);
+
         // arraypictur zum Album erstellen
             $objPicture = \Database::getInstance()->prepare('SELECT * FROM tl_gallery_creator_pictures WHERE id=?')
                ->execute($objPictures->id);
@@ -283,12 +283,15 @@ $hourglass='data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
             $objOwner = \Database::getInstance()->prepare('SELECT name FROM tl_user WHERE id=?')->execute($objPicture->owner);
             $strImageSrc = $objPictures->path;
 //echo "strImageSrc " . $objPictures->path . " $strImageSrc<br>";
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::EfgwriteLog(1, 'ce_gc_galerie_heike', 4711, 'objPicture->path ' . $objPicture->path);
 
 //echo "deatilview " . $this->gc_size_detailview . "<br>";
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::EfgwriteLog(1, 'ce_gc_galerie_heike', 4711, 'objPicture->gc_size_detailview ' . $objPicture->gc_size_detailview);
             $arrSize = unserialize($this->gc_size_detailview);
             $thumbSrc = \Image::get($strImageSrc, $arrSize[0], $arrSize[1], $arrSize[2]);
 
 //echo "strImageSrc $strImageSrc thumbSrc $thumbSrc arrSize $arrSize"  . "<br>";
+//\PBDKN\Efgco4\Resources\contao\classes\EfgLog::EfgwriteLog(1, 'ce_gc_galerie_heike', 4711, 'thumbSrc ' . $thumbSrc);
             $objFile = new \File(rawurldecode($thumbSrc), true);
 //echo "thumsrc decode $objFile<br>" ;
             $arrSize[0] = $objFile->width;
