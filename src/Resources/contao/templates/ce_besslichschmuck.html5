@@ -11,7 +11,9 @@ echo "<div class='schmuck-detail block'>\n";
 	{
 	  $path = $objFile->path;
     $im = "<figure class='image_container'>";
-    $im .=  "<img src='$path'></img>";
+    $hourglass='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALDAAACwwBP0AiyAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGzSURBVEiJ1da/alVBEAbw314FCwtRrCwsrKxslaCoMWJjIaaJWguiFikE8Ql8AUEfQAhYGEwZMJUEQrAxKILWNirGQtDmjsXdg3uTPefc+KdwYGF3Zvb7ZnbOzh4RoRnYRPzh2CwxB/6x7N6yfojL+IGVHWJNYw+elsqUj+aXIqUFfI2IGztBTyk9wr6IuFLqt2YAb3EtpTTAQRzqwf6ATziHx9usZUFyNlNGxbqEef1Fncdsnk9tw6sQDPAGL3AAnzvAP2I/1vAag16CTHI1A5zAzQ6C6zid53NVrBaCJosl7MKrCvh69lvGRi36VoJMcqHI4iyGBfgQx3Emr6dbcdoMmeQZVvL8bkFwJ+tW8aQTo4fgCL5jJq9v41aeX8Q3HO7CqN2DVomIBzV136auDBabI2qxr2Lht44IM02RO3yaIp/aEYHR57eBpa7osu8yXsp9bVKCub7oC9/mos3W7LVu2kT/JSJOTlL8lNIa9uJYRAw7i6xodn3RF3tam13tRTuPd0ZtYlJZxPu8d0xqBEeNPs1hxVaV7Ps87x2TsRqklO77C09mRNwr2cuz/P/+Kn4CKfnP9a2yiFsAAAAASUVORK5CYII=';
+    //$im .=  "<img src='$path'></img>";
+    $im .= "<img src='$hourglass' data-src='$path'> </img>\n";
     $im .= "</figure>";
     echo $im;
     //echo "<br>" . $this->caption;
