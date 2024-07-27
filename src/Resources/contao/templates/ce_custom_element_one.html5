@@ -1,0 +1,12 @@
+<?php
+<div id="<?= $this->cssID[0] ?>" class="schmuck-detail <?= $this->cssID[1] ?> <?= $this->classes ?>">
+echo "dieses Template"
+echo "</div>\n";
+    <h2><?= $this->headline ?></h2>
+    <p><?= $this->text ?></p>
+</div>
+
+<!-- Debugging: Ausgabe aller Parameter -->
+<pre><?php print_r($this); ?></pre>
+
+?>

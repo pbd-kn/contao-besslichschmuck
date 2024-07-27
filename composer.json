@@ -29,15 +29,15 @@
     },
     "autoload": {
         "psr-4": {
-            "PBDKN\\ContaoBesslichschmuck\\": "src/"
+            "Pbdkn\\ContaoBesslichschmuck\\": "src/"
         }
     },
     "extra": {
-        "contao-manager-plugin": "PBDKN\\ContaoBesslichschmuck\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Pbdkn\\ContaoBesslichschmuck\\ContaoManager\\Plugin"
     },
     "autoload-dev": {
         "psr-4": {
-            "PBDKN\\ContaoBesslichschmuck\\Tests\\": "tests/"
+            "Pbdkn\\ContaoBesslichschmuck\\Tests\\": "tests/"
         }
     },
     "support": {

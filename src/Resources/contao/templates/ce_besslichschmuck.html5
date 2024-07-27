@@ -6,19 +6,8 @@ echo "<div class='schmuck-detail block'>\n";
     echo "<" . $this->hl . ">" . $this->headline . "</" . $this->hl . ">\n";
   }
   */
-  $objFile = \FilesModel::findByUuid($this->singleSRC);
-  if ($objFile !== null)
-	{
-	  $path = $objFile->path;
-    $im = "<figure class='image_container'>";
-    $hourglass='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALDAAACwwBP0AiyAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGzSURBVEiJ1da/alVBEAbw314FCwtRrCwsrKxslaCoMWJjIaaJWguiFikE8Ql8AUEfQAhYGEwZMJUEQrAxKILWNirGQtDmjsXdg3uTPefc+KdwYGF3Zvb7ZnbOzh4RoRnYRPzh2CwxB/6x7N6yfojL+IGVHWJNYw+elsqUj+aXIqUFfI2IGztBTyk9wr6IuFLqt2YAb3EtpTTAQRzqwf6ATziHx9usZUFyNlNGxbqEef1Fncdsnk9tw6sQDPAGL3AAnzvAP2I/1vAag16CTHI1A5zAzQ6C6zid53NVrBaCJosl7MKrCvh69lvGRi36VoJMcqHI4iyGBfgQx3Emr6dbcdoMmeQZVvL8bkFwJ+tW8aQTo4fgCL5jJq9v41aeX8Q3HO7CqN2DVomIBzV136auDBabI2qxr2Lht44IM02RO3yaIp/aEYHR57eBpa7osu8yXsp9bVKCub7oC9/mos3W7LVu2kT/JSJOTlL8lNIa9uJYRAw7i6xodn3RF3tam13tRTuPd0ZtYlJZxPu8d0xqBEeNPs1hxVaV7Ps87x2TsRqklO77C09mRNwr2cuz/P/+Kn4CKfnP9a2yiFsAAAAASUVORK5CYII=';
-    //$im .=  "<img src='$path'></img>";
-    $im .= "<img src='$hourglass' data-src='$path'> </img>\n";
-    $im .= "</figure>";
-    echo $im;
-    //echo "<br>" . $this->caption;
-  }
- 
+
+  if ($this->schmuckImage) echo $this->schmuckImage; // Bild vorhanden
   //<!-- Beschreibung -->
   echo "<div class='detail_beschreibung'>\n";
   if ($this->text) {
@@ -32,26 +21,53 @@ echo "<div class='schmuck-detail block'>\n";
     echo "</div>\n";
   }
   echo "</div>\n";
- 
+
+  $arrPreisArikel=$this->preisArikel;                 //datensatz aus der Preisliste als arr
   //<!-- Preisliste -->
-  //echo "Artikelname: " . $this->schmuckartikelname . "<br>";
-  $preisliste = array($this->schmuckartikelname);
-  if (is_array($this->arrpreisliste) && count($this->arrpreisliste)) {
-    $preisliste =  array_merge($preisliste,$this->arrpreisliste);
+  //echo "artikelname: " . $this->schmuckartikelname . "<br>";
+  //echo "vor Preistabelle<br>";
+  echo $this->divpreisliste;
+  $n=$this->schmuckartikelname;
+  // kategorie und subkategorie aus artikelliste lesen
+  $kategorie =  $this->replaceInsertTags("{{efg_insert::artikelliste::$n::kategorie}}");
+  $subkategorie =  $this->replaceInsertTags("{{efg_insert::artikelliste::$n::subkategorie}}");
+//echo "Kategorie: $kategorie subkategorie: $subkategorie<br>";
+  // evtl. Aliasnamen aus popup-artikel lesen
+  $popup1 =  $this->replaceInsertTags("{{efg_insert::popup-artikel::$kategorie::artikelname}}");
+  $popup2 =  $this->replaceInsertTags("{{efg_insert::popup-artikel::$kategorie$subkategorie::artikelname}}");
+  if ($this->zusatzinfo || !empty($popup1) || !empty($popup2)) {   //Reihenfolge Angabe im Artikel Angabe Kategoriesubkategorie Angabe Kategorie
+    $pop = "";
+    if  (!empty($this->zusatzinfo)) $pop = $this->zusatzinfo;
+    elseif (!empty($popup2))        $pop = $popup2;
+    else                            $pop = $popup1;
+//echo "this->zusatzinfo: " . $this->zusatzinfopopup1 . " $popup1 popup2: $popup2 pop $pop<br>";
+    echo "<div class='popupurl'>\n";
+    $opnstr='AjaxGetArticle("' . $pop . '","' . $GLOBALS['objPage']->id . '");';   // ueber die Pageid wird die Page im Ajaxrequest gesetzt
+    echo "<button onclick='" . $opnstr . "'>auswahl ketten</button>\n";
+/*  Beispiel popup mit neuem Window
+    $opnstr='window.open("' . $this->myurl . '", "Popup", "scrollbars=1;width=800,height=1024,left=500,location=0,menubar=0,status=0,titlebar=0,toolbar=0");';
+    $mein_init_txt = <<< EOT
+      <script>
+        function myFunction() {
+          var myWindow = $opnstr;
+          myWindow.focus();
+        };
+      </script>
+EOT;
+*/
+    echo "</div>\n";
   }
-  echo "<div class='preistabelle'>";
-  echo "{{file::heike/get-preis.php?artikel=" . implode(':',$preisliste) . "}}";
-  echo "</div>";
-  if ($this->myurl) {
-    echo "<div class='popupurl'>";
-    $opnstr='window.open("' . $this->myurl . '", "Popup", "width=300,height=400,left=500,location=no,menubar=no,status=no,titlebar=no,toolbar=no")';
-    echo "<button  onClick='$opnstr'> Weitere Information</button><br>";
-    echo "</div>";
-  }
-  echo "<div class='detail-linkback'>";
-  echo "<br>";
-  echo "{{insert_article::linkback}}";
-  echo "</div>";
+  //echo "<div class='detail-linkback'>\n";
+  //echo "<span class='detail-linkback-icon'";
+  //echo "<i class='fa fa-chevron-left'>&nbsp;</i>";
+  //echo "</span>";
+  echo "<div class='detail-linkback'>\n";
+  $o="";
+  $o.= $this->replaceInsertTags("{{link_open::back}}")."<span class='fa fa-chevron-left'>&nbsp;</span>";
+  $o.= "<span class=detail-linkback-txt>".$this->replaceInsertTags("{{link_title::back|utf8_strtolower}}")."</span>";
+  $o.= $this->replaceInsertTags("{{link_close}}");
+  echo $o;
+  echo "</div>\n";
 echo "</div>\n";
 
 /*

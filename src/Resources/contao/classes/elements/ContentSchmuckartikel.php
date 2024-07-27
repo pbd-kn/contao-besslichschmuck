@@ -19,9 +19,13 @@
  * Wir speichern das Array in $this->Template->arrProperties und haben dann im Template über $this->arrProperties zugriff darauf.
  */
  
-namespace PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements;
+namespace Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\elements;
 
-use PBDKN\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper;
+use Contao\System;
+use Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper;
+use Pbdkn\ContaoBesslichschmuck\Util\BesslichUtil;
+use Pbdkn\ContaoBesslichschmuck\Util\CgiUtil;
+use Markocupic\GalleryCreatorBundle\Model\GalleryCreatorAlbumsModel;
 
 
 class ContentSchmuckartikel extends \Contao\ContentElement
@@ -33,7 +37,15 @@ class ContentSchmuckartikel extends \Contao\ContentElement
      */
     protected $strTemplate = 'ce_besslichschmuck';
  
-    /**
+    private BesslichUtil $besslichUtil;
+    private CgiUtil $cgi;
+
+    public function __construct($arrAttributes = null)
+    {
+        parent::__construct($arrAttributes);
+        $this->besslichUtil = System::getContainer()->get(BesslichUtil::class);
+        $this->cgi = System::getContainer()->get(CgiUtil::class);
+    }    /**
      * Compile the content element
      */
     protected function compile()
@@ -47,7 +59,7 @@ class ContentSchmuckartikel extends \Contao\ContentElement
     }
  
     /**
-     * Erzeugt die Ausgabe für das Backend.
+     * Erzeugt die Ausgabe für das Backend. zur Uebersichtsdarstellung des ce Elements
      * @return string
      */
     private function genBeOutput()
@@ -56,28 +68,17 @@ class ContentSchmuckartikel extends \Contao\ContentElement
     //\System::log('PBD Besslich Artikel compile gerufen singleSrc path ' . checkSchmuck::$schmuckpath , __METHOD__, TL_GENERAL);
         $this->strTemplate          = 'be_wildcard';
         $this->Template             = new \BackendTemplate($this->strTemplate);
-        //$this->Template->title      = $this->headline;
-        //$objFile = \FilesModel::findByUuid($this->singleSRC);
         $imgtxt="";
-/*
-        $objPicElement = \GalleryCreatorPicturesModel::findOneBy(
-          array('column' => "tl_gallery_creator_pictures.name like '" . $this->schmuckartikelname . ".%'"),"" 
-        );
-*/      
-        //$objPicElement=null;  
         $gch=new GC_Helper();
         $objPicElement=$gch->getPicture($this->schmuckartikelname);
 
         $wi = "";
         
-        if ($objPicElement !== null)
-			  {
-				  $path = $objPicElement['path'];
-          //$wi .= $this->Template->wildcard   = "single: " . $path . "<br>";
-          //$imgtxt="";
+        if ($objPicElement !== null) {
+		  $path = $objPicElement['path'];
           $imgtxt .= "Schmuckartikel: " . $this->schmuckartikelname . "<br>";
           $imgtxt .= "Pfad: $path<br>";
-          $objAlbumlement = \GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement['pid']);
+          $objAlbumlement = GalleryCreatorAlbumsModel::findOneBy('id',$objPicElement['pid']);
           if ($objAlbumlement !== null) {
             $imgtxt .=  "Album: " .  $objAlbumlement->name . "<br>";
           } else {
@@ -85,27 +86,78 @@ class ContentSchmuckartikel extends \Contao\ContentElement
           }
           $wi .= "<img src='$path' width='50px' height='50px' style='float:left'></img>";
           $wi .= "<span style='float:left;padding-left: 10px;'>$imgtxt</span>";
-			  } else {
+		} else {
           $wi .= $this->Template->wildcard   = "<strong> !!! Kein Bild vorhanden</strong><br>";
         }
         $this->Template->wildcard   = $wi;
     }
  
     /**
-     * Erzeugt die Ausgebe für das Frontend.
+     * Erzeugt die Ausgabe für das Frontend.
+     * mittels protected $strTemplate = 'ce_besslichschmuck'; template ce_besslichschmuck
+     * es werden templatevariable erzeugt
+     * schmuckImage:    gerednertes image
+     * preisArikel:     array das den gesamten Datensatz des schuckartikels enthaelt
+     * arrpreisliste:   array mit schluessel des elments aller vorhandenen artikel name + preisliste
+     * divpreisliste:   gerenderte Preisliste
      * @return string
      */
     private function genFeOutput()
     {
-        if ($this->preisliste != '') {
-            // prüfen ob inhalt da
-            $arr =  deserialize($this->preisliste, true);
-            foreach ($arr as $str) {
-              if ($str != "") {
-                $this->Template->arrpreisliste = deserialize($this->preisliste, true);
-              }
-            }
-        }
+      // Bild erzeugen
+      $c=$this->cgi;                    // create cgi
+      $objFile = \FilesModel::findByUuid($this->singleSRC);
+      if ($objFile !== null)
+	  {
+	    $path = $objFile->path;
+        $im = "<figure class='image_container'>";
+        $im .=  "<img src='$path'>";
+        $im .= "</figure>";
+        $this->Template->schmuckImage=$im;
+        //echo "<br>" . $this->caption;
+      } else {
+        $this->Template->schmuckImage="";
+      }
+      $preisArrArtikel=$this->besslichUtil->getPreis($this->schmuckartikelname);
+      $this->Template->preisArikel=$preisArrArtikel;  // zum auswerten im Template
+      
+      $preislisteArtikel = [$this->schmuckartikelname=>$preisArrArtikel];
+      if ($this->preisliste != '') {  // prüfen ob zusaetzliche Preise  da  
+            $arr =  deserialize($this->preisliste, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
+            foreach ($arr as $k=>$v) {
+              if(isset($preislisteArtikel[$v])) continue;    // schon enthalten
+              $preisArrArtikel=$this->besslichUtil->getPreis($v);
+              $preislisteArtikel[$v]=$preisArrArtikel;
+            }   
+      }
+      $this->Template->arrpreisliste=$preislisteArtikel;   // [name][arrpreisliste]
+
+      // Preistabelle erzeugen
+
+      $html=$c->div(array("class"=>"preistabelle"));
+      $html.=$c->table(array("class"=>"tablepreistabelle"));
+      $html.=$c->thead();
+      $html.=$c->tr();
+          $html.=$c->th("name").$c->th("einzelpreis").$c->th("paarpreis");
+      $html.=$c->end_tr();
+      $html.=$c->end_thead();
+      $html.=$c->tbody();
+      foreach ($preislisteArtikel as $name=>$arrPr) {
+        $html.=$c->tr();
+        $PreisStueck=@$arrPr['PreisStueck2_5'];
+        $PreisPaar=@$arrPr['PreisPaar2_5'];
+        $html.=$c->td($name);
+        $html.=$c->td(array('width'=>'80px','data-toggle'=>'tooltip','title'=>"detailinformation erhalten sie unter\ninfo -> preise"),"$PreisStueck € <sup style='font-size:.7em; line-height:2em;'>*</sup>");
+        if (isset($PreisPaar)&&$PreisPaar!='')
+        $html.=$c->td(array('width'=>'80px','data-toggle'=>'tooltip','title'=>"detailinformation erhalten sie unter\ninfo -> preise"),"$PreisPaar € <sup style='font-size:.7em; line-height:2em;'>*</sup>");
+        else $html.=$c->td("&nbsp;");
+        $html.=$c->end_tr();
+      }
+      
+      $html.=$c->end_tbody();
+      $html.=$c->end_table();
+      $html.=$c->end_div(); 
+      $this->Template->divpreisliste=$html;
     }
 }
 

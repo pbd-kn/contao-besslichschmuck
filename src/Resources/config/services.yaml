@@ -1,0 +1,15 @@
+# src/Resources/config/services.yaml
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Pbdkn\ContaoBesslichschmuck\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Resources/contao,dca,Resources/public}'
+
+    Pbdkn\ContaoBesslichschmuck\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+      

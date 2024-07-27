@@ -8,18 +8,19 @@ if ($artikel == "") $artikel = $name;
 if ($artikel == "") return;
 $arr = explode(':', $artikel);
 $tableexist=false;
-
+echo "<br><p><strong>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!preis bitte nachfragen</strong></p>";
+return;
 
 // voreinstellung
   $Paarpreis = "paarpreis";
   $Stückpreis = "stückpreis";
   $Paarpreistxt = "paarpreis";
-  $Stückpreistxt = "stückpreis";
+  $Stückpreistxt = "st&uuml;ckpreis";
 if ($preiskategorie == "2.3") {
   $Paarpreis = "paarpreis2.3";
   $Stückpreis = "stückpreis2.3";
-  $Paarpreistxt = "paarpr2.3";
-  $Stückpreistxt = "stückpr2.3";
+  $Paarpreistxt = "pp 2.3";
+  $Stückpreistxt = "sp 2.3";
 }
 elseif ($preiskategorie == "EK") {
   $Paarpreis = "paarpreisEK";
@@ -78,13 +79,14 @@ echo "<div class='preistabelle'>";
           echo "<tr><td>$n error: $e </td></tr>";
         } else {
           if ($e != "")  {
+            $e=utf8_encode($e);
             $e = sprintf("%1\$.2f",$e); 
             $e = str_replace(".",",",$e);
             if ($tableexist == false) {
               echo " <table class='tablepreistabelle'>";
               $tableexist=true;
             }
-            echo "<tr>\n<td width='80px' data-toggle='tooltip' title='detailinformation erhalten sie unter info -> preise' >$Stückpreistxt<sup style='font-size:.7em; line-height:2em;'>*</sup></td>\n<td width='auto'>$n</td><td align='right' width='66px'>$e €</td>\n</tr>\n";
+            echo "<tr>\n<td width='80px' data-toggle='tooltip' title='detailinformation erhalten sie unter info -> preise' >$Stückpreistxt<sup style='font-size:.7em; line-height:2em;'>*</sup></td>\n<td width='auto'>$n</td><td align='right' width='66px'>$e &euro;</td>\n</tr>\n";
             $cnt++;
             $gesamt += $e;
           }

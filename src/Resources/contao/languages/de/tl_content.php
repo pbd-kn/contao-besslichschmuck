@@ -12,8 +12,8 @@ $strName = 'tl_content';
 /**
  * Fields
  */
-$GLOBALS['TL_LANG'][$strName]['artikelzusatz'] = array('Zusatzbeschreibung zum Schmuckartikels', 'Bitte geben Sie die Zusatztbeschreibung des Artikels ein. z.B. Beschreibung des Anh&auml:ngers.');
-$GLOBALS['TL_LANG'][$strName]['preisliste']  = array('Preisliste', 'Zus&auml;tzliche Schmuckartikel an, deren Preis hinzugefügt werden soll.');
+$GLOBALS['TL_LANG'][$strName]['artikelzusatz'] = array('Zusatzbeschreibung zum Schmuckartikels', 'Bitte geben Sie die Zusatzbeschreibung des Artikels ein. z.B. Beschreibung des Anh&auml;ngers.');
+$GLOBALS['TL_LANG'][$strName]['preisliste']  = array('Preisliste', 'Zus&auml;tzliche Schmuckartikel deren Preis hinzugefügt werden soll.');
 $GLOBALS['TL_LANG'][$strName]['schmuckartikelname'] = array('Schmuckartikel Name', 'Bitte geben Sie den Namen des Schmuckartikels ein'); 
 $GLOBALS['TL_LANG'][$strName]['myaddImage'] = array('Schmuckartikel Bild', 'Bitte w&auml;hlen Sie ein Bild zum Schmuckartikel aus'); 
 $GLOBALS['TL_LANG'][$strName]['customTpl']  = array('Individuelles für Besslich-Schmuckartikel','Hier können Sie das Standard-Template überschreiben.');
@@ -29,9 +29,9 @@ $GLOBALS['TL_LANG'][$strName]['myimage_legend'] = "Bild zum Schmuckartikel ausw�
 /*
  * Fehlertexte 
  */
-$GLOBALS['TL_LANG'][$strName]['no_artikellist'] = '%s keine Preisliste vorhanden';
-$GLOBALS['TL_LANG'][$strName]['no_artikelexist'] = 'Schmuckartikel |%s| in preisliste(artikelliste) nicht vorhanden';
+$GLOBALS['TL_LANG'][$strName]['no_artikellist'] = 'Fehler: %s kein Zugriff auf Preisliste ';
+$GLOBALS['TL_LANG'][$strName]['no_artikelexist'] = 'Artikel |%s| in Preisliste nicht vorhanden';
 $GLOBALS['TL_LANG'][$strName]['no_image']       = 'Kein Bild zu %s im Gallery Creator vorhanden';
-$GLOBALS['TL_LANG'][$strName]['invalid_uuid']   = 'es existiert kein File zu %s';
+$GLOBALS['TL_LANG'][$strName]['invalid_uuid']   = 'es existiert kein File(Bild) im Gallery Creator zu %s';
 
 ?>

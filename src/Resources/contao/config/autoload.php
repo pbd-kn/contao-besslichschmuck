@@ -1,6 +1,6 @@
 <?php
 // config/autoload.php
-class_alias(PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements\ContentSchmuckartikel::class, 'ContentSchmuckartikel');
+class_alias(Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\elements\ContentSchmuckartikel::class, 'ContentSchmuckartikel');
 
 
 /**
@@ -8,6 +8,6 @@ class_alias(PBDKN\ContaoBesslichschmuck\Resources\contao\classes\elements\Conten
  */
 TemplateLoader::addFiles(array
 (
-    'ce_besslichschmuck' => 'PBDKN/ContaoBesslichschmuck/Resources/contao/templates'
+    'ce_besslichschmuck' => 'Pbdkn/ContaoBesslichschmuck/Resources/contao/templates'
 ));
 ?>
