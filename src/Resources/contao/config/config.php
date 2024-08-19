@@ -8,19 +8,16 @@ $GLOBALS['BE_FFL']['schmuckartikel'] = 'schmuckartikel';
 $GLOBALS['BE_FFL']['comment'] = 'comment';
 
 
-/*
-$GLOBALS['BE_MOD']['system']['Preisliste'] = array(
-    'tables' => array('tl_heike_preisliste')
-);
-*/
-// Optional: Konfiguration der Menüreihenfolge
-array_insert($GLOBALS['BE_MOD'], 1, [
-    'Tabellen' => [
-        'Preisliste' => [
-            'tables' => ['tl_heike_preisliste'],
-        ],
-    ],
-]);
+if (TL_MODE == 'BE') {
+array_insert($GLOBALS['BE_MOD'], 1, array('Tabellen' => array()));
+$GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
+   (
+	'tables'     => ['tl_heike_preisliste'],
+	'icon'       => 'bundles/contaobesslichschmuck/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaobesslichschmuck/css/style.css',
+    );
+}
+
 
 
 ?>

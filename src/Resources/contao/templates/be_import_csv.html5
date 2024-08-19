@@ -1,0 +1,62 @@
+<!-- templates/be_import_csv.html5 -->
+<!DOCTYPE html>
+<html lang="<?= $this->language ?>">
+<head>
+    <meta charset="utf-8">
+    <title><?= $this->title ?></title>
+    <?= $this->stylesheets ?>  <!-- Standard Contao Stylesheets -->
+    <?= $this->javascripts ?>   <!-- Standard Contao JavaScripts -->
+    <script src="assets/mootools/core.js"></script>
+    <script src="assets/mootools/more.js"></script>
+</head>
+<body class="tl_page">
+    <div id="wrapper">
+        <div id="container">
+            <!-- Hier kannst du deine eigene Struktur einfügen -->
+            <div class="tl_formbody_edit">
+                <form action="<?= $this->action; ?>" id="csvImportForm" method="post" enctype="multipart/form-data" >
+                    <input type="hidden" name="FORM_SUBMIT" value="tl_formdata_import">
+                    <input type="hidden" name="FORM_MODE" value="preview">
+                    <input type="hidden" name="REQUEST_TOKEN" value="<?= REQUEST_TOKEN; ?>">
+                    <div class="widget">
+                        <h3>CSV-Datei auswählen:</h3>
+                        <br><br><br>
+                        <?= $this->fileTreeParse; ?>
+                        <br><br><br>
+                        <p> nach filetree </p>
+                    </div>
+                    <div class="tl_formbody_submit">
+                        <div class="tl_submit_container">
+                            <button type="submit" class="tl_submit">Importieren</button>
+                            <button type="readCsv" class="tl_submit">File Preisliste lesen</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Hier endet dein eigener Inhalt -->
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('csvImportForm');
+    form.addEventListener('submit', function(e) {
+debugger;
+        const selectedFiles = document.querySelectorAll('input[type="radio"][name="csvFile"]:checked');
+        if (selectedFiles.length === 0) {
+            //e.preventDefault(); // Verhindern des Formularabsendens
+            const fileValue = 'anton';
+            alert('Bitte wählen Sie eine CSV-Datei aus.');
+        } else {
+            const fileValue = selectedFiles[0].value;
+            console.log('Ausgewählte Datei:', fileValue); // Für Debugging-Zwecke
+            // Hier können Sie weitere Aktionen durchführen, bevor das Formular abgesendet wird.
+        }
+    });
+});
+
+</script>

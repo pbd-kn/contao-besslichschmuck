@@ -14,12 +14,18 @@
 use Contao\DC_Table;
 use Contao\DataContainer;
 use Pbdkn\ContaoBesslichschmuck\Resources\contao\dataContainer\tableList;
+use Contao\Backend;
+use Contao\System;
+use Contao\Image;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+\Contao\System::loadLanguageFile('tl_heike_preisliste');
 
 /**
  * Table tl_heike_preisliste 
  */
 // config/dca/tl_heike_preisliste.php
+
 $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
     // Config
     'config' => [
@@ -31,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
                 'id' => 'primary',
                 'Artikel' => 'index'
             ]
-        ]
+        ],
     ],
 
     // List
@@ -50,12 +56,15 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
             'format' => '%s [StückPr: %s, PaarPr: %s]',
         ],
         'global_operations' => [
-			'import' => [
-				'label'               => &$GLOBALS['TL_LANG']['tl_heike_preisliste']['importCSV'],
-				'href'                => 'key=import',
-				'class'               => 'header_csv_import',
-				'attributes'          => 'onclick="Backend.getScrollOffset();"'
-			],
+            'csvimport' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_heike_preisliste']['importCSV'][0], 
+            //'href' => 'key=importCSV', 
+			'href'                => '',
+            'class' => 'header_csv_import', 
+            'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'button_callback' => ['tl_heike_preisliste', 'importCsvButton'],
+
+            ],            
         
             'all' => [
                 'label'        => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -84,7 +93,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
                 'label'       => &$GLOBALS['TL_LANG']['tl_heike_preisliste']['delete'],
                 'href'        => 'act=delete',
                 'icon'        => 'delete.gif',
-                'attributes'  => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"'
+                'attributes'  => 'onclick="if (!confirm(\'' . 'Wirklich löschen?' . '\')) return false; Backend.getScrollOffset();"'
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_heike_preisliste']['show'],
@@ -118,6 +127,25 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
         'tstamp' => [
             'sql' => "int(10) unsigned NOT NULL default '0'"
         ],
+		'import_source' => array
+		(
+			//'label'                   => @$GLOBALS['TL_LANG']['tl_heike_preisliste']['import_source'],
+			'label'                   => 'PBD hallo',
+            'exclude'   => true,
+            'inputType' => 'fileTree',
+            'eval'      => [
+               'filesOnly'  => true,
+                'fieldType'  => 'radio',
+                'extensions' => '',
+            ],
+            'sql'       => [
+              'type' => 'binary',
+              'length' => 16,
+              'fixed' => true,
+              'notnull' => false,
+            ],		
+       ),
+        
         
         'Artikel' => [
             'label'   => &$GLOBALS['TL_LANG']['tl_heike_preisliste']['Artikel'],
@@ -222,5 +250,29 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
         ],
     ],
 ];
+
+
+
+// src/Resources/contao/dca/tl_heike_preisliste.php
+
+// diese Klasse wird benötigt um den Button Callback auf eine route umzulenktn
+class tl_heike_preisliste extends Backend
+{
+    /**
+     * Erzeugt den CSV-Import-Button mit einer Route.
+     */
+    public function importCsvButton($row, $href, $label, $title, $icon, $attributes)
+    {
+        // Den Symfony-Router verwenden, um die URL zu generieren
+        $router = System::getContainer()->get('router');
+        //$url = $router->generate('ImportHeikePreislisteController::importAction', [], UrlGeneratorInterface::ABSOLUTE_URL);  // erzeugt wohl die url fuer den Namen
+        $url = $router->generate('ImportHeikePreislisteController::importFromCheckbox', [], UrlGeneratorInterface::ABSOLUTE_URL);  // erzeugt wohl die url fuer den Namen
+
+        $strRet='<a href="' . $url . '?table=tl_heike_preisliste " title="' . $title . '"' . $attributes . '>' . $label . '</a> ';
+//var_dump("<pre>.$strRet.</pre>");
+        return $strRet;
+    }
+}
+
 
 

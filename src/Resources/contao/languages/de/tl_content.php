@@ -34,4 +34,3 @@ $GLOBALS['TL_LANG'][$strName]['no_artikelexist'] = 'Artikel |%s| in Preisliste n
 $GLOBALS['TL_LANG'][$strName]['no_image']       = 'Kein Bild zu %s im Gallery Creator vorhanden';
 $GLOBALS['TL_LANG'][$strName]['invalid_uuid']   = 'es existiert kein File(Bild) im Gallery Creator zu %s';
 
-?>

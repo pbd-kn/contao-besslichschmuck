@@ -9,4 +9,3 @@
  */
 $GLOBALS['TL_LANG']['CTE']['besslichschmuck']      = array('Besslich-Schmuck');
 $GLOBALS['TL_LANG']['CTE']['schmuckartikel'] = array('Schmuckartikel');
-?>

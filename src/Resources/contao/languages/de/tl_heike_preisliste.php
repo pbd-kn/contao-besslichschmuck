@@ -35,8 +35,11 @@ $GLOBALS['TL_LANG']['tl_heike_preisliste']['PreisPaar23'] = ['Paarpreis23', 'Red
 $GLOBALS['TL_LANG']['tl_heike_preisliste']['PreisStueckEK'] = ['Stück EK', 'EK Stück'];
 $GLOBALS['TL_LANG']['tl_heike_preisliste']['PreisPaarEK'] = ['Stück EK', 'EK Paar'];
 $GLOBALS['TL_LANG']['tl_heike_preisliste']['Beschreibung'] = ['Beschreibung', '[Beschreibung] Beschreibung'];
+$GLOBALS['TL_LANG']['tl_heike_preisliste']['importCSV'] = ['ImportCSV', 'Importiere CSV 1. Zeile korrekte Spaltennamen für Tabelle Preisliste'];
+$GLOBALS['TL_LANG']['tl_heike_preisliste']['import_source'] = ['Label für Importsource', 'Importiere CSV 1. Zeile korrekte Spaltennamen für Tabelle Preisliste'];
 
-$GLOBALS['TL_LANG']['tl_heike_preisliste']['importCSV'] = ['ImportCSV', 'Importiere CSV 1. Zeile korrekkte Spaltennamen fuer Tabelle Preisliste'];
+
+
 
 
 

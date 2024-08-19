@@ -2,4 +2,6 @@
 ContaoBesslichschmuck:
     resource: '../../Controller/'
     type: annotation
+    
+    
 
