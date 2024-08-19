@@ -325,8 +325,9 @@ class ImportHeikePreislisteController extends AbstractBackendController
               if (!isset($arrDcaFields[$feldname])) {
                  $s=" Felder in dca ";
                  foreach ($arrDcaFields as $k=>$v) $s.="$k, ";
-                 $res['error'][]="$feldname in Zeile $line nicht in der tabelledefinition von ".$this->strTable." $s"; 
-                 return "$res";
+                 $s="";
+                 $res['error'][]="$feldname in Zeile $cnt <br>nicht in der tabelledefinition von ".$this->strTable." $s"; 
+                 return $res;
               }
               if (in_array($feldname, $arrspalten)) { $res['error'][]="$feldname mehrfach in Zeile 1 enthalten"; return $res;}
               if (in_array($feldname, $arrImportIgnoreFields)) {
