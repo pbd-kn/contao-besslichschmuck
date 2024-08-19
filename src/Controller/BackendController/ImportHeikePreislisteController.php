@@ -345,7 +345,7 @@ class ImportHeikePreislisteController extends AbstractBackendController
                     $fehler=true;
                    }
                }
-               $insertData[$feldname] = "'".$arr[$spalte]."'";
+               $insertData[$feldname] = $arr[$spalte];
             }
             if ($fehler) {
                     $res['warning'][]="zeile $cnt $line übersprungen.";
@@ -369,49 +369,20 @@ class ImportHeikePreislisteController extends AbstractBackendController
         }
       $res['res'][]="eingelesene Zeilen $cnt gespeicherte Einträge $linesOK";
       return $res;
-/*
-    // SQL-Abfrage, um alle Datensätze in der Tabelle zu löschen
-    $sql = "DELETE FROM $tableName";
-
-    // Ausführen der Abfrage
-    Database::getInstance()->execute($sql);
-
-    // Alternativ: Wenn du den Autoincrement-Zähler zurücksetzen möchtest (optional)
-    Database::getInstance()->execute("ALTER TABLE $tableName AUTO_INCREMENT = 1");
-
-
-try {
-            $db->prepare("INSERT INTO $tableName (field1, field2) VALUES (?, ?)")
-               ->execute($data['field1'], $data['field2']);
-    } catch (\Exception $e) {
-        // Fehlerbehandlung
-        echo "Es ist ein Fehler aufgetreten: " . $e->getMessage();
-        // Optional: Logging des Fehlers für Debugging-Zwecke
-        \System::log('Datenbankfehler: ' . $e->getMessage(), __METHOD__, TL_ERROR);
-    }   
-        foreach ($csvLines as $k=>$arrRow) {
-            if (!empty($arrRow)) {
-               $arrData = [
-                    'tstamp' => time(),
-                    'Artikel' => $arrRow[0],
-                    'Kategorie' => $arrRow[1],
-                    'Subkategorie' => $arrRow[2],
-                    'PreisStueck2_5' => $arrRow[3],
-                    'PreisPaar2_5' => $arrRow[4],
-                    // Weitere Felder hier hinzufügen
-                ];
-
-                $this->get('contao.framework')->getAdapter(\Contao\Database::class)
-                    ->getInstance()
-                    ->prepare("INSERT INTO tl_heike_preisliste %s")
-                    ->set($arrData)
-                    ->execute();
-            }
-        }
-        
-*/
     }
     
+    public function redirekt()
+    {
+        // Führe hier deine Logik aus (z.B. Button-Callback, Datenbankoperationen, etc.)
+
+        // Jetzt wollen wir zurück zur Listenansicht
+        $url = $this->router->generate('contao_backend', [
+            'do' => 'myModule', // Hierbei handelt es sich um den entsprechenden Modulnamen
+            'table' => 'tl_my_table', // Optional: wenn du eine bestimmte Tabelle ansprichst
+        ]);
+
+        return new RedirectResponse($url);
+    }
     // von efg DC_formdata übernommen wird beim aufbaut des filetrees mitgeliefert.
     // ob da funktioniert ???
         private function getFilepickerJavascript($strReload)
