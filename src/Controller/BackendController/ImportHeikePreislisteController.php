@@ -7,6 +7,7 @@ use Contao\CoreBundle\Controller\AbstractBackendController;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface; // Korrekte Verwendung des Namespaces
 use Contao\CoreBundle\Exception\RedirectResponseException;
 
+
 use Contao\BackendTemplate;
 
 use Contao\FilesModel;
@@ -20,24 +21,28 @@ use Contao\Input;
 use Contao\Widget\Widget;
 use Contao\Database;
 
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Contao\CoreBundle\Picker\FilePickerProvider;
+use Symfony\Component\Routing\RouterInterface;
 
 class ImportHeikePreislisteController extends AbstractBackendController
 {
     private $framework;
+    private $router;
     private $filePickerProvider;
     private $strTemplate;
     private $Template;
     private $strTable;
 
 
-    public function __construct(ContaoFrameworkInterface $framework)
+    public function __construct(ContaoFrameworkInterface $framework,RouterInterface $router)
     {
         $this->framework = $framework;
+        $this->router = $router;
         //$this->filePickerProvider = $filePickerProvider;
 
         $this->framework->initialize();
@@ -116,7 +121,7 @@ class ImportHeikePreislisteController extends AbstractBackendController
 
 
         $this->Template->action = $this->generateUrl('ImportHeikePreislisteController::importAction'); // aktion fuer die <form
-        $this->Template->headline = 'CSV-Datei importieren';
+        $this->Template->headline = 'Preisliste von CSV-Datei importieren';
         $this->Template->submit = 'Importieren';
         $this->Template->fileTreeParse=$objWidget->generate();   // das erzeugt fileTree widget html-code
         $strT=$this->Template->parse().$this->getFilepickerJavascript('reloadEfgFiletree');
@@ -153,19 +158,24 @@ class ImportHeikePreislisteController extends AbstractBackendController
             'eval' => ['mandatory' => true,'tl_class'=>'w50'],
             'multiple' => false,
         ];
-        // Erstelle das Widget
         $arrCSVFiles=$this->getCsvFilesFromContaoDirectory('files/heike-files/downloads/CSV');
         foreach($arrCSVFiles as $k=>$v) {
           $attributes['options'][]=['value' => $v, 'label' => basename($v)];
         }
+        $redirekturl = $this->router->generate('contao_backend', [
+            'do' => 'Preisliste', // Verwende hier den Namen, den du im BE_MOD-Array definiert hast
+            'table' => "$this->strTable", // Optional: wenn du eine bestimmte Tabelle direkt ansprechen möchtest
+        ]);
+
         
         // erzeuge das Template, damit es im Fehlerfall auch verwendet werden kann 
         $csvWidget = new \Contao\RadioButton($attributes);
         $strCSVListe = $csvWidget->generate();
         $this->Template->action = $this->generateUrl('ImportHeikePreislisteController::importAction'); // aktion fuer die <form
-        $this->Template->headline = 'CSV-Datei importieren';
+        $this->Template->headline = 'Preisliste von CSV-Datei importieren';
         $this->Template->submit = 'Importieren';
         $this->Template->csvCheckbox=$strCSVListe;   // string erzeugt das checkbox widget
+        $this->Template->redirekturl=$redirekturl;
         $strT=$this->Template->parse();
         
 
@@ -213,7 +223,9 @@ class ImportHeikePreislisteController extends AbstractBackendController
                 if (count($resArr['error'])>0)$strResp.="error<br>";foreach ($resArr['error'] as $k=>$s) $strResp.="$s<br>";
 //                $strResp.="res<br>";
                 foreach ($resArr['res'] as $k=>$s) $strResp.="$s<br>";
-//var_dump($strResp);
+                $url="importFromCheckbox?table=tl_heike_preisliste";
+                $strResp.="<a href = $url > Zurück </a>";
+
                 return new Response($strResp);
             }
         }
@@ -338,30 +350,31 @@ class ImportHeikePreislisteController extends AbstractBackendController
             $firstLine=false;
           } else {
             $insertData=[];
-            $fehler=false;
+            $fehlerListe="";
             foreach ($arrspalten as $spalte=>$feldname) {
-               // ueberpruefen ob importantes Filer da ist
+               // ueberpruefen ob importantes Feld da ist
                if (in_array("$feldname", $arrImportantFields)) {
                   if (!isset($arr[$spalte]) || $arr[$spalte]=="") {
-                    $fehler=true;
+                    $fehlerListe.="$feldname, ";
                    }
                }
-               $insertData[$feldname] = $arr[$spalte];
+               $insertData[$feldname] = $arr[$spalte];  // aufbau des InsertFeldes
             }
-            if ($fehler) {
-                    $res['warning'][]="zeile $cnt $line übersprungen.";
+            if ($fehlerListe!="") {
+                    $res['warning'][]="zeile $cnt übersprungen $fehlerListe  ist/sind leer.";
                     continue;
             }
             
+            $insertData['tstamp']=time();
             $res['debug'][]='<pre>' . htmlspecialchars(print_r($insertData,true)) . '</pre>';
             try {
-                    $db->prepare("INSERT INTO ".$this->strTable." %s")
+                    $result=$db->prepare("INSERT INTO ".$this->strTable." %s")
                     ->set($insertData)
                     ->execute();
-
+                    $insertId = $result->insertId; // Die ID des neu eingefügten Datensatzes abrufen
             } catch (\Exception $e) {
                // Fehlerbehandlung
-              $res['warning'][]="Es ist ein Fehler aufgetreten: " . $e->getMessage();
+              $res['warning'][]="Es ist ein Fehler aufgetreten: Zeile $cnt " . $e->getMessage();
               continue;
             }   
             
@@ -372,18 +385,6 @@ class ImportHeikePreislisteController extends AbstractBackendController
       return $res;
     }
     
-    public function redirekt()
-    {
-        // Führe hier deine Logik aus (z.B. Button-Callback, Datenbankoperationen, etc.)
-
-        // Jetzt wollen wir zurück zur Listenansicht
-        $url = $this->router->generate('contao_backend', [
-            'do' => 'myModule', // Hierbei handelt es sich um den entsprechenden Modulnamen
-            'table' => 'tl_my_table', // Optional: wenn du eine bestimmte Tabelle ansprichst
-        ]);
-
-        return new RedirectResponse($url);
-    }
     // von efg DC_formdata übernommen wird beim aufbaut des filetrees mitgeliefert.
     // ob da funktioniert ???
         private function getFilepickerJavascript($strReload)

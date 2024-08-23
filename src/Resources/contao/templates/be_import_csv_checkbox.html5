@@ -27,7 +27,7 @@
                 <div class="tl_deletBox">
                     <br>
                     <input type="checkbox" name="delEntries" id="delEntries" checked>
-                    <label for="delEntries">Tabelle vor insert CSV löschen?</label>
+                    <label for="delEntries">Tabelle vor insert Preisliste löschen?</label>
                     <br>
                 </div>
                 <div class="tl_formbody_submit">
@@ -37,6 +37,9 @@
                     </div>
                 </div>
             </form>
+            </div>
+            <div class=tl_redirect>
+                <br><a href = <?= $this->redirekturl; ?> > Zurück zur Tabelle </a>
             </div>
             <!-- Hier endet dein eigener Inhalt -->
         </div>

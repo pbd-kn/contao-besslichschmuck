@@ -30,14 +30,16 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
     // Config
     'config' => [
         //'dataContainer'               => DC_Table::class,
-        'dataContainer'               => tableList::class,
-        'enableVersioning'            => true,
+        //'dataContainer'               => tableList::class,
+        'dataContainer'               => 'Table',  // DC_Table verwenden
+         'enableVersioning'            => true,
         'sql' => [
             'keys' => [
                 'id' => 'primary',
                 'Artikel' => 'index'
             ]
         ],
+
     ],
 
     // List
@@ -265,13 +267,43 @@ class tl_heike_preisliste extends Backend
     {
         // Den Symfony-Router verwenden, um die URL zu generieren
         $router = System::getContainer()->get('router');
-        //$url = $router->generate('ImportHeikePreislisteController::importAction', [], UrlGeneratorInterface::ABSOLUTE_URL);  // erzeugt wohl die url fuer den Namen
+        //$url = $router->generate('ImportHeikePreislisteController::importAction', [], UrlGeneratorInterface::ABSOLUTE_URL);  // für filetree geht aber nicht
         $url = $router->generate('ImportHeikePreislisteController::importFromCheckbox', [], UrlGeneratorInterface::ABSOLUTE_URL);  // erzeugt wohl die url fuer den Namen
-
-        $strRet='<a href="' . $url . '?table=tl_heike_preisliste " title="' . $title . '"' . $attributes . '>' . $label . '</a> ';
-//var_dump("<pre>.$strRet.</pre>");
+        $class = 'header_csv_import';
+        $strRet='<a href="'.$url.'?table=tl_heike_preisliste"  class="' . $class .'" title="' . $title . '"' . $attributes . '>' . $label . '</a> ';
         return $strRet;
     }
+    
+    /*
+     * nachdem der Datensatz gespeichert ist,werden die defaultwerte noch gesetzt.
+     */
+    public function stattic setDefaultValues(DataContainer $dc)
+    {
+//die ('setDefaultValues gerufen');
+        // Setze tstamp auf den aktuellen Zeitstempel, falls es nicht gesetzt ist
+        if (!$dc->activeRecord->tstamp) {
+//die ("set defualt tstamp");
+        }
+/*
+        // Automatisches Setzen von sorting basierend auf der höchsten Sortierreihenfolge
+        if (!$dc->activeRecord->sorting) {
+            $maxSorting = $this->Database->prepare("SELECT MAX(sorting) AS sorting FROM tl_heike_preisliste WHERE pid=?")
+                ->execute($dc->activeRecord->pid)
+                ->sorting;
+
+            $this->Database->prepare("UPDATE tl_heike_preisliste SET sorting=? WHERE id=?")
+                ->execute($maxSorting + 1, $dc->id);
+        }
+
+        // Setze pid, falls es nicht gesetzt ist
+        if (!$dc->activeRecord->pid) {
+            $defaultPid = 1; // Standard-PID-Wert
+            $this->Database->prepare("UPDATE tl_heike_preisliste SET pid=? WHERE id=?")
+                ->execute($defaultPid, $dc->id);
+        }
+*/
+    }
+
 }
 
 
