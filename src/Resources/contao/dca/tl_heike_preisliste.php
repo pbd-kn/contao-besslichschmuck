@@ -132,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
 		'import_source' => array
 		(
 			//'label'                   => @$GLOBALS['TL_LANG']['tl_heike_preisliste']['import_source'],
-			'label'                   => 'PBD hallo',
+			'label'                   => 'PBD importsource CSV',
             'exclude'   => true,
             'inputType' => 'fileTree',
             'eval'      => [
@@ -274,36 +274,6 @@ class tl_heike_preisliste extends Backend
         return $strRet;
     }
     
-    /*
-     * nachdem der Datensatz gespeichert ist,werden die defaultwerte noch gesetzt.
-     */
-    public function stattic setDefaultValues(DataContainer $dc)
-    {
-//die ('setDefaultValues gerufen');
-        // Setze tstamp auf den aktuellen Zeitstempel, falls es nicht gesetzt ist
-        if (!$dc->activeRecord->tstamp) {
-//die ("set defualt tstamp");
-        }
-/*
-        // Automatisches Setzen von sorting basierend auf der höchsten Sortierreihenfolge
-        if (!$dc->activeRecord->sorting) {
-            $maxSorting = $this->Database->prepare("SELECT MAX(sorting) AS sorting FROM tl_heike_preisliste WHERE pid=?")
-                ->execute($dc->activeRecord->pid)
-                ->sorting;
-
-            $this->Database->prepare("UPDATE tl_heike_preisliste SET sorting=? WHERE id=?")
-                ->execute($maxSorting + 1, $dc->id);
-        }
-
-        // Setze pid, falls es nicht gesetzt ist
-        if (!$dc->activeRecord->pid) {
-            $defaultPid = 1; // Standard-PID-Wert
-            $this->Database->prepare("UPDATE tl_heike_preisliste SET pid=? WHERE id=?")
-                ->execute($defaultPid, $dc->id);
-        }
-*/
-    }
-
 }
 
 
