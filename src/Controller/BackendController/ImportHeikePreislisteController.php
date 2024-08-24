@@ -212,7 +212,7 @@ class ImportHeikePreislisteController extends AbstractBackendController
                 }
                 $arrImportIgnoreFields = ['id', 'pid', 'tstamp', 'sorting', 'import_source'];
 
-//var_dump($arrImportantFields);
+//var_dump($arrImportantFields); 
                 $objFile = new File($fname, true);
 
                 $resArr=$this->importFromCSV($objFile,$dca,$delEntries,$arrImportIgnoreFields,$arrImportantFields);
