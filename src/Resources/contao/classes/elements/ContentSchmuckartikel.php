@@ -122,12 +122,15 @@ class ContentSchmuckartikel extends \Contao\ContentElement
       $this->Template->preisArikel=$preisArrArtikel;  // zum auswerten im Template
       
       $preislisteArtikel = [$this->schmuckartikelname=>$preisArrArtikel];
-      if ($this->preisliste != '') {  // prüfen ob zusaetzliche Preise  da  
+//      if ($this->preisliste != '') {  // prüfen ob zusaetzliche Preise  da  
+      if (isset($this->preisliste) &&  ($this->preisliste!= '')) {  // prüfen ob zusaetzliche Preise  da  
             $arr =  deserialize($this->preisliste, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
             foreach ($arr as $k=>$v) {
-              if(isset($preislisteArtikel[$v])) continue;    // schon enthalten
-              $preisArrArtikel=$this->besslichUtil->getPreis($v);
-              $preislisteArtikel[$v]=$preisArrArtikel;
+              if (isset($v) && $v!='') {
+                if(isset($preislisteArtikel[$v])) continue;    // schon enthalten
+                $preisArrArtikel=$this->besslichUtil->getPreis($v);
+                $preislisteArtikel[$v]=$preisArrArtikel;
+              }
             }   
       }
       $this->Template->arrpreisliste=$preislisteArtikel;   // [name][arrpreisliste]
