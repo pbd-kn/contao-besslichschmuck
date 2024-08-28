@@ -216,12 +216,12 @@ class ImportHeikePreislisteController extends AbstractBackendController
                 $objFile = new File($fname, true);
 
                 $resArr=$this->importFromCSV($objFile,$dca,$delEntries,$arrImportIgnoreFields,$arrImportantFields);
-//var_dump($resArr);
                 $strResp="";
-                foreach ($resArr['res'] as $k=>$s) $strResp.="$s<br>";
-//                $strResp.="debug<br>"; foreach ($resArr['debug'] as $k=>$s) $strResp.="$s<br>";
-                if (count($resArr['warning'])>0)$strResp.="<br>Warnungen<br>";foreach ($resArr['warning'] as $k=>$s) $strResp.="$s<br>";
-                if (count($resArr['error'])>0)$strResp.="<br>Fehler<br>";foreach ($resArr['error'] as $k=>$s) $strResp.="$s<br>";
+                $ausgabe = (int) \Input::post('ausgabe');
+                if ($ausgabe>=0)if (count($resArr['res'])>0){ $strResp.="<br>Ergebnis<br>";foreach ($resArr['res'] as $k=>$s) $strResp.="$s<br>";}
+                if ($ausgabe>=1)if (count($resArr['error'])>0){$strResp.="<br>Fehler<br>";foreach ($resArr['error'] as $k=>$s) $strResp.="$s<br>";}
+                if ($ausgabe>=2)if (count($resArr['warning'])>0){$strResp.="<br>Warnungen<br>";foreach ($resArr['warning'] as $k=>$s) $strResp.="$s<br>";}
+                if ($ausgabe>=3)if (count($resArr['debug'])>0) { $strResp.="<br>Debug<br>"; foreach ($resArr['debug'] as $k=>$s) $strResp.="$s<br>";}
 //                $strResp.="res<br>";
                 $url="importFromCheckbox?table=tl_heike_preisliste";
                 $strResp.="<a href = $url > Zurück </a>";

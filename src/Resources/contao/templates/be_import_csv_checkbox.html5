@@ -24,6 +24,13 @@
                     <?= $this->csvCheckbox; ?>
                     <br>
                 </div>
+                Ausgabe<br>
+                <select name="ausgabe" id="ausgabe">
+                  <option value="0" selected>Standard</option>
+                  <option value="1">Standard/Fehler</option>
+                  <option value="2" >Standard/Fehler/Warnungen</option>
+                  <option value="3">Standard/Fehler/Warnungen/Debug</option>
+                </select> 
                 <div class="tl_deletBox">
                     <br>
                     <input type="checkbox" name="delEntries" id="delEntries" checked>
