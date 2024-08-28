@@ -305,9 +305,10 @@ class ImportHeikePreislisteController extends AbstractBackendController
         $encoding = mb_detect_encoding($content, "auto", true);
         $res['debug'][]="Die vermutete Kodierung ist: $encoding";        
         if ($encoding != 'UTF-8') {
-          $res['debug'][]="falsche codierung der Preisliste $encoding sollte UTF-8 sein. Es wird versucht zu wandeln";
+          $res['warning'][]="falsche codierung der Preisliste $encoding sollte UTF-8 sein. Versuch zu wandeln nach UTF-8<br>Wahrscheinlich werden Umlaute falsch dargestellt";
           // Inhalt nach UTF-8 konvertieren, falls nötig
-          $content = mb_convert_encoding($content, "UTF-8", $encoding);
+          $content = mb_convert_encoding($content, "UTF-8");
+          $content = preg_replace('/\xEF\xBB\xBF/', '', $content);
         }
         // Ersetze mögliche Windows-Zeilenumbrüche durch Unix-Zeilenumbrüche
         $content = str_replace("\r\n", "\n", $content);
@@ -331,6 +332,12 @@ class ImportHeikePreislisteController extends AbstractBackendController
           $arr=str_getcsv($line,$strDelimiter);   // werte einer csv-Zeile
           if ($firstLine) {
             $res['debug'][]="Feldnamen<br>";
+            $validNames="";
+            foreach ($dca['fields'] as $fieldName => $fieldConfig) {
+              $validNames.="$fieldName, ";
+            }
+            $res['warning'][]="Gueltige Feldnamen $validNames ";
+
             foreach ($arr as $spalte=>$feldname) {            
               $res['debug'][]="$feldname, ";
               //var_dump($arrDcaFields);
@@ -338,7 +345,9 @@ class ImportHeikePreislisteController extends AbstractBackendController
                  $s=" Felder in dca ";
                  foreach ($arrDcaFields as $k=>$v) $s.="$k, ";
                  $s="";
-                 $res['error'][]="$feldname in Zeile $cnt <br>nicht in der tabelledefinition von ".$this->strTable." $s"; 
+                 //$res['warning'][]="$feldname in Zeile $cnt <br>Feld wird übersprungen.<br>nicht in der tabelledefinition von ".$this->strTable." $s"; 
+                 $res['warning'][]="$feldname in Zeile $cnt Feld wird übersprungen. (nicht in der tabelledefinition)"; 
+                 continue;
                  return $res;
               }
               if (in_array($feldname, $arrspalten)) { $res['error'][]="$feldname mehrfach in Zeile 1 enthalten"; return $res;}
