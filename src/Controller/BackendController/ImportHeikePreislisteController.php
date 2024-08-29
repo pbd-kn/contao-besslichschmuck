@@ -212,7 +212,6 @@ class ImportHeikePreislisteController extends AbstractBackendController
                 }
                 $arrImportIgnoreFields = ['id', 'pid', 'tstamp', 'sorting', 'import_source'];
 
-//var_dump($arrImportantFields); 
                 $objFile = new File($fname, true);
 
                 $resArr=$this->importFromCSV($objFile,$dca,$delEntries,$arrImportIgnoreFields,$arrImportantFields);
@@ -222,7 +221,6 @@ class ImportHeikePreislisteController extends AbstractBackendController
                 if ($ausgabe>=1)if (count($resArr['error'])>0){$strResp.="<br>Fehler<br>";foreach ($resArr['error'] as $k=>$s) $strResp.="$s<br>";}
                 if ($ausgabe>=2)if (count($resArr['warning'])>0){$strResp.="<br>Warnungen<br>";foreach ($resArr['warning'] as $k=>$s) $strResp.="$s<br>";}
                 if ($ausgabe>=3)if (count($resArr['debug'])>0) { $strResp.="<br>Debug<br>"; foreach ($resArr['debug'] as $k=>$s) $strResp.="$s<br>";}
-//                $strResp.="res<br>";
                 $url="importFromCheckbox?table=tl_heike_preisliste";
                 $strResp.="<a href = $url > Zurück </a>";
 

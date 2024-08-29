@@ -138,19 +138,14 @@ class ContentSchmuckartikel extends \Contao\ContentElement
       // Preistabelle erzeugen
 
       $html=$c->div(array("class"=>"preistabelle"));
-      $html.=$c->table(array("class"=>"tablepreistabelle"));
-      $html.=$c->thead();
-      $html.=$c->tr();
-          $html.=$c->th("name").$c->th("einzelpreis").$c->th("paarpreis");
-      $html.=$c->end_tr();
-      $html.=$c->end_thead();
+/*      $html.=$c->table(array("class"=>"tablepreistabelle"));
       $html.=$c->tbody();
       foreach ($preislisteArtikel as $name=>$arrPr) {
         $html.=$c->tr();
-        $PreisStueck=@$arrPr['PreisStueck2_5'];
+        $PreisStueck=@$arrPr['PreisStueck2_3'];
         $PreisPaar=@$arrPr['PreisPaar2_5'];
-        $html.=$c->td($name);
-        $html.=$c->td(array('width'=>'80px','data-toggle'=>'tooltip','title'=>"detailinformation erhalten sie unter\ninfo -> preise"),"$PreisStueck € <sup style='font-size:.7em; line-height:2em;'>*</sup>");
+        $html.=$c->td($name.": ");
+        $html.=$c->td(array('width'=>'80px','data-toggle'=>'tooltip','title'=>"detailinformation erhalten sie unter\ninfo -> preise"),"stk $PreisStueck € <sup style='font-size:.7em; line-height:2em;'>*</sup>");
         if (isset($PreisPaar)&&$PreisPaar!='')
         $html.=$c->td(array('width'=>'80px','data-toggle'=>'tooltip','title'=>"detailinformation erhalten sie unter\ninfo -> preise"),"$PreisPaar € <sup style='font-size:.7em; line-height:2em;'>*</sup>");
         else $html.=$c->td("&nbsp;");
@@ -159,6 +154,24 @@ class ContentSchmuckartikel extends \Contao\ContentElement
       
       $html.=$c->end_tbody();
       $html.=$c->end_table();
+*/
+      foreach ($preislisteArtikel as $name=>$arrPr) {
+        $PreisStueck=@$arrPr['PreisStueck2_3'];
+        $PreisPaar=@$arrPr['PreisPaar2_5'];
+        if ((isset($PreisStueck) && strlen(trim($PreisStueck))!=0) ||
+            (isset($PreisPaar) && strlen(trim($PreisPaar))!=0)
+           )           
+        {
+          $html.='<span class="tl_preisliste tl_preislisteName">'.$name.': </span>';
+          if (isset($PreisStueck) && strlen(trim($PreisStueck))!=0) {
+            $html.='<span class="tl_preisliste tl_preislisteStueckPr">'.$PreisStueck .' €</span>';
+          }
+          if (isset($PreisPaar) && strlen(trim($PreisPaar))!=0) {
+            $html.='<span class="tl_preisliste tl_preislisteStueckPr"> '.$PreisPaar .' €</span>';
+          }
+          $html.='<br>';
+        }
+      }
       $html.=$c->end_div(); 
       $this->Template->divpreisliste=$html;
     }

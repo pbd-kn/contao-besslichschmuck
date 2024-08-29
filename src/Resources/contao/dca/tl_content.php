@@ -290,9 +290,11 @@ class checkSchmuck extends Backend {
   public function checkPreis ($varValue) {  
       // Prüfen ob in der Preisliste vorhanden  
     $strName = 'tl_content';   // fuer text aus language 
-    $resArr=$this->getPreisFromPreisliste($varValue);
-     if (count($resArr)==0) {
-       throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_artikelexist'], $varValue)." anton");
+    if (isset($varValue) && strlen(trim($varValue)) !=0 ) {
+      $resArr=$this->getPreisFromPreisliste($varValue);
+      if (count($resArr)==0) {
+        throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_artikelexist'], $varValue)." anton");
+      }
      }
      return "";    
   }
