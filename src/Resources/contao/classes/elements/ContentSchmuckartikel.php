@@ -157,17 +157,21 @@ class ContentSchmuckartikel extends \Contao\ContentElement
 */
       foreach ($preislisteArtikel as $name=>$arrPr) {
         $PreisStueck=@$arrPr['PreisStueck2_3'];
-        $PreisPaar=@$arrPr['PreisPaar2_5'];
-        if ((isset($PreisStueck) && strlen(trim($PreisStueck))!=0) ||
-            (isset($PreisPaar) && strlen(trim($PreisPaar))!=0)
-           )           
+        $PreisPaar=@$arrPr['PreisPaar2_3'];
+        if ((isset($PreisStueck) && strlen(trim($PreisStueck))!=0)) $einzelDa=true; else $einzelDa=false;
+        if ((isset($PreisPaar) && strlen(trim($PreisPaar))!=0)) $paarDa=true; else $paarDa=false;
+        if ($einzelDa ||$paarDa)           
         {
           $html.='<span class="tl_preisliste tl_preislisteName">'.$name.': </span>';
-          if (isset($PreisStueck) && strlen(trim($PreisStueck))!=0) {
-            $html.='<span class="tl_preisliste tl_preislisteStueckPr">'.$PreisStueck .' €</span>';
+          if ($einzelDa) {
+            $cl="tl_preisliste tl_preislisteStueckPr";
+            if ($paarDa) $cl.=" tl_preislisteEinzelBefore";
+            $html.='<span class="'.$cl.'">'.$PreisStueck .' €</span>';
           }
-          if (isset($PreisPaar) && strlen(trim($PreisPaar))!=0) {
-            $html.='<span class="tl_preisliste tl_preislisteStueckPr"> '.$PreisPaar .' €</span>';
+          if ($paarDa) {
+            $cl="tl_preisliste tl_preislistePaarPr";
+            if ($einzelDa) $cl.=" tl_preislistePaarBefore";
+            $html.='<span class="'.$cl.'"> '.$PreisPaar .' €</span>';
           }
           $html.='<br>';
         }

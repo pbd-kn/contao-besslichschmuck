@@ -1,0 +1,28 @@
+/* Contao Besslich Schmuck style sheet */
+// FE
+
+  .tl_preisliste {
+     display: inline-block;                 // damit width Angabe wirkt
+  }
+  .tl_preislisteName {
+     width: 80px;                          // Breite des Namensfeldes
+     text-align: left;
+  }
+  .tl_preislisteStueckPr, .tl_preislistePaarPr {
+     width: 80px;                          // Breite des Stueckpreisfeldes
+     text-align: right;
+  }
+  .tl_preislisteEinzelBefore::before { 
+    content: url("/bundles/contaobesslichschmuck/icons/einzelpreis.png");
+    position: relative;
+    top: 3px;
+  }
+  .tl_preislistePaarBefore::before { 
+    position: relative;
+    top: 3px;
+    content: url("/bundles/contaobesslichschmuck/icons/paarpreis.png");
+  }
+
+
+
+
