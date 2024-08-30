@@ -171,7 +171,7 @@ class ContentSchmuckartikel extends \Contao\ContentElement
           if ($paarDa) {
             $cl="tl_preisliste tl_preislistePaarPr";
             if ($einzelDa) $cl.=" tl_preislistePaarBefore";
-            $html.='<span class="'.$cl.'"> '.$PreisPaar .' €</span>';
+            $html.='<span class="'.$cl.'">'.$PreisPaar .' €</span>';
           }
           $html.='<br>';
         }
