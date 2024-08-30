@@ -27,6 +27,7 @@ $GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
 
 /* css einbinden */
 
+
 if (TL_MODE == 'FE') {
     $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/festyle.css|static';
 }
