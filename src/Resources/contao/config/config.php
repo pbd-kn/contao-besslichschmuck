@@ -18,6 +18,19 @@ $GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
     );
 }
 
+/**
+ * -------------------------------------------------------------------------
+ * FRONT END MODULES
+ * -------------------------------------------------------------------------
+ */
+
+
+/* css einbinden */
+// config/config.php
+if (TL_MODE == 'FE') {
+    $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/festyle.css|static';
+}
+
 
 
 ?>
