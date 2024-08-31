@@ -1,5 +1,5 @@
 /* Contao Besslich Schmuck style sheet */
-// Backend
+/* Backend */
 .header_csv_import, .header_csv_export, .header_xls_export{padding:2px 0 3px 20px;margin-left:15px;background-position:left center;background-repeat:no-repeat;}
 .header_csv_import{background-image:url("../icons/importCSV.gif");}
 .header_csv_export{background-image:url("../icons/exportCSV.gif");}
