@@ -2,25 +2,31 @@
 // FE
 
   .tl_preisliste {
-     display: inline-block;                 // damit width Angabe wirkt
+     display: inline-block;                 /* damit width Angabe wirkt */
   }
   .tl_preislisteName {
-     width: 2rem;                          // Breite des Namensfeldes
+     width: fit-content;                          /* Breite des Namensfeldes */
      text-align: left;
   }
   .tl_preislisteStueckPr, .tl_preislistePaarPr {
-     width: 6rem;                          // Breite des Stueckpreisfeldes
+     width: fit-content;                          /* Breite des Stueckpreisfeldes */
      text-align: right;
   }
-  .tl_preislisteEinzelBefore::before { 
-    content: url("/bundles/contaobesslichschmuck/icons/einzelpreis.png");
+  .tl_preislisteEinzelBefore::before, .tl_preislistePaarBefore::before { 
+    content: "";
+    display: inline-block;
+    width: 16px;  /* Hier die gewünschte Breite einstellen */
+    height: 16px; /* Hier die gewünschte Höhe einstellen */
+    background-size: contain; /* Bildgröße anpassen */
+    background-repeat: no-repeat;
     position: relative;
-    top: 3px;
+    top: 4px;
+  }
+  .tl_preislisteEinzelBefore::before { 
+    background-image: url("/bundles/contaobesslichschmuck/icons/einzelpreis.png");
   }
   .tl_preislistePaarBefore::before { 
-    position: relative;
-    top: 3px;
-    content: url("/bundles/contaobesslichschmuck/icons/paarpreis.png");
+    background-image: url("/bundles/contaobesslichschmuck/icons/paarpreis.png");
   }
 
 

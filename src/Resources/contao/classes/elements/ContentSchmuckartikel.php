@@ -155,27 +155,34 @@ class ContentSchmuckartikel extends \Contao\ContentElement
       $html.=$c->end_tbody();
       $html.=$c->end_table();
 */
+      $html.=$c->table(array("class"=>"tablepreistabelle"));
+      $html.=$c->tbody();      
       foreach ($preislisteArtikel as $name=>$arrPr) {
         $PreisStueck=@$arrPr['PreisStueck2_3'];
         $PreisPaar=@$arrPr['PreisPaar2_3'];
         if ((isset($PreisStueck) && strlen(trim($PreisStueck))!=0)) $einzelDa=true; else $einzelDa=false;
         if ((isset($PreisPaar) && strlen(trim($PreisPaar))!=0)) $paarDa=true; else $paarDa=false;
+        $html.=$c->tr();
         if ($einzelDa ||$paarDa)           
         {
-          $html.='<span class="tl_preisliste tl_preislisteName">'.$name.': </span>';
+          $html.=$c->td(array('class'=>'tl_preisliste tl_preislisteName '),"$name:");
           if ($einzelDa) {
             $cl="tl_preisliste tl_preislisteStueckPr";
             if ($paarDa) $cl.=" tl_preislisteEinzelBefore";
-            $html.='<span class="'.$cl.'">'.$PreisStueck .' €</span>';
+            $html.=$c->td(array('class'=>$cl),"$PreisStueck €");
           }
           if ($paarDa) {
             $cl="tl_preisliste tl_preislistePaarPr";
             if ($einzelDa) $cl.=" tl_preislistePaarBefore";
-            $html.='<span class="'.$cl.'">'.$PreisPaar .' €</span>';
+            $html.=$c->td(array('class'=>$cl),"$PreisPaar €");
           }
           $html.='<br>';
         }
+        $html.=$c->end_tr();
+
       }
+      $html.=$c->end_tbody();
+      $html.=$c->end_table();
       $html.=$c->end_div(); 
       $this->Template->divpreisliste=$html;
     }
