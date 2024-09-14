@@ -118,73 +118,16 @@ class ContentSchmuckartikel extends \Contao\ContentElement
       } else {
         $this->Template->schmuckImage="";
       }
-      $preisArrArtikel=$this->besslichUtil->getPreis($this->schmuckartikelname);
-      $this->Template->preisArikel=$preisArrArtikel;  // zum auswerten im Template
+      $preisArtikelNamen=[];
+      $preisArtikelNamen[]=$this->schmuckartikelname;
       
-      $preislisteArtikel = [$this->schmuckartikelname=>$preisArrArtikel];
-//      if ($this->preisliste != '') {  // prüfen ob zusaetzliche Preise  da  
       if (isset($this->preisliste) &&  ($this->preisliste!= '')) {  // prüfen ob zusaetzliche Preise  da  
             $arr =  deserialize($this->preisliste, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
             foreach ($arr as $k=>$v) {
-              if (isset($v) && $v!='') {
-                if(isset($preislisteArtikel[$v])) continue;    // schon enthalten
-                $preisArrArtikel=$this->besslichUtil->getPreis($v);
-                $preislisteArtikel[$v]=$preisArrArtikel;
-              }
+              $preisArtikelNamen[]=$v;
             }   
       }
-      $this->Template->arrpreisliste=$preislisteArtikel;   // [name][arrpreisliste]
-
-      // Preistabelle erzeugen
-
-      $html=$c->div(array("class"=>"preistabelle"));
-/*      $html.=$c->table(array("class"=>"tablepreistabelle"));
-      $html.=$c->tbody();
-      foreach ($preislisteArtikel as $name=>$arrPr) {
-        $html.=$c->tr();
-        $PreisStueck=@$arrPr['PreisStueck2_3'];
-        $PreisPaar=@$arrPr['PreisPaar2_5'];
-        $html.=$c->td($name.": ");
-        $html.=$c->td(array('width'=>'80px','data-toggle'=>'tooltip','title'=>"detailinformation erhalten sie unter\ninfo -> preise"),"stk $PreisStueck € <sup style='font-size:.7em; line-height:2em;'>*</sup>");
-        if (isset($PreisPaar)&&$PreisPaar!='')
-        $html.=$c->td(array('width'=>'80px','data-toggle'=>'tooltip','title'=>"detailinformation erhalten sie unter\ninfo -> preise"),"$PreisPaar € <sup style='font-size:.7em; line-height:2em;'>*</sup>");
-        else $html.=$c->td("&nbsp;");
-        $html.=$c->end_tr();
-      }
-      
-      $html.=$c->end_tbody();
-      $html.=$c->end_table();
-*/
-      $html.=$c->table(array("class"=>"tablepreistabelle"));
-      $html.=$c->tbody();      
-      foreach ($preislisteArtikel as $name=>$arrPr) {
-        $PreisStueck=@$arrPr['PreisStueck2_3'];
-        $PreisPaar=@$arrPr['PreisPaar2_3'];
-        if ((isset($PreisStueck) && strlen(trim($PreisStueck))!=0)) $einzelDa=true; else $einzelDa=false;
-        if ((isset($PreisPaar) && strlen(trim($PreisPaar))!=0)) $paarDa=true; else $paarDa=false;
-        $html.=$c->tr();
-        if ($einzelDa ||$paarDa)           
-        {
-          $html.=$c->td(array('class'=>'tl_preisliste tl_preislisteName '),"$name:");
-          if ($einzelDa) {
-            $cl="tl_preisliste tl_preislisteStueckPr";
-            if ($paarDa) $cl.=" tl_preislisteEinzelBefore";
-            $html.=$c->td(array('class'=>$cl),"$PreisStueck €");
-          }
-          if ($paarDa) {
-            $cl="tl_preisliste tl_preislistePaarPr";
-            if ($einzelDa) $cl.=" tl_preislistePaarBefore";
-            $html.=$c->td(array('class'=>$cl),"$PreisPaar €");
-          }
-          $html.='<br>';
-        }
-        $html.=$c->end_tr();
-
-      }
-      $html.=$c->end_tbody();
-      $html.=$c->end_table();
-      $html.=$c->end_div(); 
-      $this->Template->divpreisliste=$html;
+      $this->Template->divpreisliste=$this->besslichUtil->createPreislisteRender('23',$preisArtikelNamen);
     }
 }
 

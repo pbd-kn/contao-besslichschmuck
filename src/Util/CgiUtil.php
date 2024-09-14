@@ -153,7 +153,7 @@ class CgiUtil
   public function end_tbody() { return "</tbody>"; }
 
   public function tr($atts=null, $stuff=null) {
-        $str = "\n<tr";
+        $str = "<tr";
         if(is_array($atts)) {
                 foreach ($atts as  $key=>$val){ $str .= " $key='" . $val . "'";}
                 $str.=">";
@@ -327,7 +327,7 @@ class CgiUtil
   }
  
   public function div($atts=null, $stuff=null){
-        $str = "\n<div";
+        $str = "<div";
         if(is_array($atts)) {
                 foreach ($atts as  $key=>$val) { $str .= " $key='" . $val . "'"; }
                 $str .=">";                // div abschliessen
@@ -340,7 +340,7 @@ class CgiUtil
         $str .= ">";
         return ($str);
   }
-  public function end_div() { return("</div>\n"); }
+  public function end_div() { return("</div>"); }
 }
  
  

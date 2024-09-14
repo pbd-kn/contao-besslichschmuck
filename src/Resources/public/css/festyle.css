@@ -1,6 +1,6 @@
 /* Contao Besslich Schmuck style sheet */
 /* FE */
-
+/* Styling Preisliste */
   .tl_preisliste {
      display: inline-block;                 /* damit width Angabe wirkt */
   }
@@ -29,6 +29,41 @@
     background-image: url("/bundles/contaobesslichschmuck/icons/paarpreis.png");
   }
 
+/* styling artikelimage */
 
+  .artikelImg {
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    border: 3px solid var(--hb-arikel-img-border);
+    border-radius: 50%;
+  }
+  .artikelImgBig {
+        width:  16em;                                                                                                     
+        height: auto;
+  }
 
+  .artikelImgSmall {
+    width:10em;
+    height:auto;
+  }
 
+  .artikelImgList {
+    width:5em;
+    height:auto;
+  }
+
+  /* styling navigation padding */
+  nav.pagination ul {
+    list-style: none;        /* Entfernt die Aufzählungspunkte */
+    padding-left: 10px;   
+    margin-left: 0;       
+    display: flex;           /* Richtet die <li>-Elemente nebeneinander aus */
+    gap: 10px;               /* Abstand zwischen den Listenelementen (optional) */
+  }
+
+  nav.pagination ul li {
+    margin: 0;               /* Entfernt den Standard-Rand */
+    padding: 0;              /* Entfernt das Standard-Padding */
+  }

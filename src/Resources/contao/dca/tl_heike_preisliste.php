@@ -29,8 +29,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
     // Config
     'config' => [
-        //'dataContainer'               => DC_Table::class,
-        //'dataContainer'               => tableList::class,
         'dataContainer'               => 'Table',  // DC_Table verwenden
          'enableVersioning'            => true,
         'sql' => [
@@ -107,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
 
     // Palettes
     'palettes' => [
-        'default' => 'Artikel,Kategorie,Subkategorie,Beschreibung,PreisStueck2_5,PreisPaar2_5,PreisStueck2_3,PreisPaar2_3,PreisStueckEK,PreisPaarEK;'
+        'default' => 'Artikel,Kategorie,Subkategorie,Beschreibung,PreisStueck2_5,PreisPaar2_5,PreisStueck2_3,PreisPaar2_3,PreisStueckEK,PreisPaarEK;{template_legend},listTpl'
     ],
 
     // Fields
@@ -250,6 +248,19 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste'] = [
             'eval'    => ['mandatory'=>false, 'default'=>'Initialer Wert'], // Set default value
             'sql'     => "varchar(255) NOT NULL default ''"
         ],
+        // Neues Feld für die Template-Auswahl
+        'listTpl' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_heike_preisliste']['listTpl'],
+            'default' => 'mod_list_temp',
+            'exclude' => true,
+            'inputType' => 'select',
+            'options_callback' => function () {
+                return Contao\Controller::getTemplateGroup('mod_');
+            },
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "varchar(64) NOT NULL default ''"
+        ],
+        
     ],
 ];
 

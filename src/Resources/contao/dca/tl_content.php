@@ -171,6 +171,7 @@ class checkSchmuck extends Backend {
   public  $uuid = '';  
   public static $schmuckpath = '';  
   // prueft ob value in artikelliste und in Gallery Creator
+
   public function loadSchmuckartikel ($varValue, DataContainer $dc) {
 
     $strName = 'tl_content';
@@ -180,15 +181,16 @@ class checkSchmuck extends Backend {
     $GLOBALS['TL_DCA'][$strName]['fields']['singleSRC']['load_callback'] = array(array('checkSchmuck', 'loadsingleSRC'));
 
     if ($varValue) {
-      \System::log("PBD Besslich loadSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
+//      \System::log("PBD Besslich loadSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
     } else {
-      \System::log("PBD Besslich loadSchmuckartikel no Value", __METHOD__, TL_GENERAL);
+      \System::log("PBD Besslich loadSchmuckartikel no Value (Schmuckartikelname)", __METHOD__, TL_GENERAL);
     }
     $gch=new Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
     $objPicElement=$gch->getPicture($varValue);
     if ($objPicElement === null){
         //throw new Exception(sprintf($GLOBALS['TL_LANG'][$strName]['no_image'], $varValue));  
-        $varValue="";     
+        $varValue="bitte richtigen bildnamen eingeben";     
+      //$this->schmuckartikelname=$varValue;
     } else {
       // schmuckartikelname merken
       $this->schmuckartikelname=$varValue;

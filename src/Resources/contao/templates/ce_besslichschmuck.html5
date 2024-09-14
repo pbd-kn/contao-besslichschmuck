@@ -1,4 +1,6 @@
 <?php
+
+
 echo "<div class='schmuck-detail block'>\n";
   //<!-- Überschrift -->
   /*
@@ -7,26 +9,26 @@ echo "<div class='schmuck-detail block'>\n";
   }
   */
 
-  if ($this->schmuckImage) echo $this->schmuckImage; // Bild vorhanden
+  if ($this->schmuckImage) {
+    echo "<div class='detail_image'>\n";
+      echo $this->schmuckImage; // Bild vorhanden
+    echo "</div>\n";
+  }
   //<!-- Beschreibung -->
   echo "<div class='detail_beschreibung'>\n";
-  if ($this->text) {
-    echo "<div class='detail_beschreibung_main'>\n";
-      echo $this->text;
-    echo "</div>\n";
-  }
-  if ($this->artikelzusatz) {
-    echo "<div class='detail_beschreibung_zusatz'>\n";
-      echo $this->artikelzusatz;
-    echo "</div>\n";
-  }
+    if ($this->text) {
+      echo "<div class='detail_beschreibung_main'>\n";
+        echo $this->text;
+      echo "</div>\n";
+    }
+    if ($this->artikelzusatz) {
+      echo "<div class='detail_beschreibung_zusatz'>\n";
+        echo $this->artikelzusatz;
+      echo "</div>\n";
+    }
+    echo $this->divpreisliste;
   echo "</div>\n";
 
-  $arrPreisArikel=$this->preisArikel;                 //datensatz aus der Preisliste als arr
-  //<!-- Preisliste -->
-  //echo "artikelname: " . $this->schmuckartikelname . "<br>";
-  //echo "vor Preistabelle<br>";
-  echo $this->divpreisliste;
   $n=$this->schmuckartikelname;
   // kategorie und subkategorie aus artikelliste lesen
   $kategorie =  $this->replaceInsertTags("{{efg_insert::artikelliste::$n::kategorie}}");

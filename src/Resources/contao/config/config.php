@@ -23,6 +23,13 @@ $GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
  * FRONT END MODULES
  * -------------------------------------------------------------------------
  */
+/*  module einbinden ??
+array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['application']), array
+(
+	'formdatalisting' => 'Pbdkn\Efgco4\Resources\contao\modules\ModuleFormdataListing'
+));
+*/
+// config/config.php
 
 
 /* css einbinden */

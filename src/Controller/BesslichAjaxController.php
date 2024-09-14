@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Pbdkn\ContaoBesslichschmuck\Util\BesslichUtil;
 use Pbdkn\ContaoBesslichschmuck\Util\CgiUtil;
+use Pbdkn\ContaoBesslichschmuck\Model\SchmuckartikelModel;
+
 
 
 class BesslichAjaxController extends AbstractController
@@ -71,8 +73,8 @@ class BesslichAjaxController extends AbstractController
      /*
       * wertet die Angaben des get request aus
       * Parameter schmuckartikel,kategorie,subkategorie
-      * der Datenbankaufruf wird mit like ausgeführt.
-      * Beispiel: /besslich/getPreislistePath/ab1s führt zum like %ab1s%
+      * der Datenbankaufruf wird mit like ausgefÃ¼hrt.
+      * Beispiel: /besslich/getPreislistePath/ab1s fÃ¼hrt zum like %ab1s%
       */
 
     public function getPreislistePath(string $schmuckartikel,string $kategorie, string $subkategorie ): JsonResponse
@@ -113,17 +115,17 @@ class BesslichAjaxController extends AbstractController
      /*
       * wertet die Angaben des get request aus
       * Parameter schmuckartikel,kategorie,subkategorie
-      * der Datenbankaufruf wird mit like ausgeführt.
+      * der Datenbankaufruf wird mit like ausgefÃ¼hrt.
       * Beispiel: /besslich/getPreisliste&schmuckartikel=ab1s
-      * /besslich/getPreisliste&schmuckartikel=%25ab1s%25  führt zum like %ab1s%
+      * /besslich/getPreisliste&schmuckartikel=%25ab1s%25  fÃ¼hrt zum like %ab1s%
       * /besslich/getPreisliste?schmuckartikel=&subkategorie=   liefert alle bei denen Schmuckartikel und subkategorie leer ist
       */
     public function getPreisliste(Request $request)
     {
       $debugArr[]=utf8_encode("debug von getPreisliste");
       $debugArr[]=utf8_encode("Help: besslich/getPreisliste?schmuckartikel=artikel&kategorie=kategorie&subkategorie=subkategorie");
-      $debugArr[]=utf8_encode("Help: die einzelnen Attribute werden mit like gesucht. Keine Angabe führt zur Ausgabe aller");
-      $debugArr[]=utf8_encode("Help: %25name%25. Keine Angabe führt zuzum likde %name%");
+      $debugArr[]=utf8_encode("Help: die einzelnen Attribute werden mit like gesucht. Keine Angabe fÃ¼hrt zur Ausgabe aller");
+      $debugArr[]=utf8_encode("Help: %25name%25. Keine Angabe fÃ¼hrt zuzum likde %name%");
       $errArr=[];
         // Erhalte die Datenbankverbindung
         
@@ -155,11 +157,99 @@ class BesslichAjaxController extends AbstractController
             $params[] = $kategorie;
         }
         $debugArr[]=utf8_encode("debug von getPreisliste sql $sql");
-       // Führe die Abfrage aus
+       // FÃ¼hre die Abfrage aus
        $resarr=$this->besslichUtil->getSchmuckArtikel($sql,$params);
        $arr['data']=$resarr;
        $arr['error']=$errArr;
        $arr['debug']=$debugArr;
        return new JsonResponse($arr);
    }
+    /**
+     * @Route("/besslich/schmuckartikel/{alias}", 
+     * name="BesslichAjaxController::getcontent")
+     * @throws \Exception
+     */
+    public function getcontent($alias): Response
+    {
+      if (!$this->framework->isInitialized()) {   // sollte ich das evtl. im construktor machen
+        $this->framework->initialize();
+      }
+      // Suchen nach dem Contentelement mit dem Alias ab1so
+      $resArr['data']=[];
+      $resArr['error']=[];
+      $resArr['debug']=[];
+      $dataArr=[];
+      $errArr=[];
+      $debArr=[];
+      $schmuckartikel = SchmuckartikelModel::findOneBy('schmuckartikelname', $alias);
+
+      if ($schmuckartikel === null) {
+          // Wenn kein Artikel gefunden wurde, gib Error zurÃ¼ck
+        $errArr[]=utf8_encode('Artikel Alias: "'.$alias.'" nicht gefunden');
+      } else {
+        $dataArr['schmuckartikelname']=utf8_encode($schmuckartikel->schmuckartikelname);
+        $text = preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->text);
+        $dataArr['text']=preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->text);
+        $dataArr['singleSRC']=utf8_encode($schmuckartikel->singleSRC);
+        // Suche das FileModel anhand der UUID
+        $fileModel = FilesModel::findByUuid($schmuckartikel->singleSRC);
+        if ($fileModel === null) {
+            // Wenn die UUID nicht gefunden wurde, gib eine Fehlermeldung aus 
+          $errArr[]=utf8_encode('uuid von singleSRC nicht im FileModel');
+          $dataArr['imgPath']="";
+        } else {
+          $dataArr['imgPath']=utf8_encode($fileModel->path);
+        }
+        //$dataArr['artikelzusatz']=utf8_encode($schmuckartikel->artikelzusatz);
+        if (isset($schmuckartikel->artikelzusatz))$dataArr['artikelzusatz']=preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->artikelzusatz);
+        else $dataArr['artikelzusatz']='';
+        $dataArr['preisliste']=utf8_encode($schmuckartikel->preisliste);
+        $dataArr['customTpl']=utf8_encode($schmuckartikel->customTpl);
+        $dataArr['zusatzinfo']=utf8_encode($schmuckartikel->zusatzinfo);
+      }
+      $arr['data']=$dataArr;
+      $arr['error']=$errArr;
+      $arr['debug']=$debArr;
+      return new JsonResponse($arr);
+    }
+    /**
+     * @Route("/besslich/getPreisListeRender/{art}", 
+     * name="BesslichAjaxController::getPreisListeRender")
+     * @throws \Exception
+     */
+     /* 
+      * erzeugt eine gerenderte Preisliste
+      * Art = EK Einkauf
+      *     = 23 VK 2.3
+      *     = 25 VK 2.5
+      *  Default bei falscher eingabe 23
+      * im request sind die namen der Artikel
+      *  
+      * z.b. /besslich/getPreisListeRender/23?artikel[]=ka1s-s-1,4-45cm&artikel[]=ka1s-s-1,4-60cm
+      */
+    public function getPreisListeRender($art, Request $request): Response
+    {
+      if (!$this->framework->isInitialized()) {   // sollte ich das evtl. im construktor machen
+        $this->framework->initialize();
+      }
+              // Hole das Array Ã¼ber den Query-Parameter
+       $artikel = $request->query->get('artikel', []); // artikel[]=ka1s-s-1,4-45cm&artikel[]=ka1s-s-1,4-60cm Standard ist ein leeres Array
+
+       // Verarbeite das Array oder den Alias
+       // Beispielhafte Verarbeitung
+       $html="";
+       $arrArt=[];
+       if (!empty($artikel)) {
+            foreach ($artikel as $name) {
+                $arrArt[]=$name;
+            }
+            $html=$this->besslichUtil->createPreislisteRender ($art, $arrArt);
+        }
+        //$html=utf8_encode($html);
+        return new Response($html);
+    }
+
 }
+?>
+ 
+
