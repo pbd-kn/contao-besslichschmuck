@@ -53,6 +53,12 @@
     width:5em;
     height:auto;
   }
+  /* alles was innerrhalb der detailbeschreibung steht als block
+     ob das ganz richtig ist ??
+  */
+  .detail_beschreibung {
+    display:table;
+  }
 
   /* styling navigation padding */
   nav.pagination ul {

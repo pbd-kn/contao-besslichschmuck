@@ -1,0 +1,137 @@
+<?php
+
+if ($this->style) $style='style="'.$this->style.' ';
+else $style='';
+echo '<div class="'.$this->class.' ce_table listing block '.$this->cssID.'" $style >';
+
+if ($this->searchable) {
+    echo '<div class="list_search">';
+      echo '<form method="get">';
+        echo '<div class="formbody">';
+          echo '<input type="hidden" name="order_by" value="'.$this->order_by.'">';
+          echo '<input type="hidden" name="sort" value="'.$this->sort.' ">';
+          echo '<input type="hidden" name="per_page" value="'.$this->per_page.'">';
+          echo '<div class="widget widget-select">';
+            echo '<label for="ctrl_search" class="invisible">'.$this->fields_label.'</label>';
+            echo '<select name="search" id="ctrl_search" class="select">'.$this->search_fields.'</select>';
+          echo '</div>';
+          echo '<div class="widget widget-text">';
+            echo '<label for="ctrl_for" class="invisible">'.$this->keywords_label.'</label>';
+            echo '<input type="text" name="for" id="ctrl_for" class="text" value="'.$this->for.'">';
+          echo '</div>';
+          echo '<div class="widget widget-submit">';
+            echo '<button type="submit" class="submit">'.$this->search_label.'</button>';
+          echo '</div>';
+        echo '</div>';
+      echo '</form>';
+    echo '</div>';
+    echo '<br>';
+}
+if ($this->per_page) {
+    echo '<div class="list_per_page">';
+      echo '<form method="get">';
+        echo '<div class="formbody">';
+          echo '<input type="hidden" name="order_by" value="'.$this->order_by.'">';
+          echo '<input type="hidden" name="sort" value="'.$this->sort.'">';
+          echo '<input type="hidden" name="search" value="'.$this->search.'">';
+          echo '<input type="hidden" name="for" value="'.$this->for.'">';
+          echo '<div class="widget widget-select">';
+            echo '<label for="ctrl_per_page" class="invisible">'.$this->per_page_label.'</label>';
+            echo '<select name="per_page" id="ctrl_per_page" class="select">';
+              echo '<option value="-1"';if (-1 == $this->per_page)echo 'selected';echo '>0</option>';
+              echo '<option value="10"';if (10 == $this->per_page)echo 'selected';echo '>10</option>';
+              echo '<option value="20"';if (20 == $this->per_page)echo 'selected';echo '>20</option>';
+              echo '<option value="30"';if (30 == $this->per_page)echo 'selected';echo '>30</option>';
+              echo '<option value="50"';if (50 == $this->per_page)echo 'selected';echo '>50</option>';
+              echo '<option value="100"';if (100 == $this->per_page)echo 'selected';echo '>100</option>';
+              echo '<option value="250"';if (250 == $this->per_page)echo 'selected';echo '>250</option>';
+              echo '<option value="500"';if (500 == $this->per_page)echo 'selected';echo '>500</option>';
+              echo '<option value="1000"';if (1000 == $this->per_page)echo 'selected';echo '>1000</option>';
+            echo '</select>';
+          echo '</div>';
+          echo '<div class="widget widget-submit">';
+            echo '<button type="submit" class="submit">'.$this->per_page_label.'</button>';
+          echo '</div>';
+        echo '</div>';
+      echo '</form>';
+    echo '</div>';
+    echo '<br>';
+}
+    echo '<div class="select_Preiskategorie">';
+      echo '<form method="get">';
+        echo '<div class="formbody">';
+          echo '<input type="hidden" name="order_by" value="'.$this->order_by.'">';
+          echo '<input type="hidden" name="sort" value="'.$this->sort.'">';
+          echo '<input type="hidden" name="search" value="'.$this->search.'">';
+          echo '<input type="hidden" name="for" value="'.$this->for.'">';
+          echo '<div class="widget widget-select">';
+            echo '<label for="ctrl_per_kategorie" class="invisible">'.$this->preisKategorie_label.'</label>';
+            echo '<select name="per_kategorie" id="ctrl_per_kategorie" class="select">';
+              echo '<option value="EK"';if ('EK' == $this->preiskategorie)echo 'selected';echo '>EK</option>';
+              echo '<option value="23"';if ('23' == $this->preiskategorie)echo 'selected';echo '>23</option>';
+              echo '<option value="25"';if ('25' == $this->preiskategorie)echo 'selected';echo '>25</option>';
+            echo '</select>';
+          echo '</div>';
+          echo '<div class="widget widget-submit">';
+            echo '<button type="submit" class="submit">'.$this->preisKategorie_label.'</button>';
+          echo '</div>';
+        echo '</div>';
+      echo '</form>';
+    echo '</div>';
+
+echo"<br>";
+if ($this->headline) {
+    echo '<'.$this->hl.'>'.$this->headline.'</'.$this->hl.'>';
+}
+if ($this->searchable && $this->for && empty($this->tbody)) {
+      echo $this->no_results;
+} else {
+
+      if ($this->preislisteKategorie) echo "<div class='list-Preis'>Preise aus Preis".$this->preislisteKategorie."<br></div>";
+      echo '<table class="all_records">';
+
+      echo '<thead>';
+        echo '<tr>';
+        echo '<th class="head ">bild</th>';
+        echo '<th class="head ">artikeltext</th>';
+        echo '<th class="head ">preisliste</th>';
+        echo '</tr>';
+      echo '</thead>';
+
+      echo '<tbody>';
+      foreach ($this->tbody as $class => $row) {
+        $artikelname=$row['Artikel'];                           // Zwischenspeicher für Artikelname
+        $kategorie=$row['Kategorie'];                            // Zwischenspeicher für kategorie
+        $subkategorie=$row['Subkategorie'];                          // Zwischenspeicher für subkategorie
+        $imgstr=$row['imgstr'];                          // Zwischenspeicher für subkategorie
+        $text=$row['text'];                          // Zwischenspeicher für subkategorie
+        $artikelzusatz=$row['artikelzusatz'];                          // Zwischenspeicher für subkategorie
+        $PreislisteRend=$row['PreislisteRend'];                          // Zwischenspeicher für subkategorie        
+        $zusatzinfo=$row['zusatzinfo'];                          // Zwischenspeicher für subkategorie
+        $customTpl=$row['customTpl'];                          // Zwischenspeicher für subkategorie
+
+        echo "<tr class='$class'>\n";   // artikel ausgeben
+        echo "<td>$artikelname<br><img class='artikelImg artikelImgList' src=$imgstr /></td>";
+        
+        if (isset($text))echo '<td>'.$text.'</td>';else echo '<td>Kein Artikeltext zu '.$artikelname.'</td>';
+        echo '<td>'.$PreislisteRend.'</td>';
+        echo '</tr>';
+      } 
+
+    echo '</tbody>';
+    echo '</table>';
+  }
+  if ($this->pagination) {
+        echo "<div class='pagination'>";
+        echo $this->pagination;
+        echo "</div>";
+  }
+
+echo '</div>';
+if (count($this->errArr)>0) {  // Fehler ausgeben
+  echo "<div class='listError'>";
+  echo "Fehlermeldungen<br>";
+  foreach ($this->errArr as $txt) echo "$txt<br>";
+  echo "</div>";
+}
+?>

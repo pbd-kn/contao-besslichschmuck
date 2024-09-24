@@ -23,13 +23,13 @@ $GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
  * FRONT END MODULES
  * -------------------------------------------------------------------------
  */
-/*  module einbinden ??
+
+// Auflistung schmuckartikel nach preiskategorie
+// Dieser Name Heike_Preisliste wird in der Palettenbeschreibung verwendet
 array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['application']), array
 (
-	'formdatalisting' => 'Pbdkn\Efgco4\Resources\contao\modules\ModuleFormdataListing'
+	'Heike_Preisliste' => ModuleHeikePreisliste::class
 ));
-*/
-// config/config.php
 
 
 /* css einbinden */

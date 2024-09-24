@@ -12,13 +12,18 @@ services:
     Pbdkn\ContaoBesslichschmuck\Controller\:
         resource: '../../Controller'
         tags: ['controller.service_arguments']
-   
-#    contao.picker.file_provider:
-#        class: Contao\CoreBundle\Picker\FilePickerProvider
-#        public: true
-#        arguments: ['@service_container']
-#        tags:
-#            - { name: 'contao.picker.provider', context: 'file' }
+
+    # Registrierung des CgiUtil-Dienstes
+    Pbdkn.ContaoBesslichschmuck.util.cgi_util:
+        class: Pbdkn\ContaoBesslichschmuck\Util\CgiUtil
+
+    # Registrierung von BesslichUtil mit seinen Abhängigkeiten
+    Pbdkn.ContaoBesslichschmuck.util.besslich_util:
+        class: Pbdkn\ContaoBesslichschmuck\Util\BesslichUtil
+        arguments:
+            $connection: '@database_connection'       # Die Doctrine DBAL-Verbindung
+            $cgiUtil: '@Pbdkn.ContaoBesslichschmuck.util.cgi_util'  # Der CgiUtil-Dienst
+
 
 
             

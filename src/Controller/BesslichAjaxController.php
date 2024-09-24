@@ -61,6 +61,9 @@ class BesslichAjaxController extends AbstractController
         $this->environment = $this->framework->getAdapter(Environment::class);
         $this->input = $this->framework->getAdapter(Input::class);
         $this->stringUtil = $this->framework->getAdapter(StringUtil::class);
+        if (!$this->framework->isInitialized()) {   // sollte ich das evtl. im construktor machen
+          $this->framework->initialize();
+        }
 
     }
     /**
@@ -97,7 +100,7 @@ class BesslichAjaxController extends AbstractController
             $sql .= " AND Subkategorie ?";
             $params[] = '%' . $subkategorie . '%';
       }
-       $resarr=$this->besslichUtil->getSchmuckArtikel($sql,$params);
+       $resarr=$this->besslichUtil->getSchmuckArtikelFromPreisliste($sql,$params);
        $arr['data']=$resarr;
        $arr['error']=$errArr;
        $arr['debug']=$debugArr;
@@ -158,7 +161,7 @@ class BesslichAjaxController extends AbstractController
         }
         $debugArr[]=utf8_encode("debug von getPreisliste sql $sql");
        // Führe die Abfrage aus
-       $resarr=$this->besslichUtil->getSchmuckArtikel($sql,$params);
+       $resarr=$this->besslichUtil->getSchmuckArtikelFromPreisliste($sql,$params);
        $arr['data']=$resarr;
        $arr['error']=$errArr;
        $arr['debug']=$debugArr;
@@ -166,51 +169,13 @@ class BesslichAjaxController extends AbstractController
    }
     /**
      * @Route("/besslich/schmuckartikel/{alias}", 
-     * name="BesslichAjaxController::getcontent")
+     * name="BesslichAjaxController::getSchmuckartikel")
      * @throws \Exception
      */
-    public function getcontent($alias): Response
+    public function getSchmuckartikel($alias): Response
     {
-      if (!$this->framework->isInitialized()) {   // sollte ich das evtl. im construktor machen
-        $this->framework->initialize();
-      }
-      // Suchen nach dem Contentelement mit dem Alias ab1so
-      $resArr['data']=[];
-      $resArr['error']=[];
-      $resArr['debug']=[];
-      $dataArr=[];
-      $errArr=[];
-      $debArr=[];
-      $schmuckartikel = SchmuckartikelModel::findOneBy('schmuckartikelname', $alias);
-
-      if ($schmuckartikel === null) {
-          // Wenn kein Artikel gefunden wurde, gib Error zurück
-        $errArr[]=utf8_encode('Artikel Alias: "'.$alias.'" nicht gefunden');
-      } else {
-        $dataArr['schmuckartikelname']=utf8_encode($schmuckartikel->schmuckartikelname);
-        $text = preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->text);
-        $dataArr['text']=preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->text);
-        $dataArr['singleSRC']=utf8_encode($schmuckartikel->singleSRC);
-        // Suche das FileModel anhand der UUID
-        $fileModel = FilesModel::findByUuid($schmuckartikel->singleSRC);
-        if ($fileModel === null) {
-            // Wenn die UUID nicht gefunden wurde, gib eine Fehlermeldung aus 
-          $errArr[]=utf8_encode('uuid von singleSRC nicht im FileModel');
-          $dataArr['imgPath']="";
-        } else {
-          $dataArr['imgPath']=utf8_encode($fileModel->path);
-        }
-        //$dataArr['artikelzusatz']=utf8_encode($schmuckartikel->artikelzusatz);
-        if (isset($schmuckartikel->artikelzusatz))$dataArr['artikelzusatz']=preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->artikelzusatz);
-        else $dataArr['artikelzusatz']='';
-        $dataArr['preisliste']=utf8_encode($schmuckartikel->preisliste);
-        $dataArr['customTpl']=utf8_encode($schmuckartikel->customTpl);
-        $dataArr['zusatzinfo']=utf8_encode($schmuckartikel->zusatzinfo);
-      }
-      $arr['data']=$dataArr;
-      $arr['error']=$errArr;
-      $arr['debug']=$debArr;
-      return new JsonResponse($arr);
+      $resarr=$this->besslichUtil->getSchmuckartikelFromAlias($alias);
+      return new JsonResponse($resarr);
     }
     /**
      * @Route("/besslich/getPreisListeRender/{art}", 

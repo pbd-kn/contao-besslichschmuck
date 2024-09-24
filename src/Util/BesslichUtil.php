@@ -7,6 +7,9 @@ namespace Pbdkn\ContaoBesslichschmuck\Util;
 
 use Doctrine\DBAL\Connection;
 use Pbdkn\ContaoBesslichschmuck\Util\CgiUtil;
+use Contao\FilesModel;
+use Pbdkn\ContaoBesslichschmuck\Model\SchmuckartikelModel;
+
 
 
 class BesslichUtil
@@ -23,7 +26,7 @@ class BesslichUtil
      */
   /* liefert die Schmuckartikel aus der preisliste selektiert nach sql
    */
-  public function getSchmuckArtikel( string $sql, array $params, array $ignoreFields=[]): array
+  public function getSchmuckArtikelFromPreisliste( string $sql, array $params, array $ignoreFields=[]): array
   {
     $stmt = $this->connection->prepare($sql);
     $stmt = $this->connection->executeQuery ($sql, $params);
@@ -107,6 +110,62 @@ class BesslichUtil
       $html.=$c->end_table();
       $html.=$c->end_div(); 
       return $html;
+  }
+  /* 
+   * erzeugt ein Array eines Schmuckartikels aus dem artikel mit dem aliasnamen
+   * Alias alias name
+   * Return
+   *  $arr['data']=$dataArr;
+   *     $dataArr['schmuckartikelname']=schmuckartikelname;
+   *     $dataArr['text']=text;
+   *     $dataArr['singleSRC']=utf8_encode($schmuckartikel->singleSRC); wohl irrelevant
+   *     $dataArr['imgPath']
+   *     $dataArr['artikelzusatz']
+   *     $dataArr['preisliste']=utf8_encode($schmuckartikel->preisliste); namen der in der Preisliste vorhanden
+   *     $dataArr['customTpl']=utf8_encode($schmuckartikel->customTpl); für popup
+   *     $dataArr['zusatzinfo']=utf8_encode($schmuckartikel->zusatzinfo); für popup
+   *  $arr['error']=$errArr;
+   *  $arr['debug']=$debArr;
+   */
+  public function getSchmuckartikelFromAlias (string $alias): array
+  {
+      $resArr['data']=[];
+      $resArr['error']=[];
+      $resArr['debug']=[];
+      $dataArr=[];
+      $errArr=[];
+      $debArr=[];
+      $schmuckartikel = SchmuckartikelModel::findOneBy('schmuckartikelname', $alias);
+
+      if ($schmuckartikel === null) {
+          // Wenn kein Artikel gefunden wurde, gib Error zurück
+        $errArr[]='Artikel Alias: "'.$alias.'" nicht gefunden';
+      } else {
+        $dataArr['schmuckartikelname']=$schmuckartikel->schmuckartikelname;
+        //$text = preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->text);
+        $dataArr['text']=$schmuckartikel->text;
+        $dataArr['singleSRC']=utf8_encode($schmuckartikel->singleSRC);
+        // Suche das FileModel anhand der UUID
+        $fileModel = FilesModel::findByUuid($schmuckartikel->singleSRC);
+        if ($fileModel === null) {
+            // Wenn die UUID nicht gefunden wurde, gib eine Fehlermeldung aus 
+          $errArr[]='uuid von singleSRC nicht im FileModel';
+          $dataArr['imgPath']="";
+        } else {
+          $dataArr['imgPath']=$fileModel->path;
+        }
+        //$dataArr['artikelzusatz']=utf8_encode($schmuckartikel->artikelzusatz);
+        //if (isset($schmuckartikel->artikelzusatz))$dataArr['artikelzusatz']=preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->artikelzusatz);
+        if (isset($schmuckartikel->artikelzusatz))$dataArr['artikelzusatz']=$schmuckartikel->artikelzusatz;
+        else $dataArr['artikelzusatz']='';
+        $dataArr['preisliste']=$schmuckartikel->preisliste;
+        $dataArr['customTpl']=$schmuckartikel->customTpl;
+        $dataArr['zusatzinfo']=$schmuckartikel->zusatzinfo;
+      }
+      $arr['data']=$dataArr;
+      $arr['error']=$errArr;
+      $arr['debug']=$debArr;
+      return $arr;
   }
 
 }
