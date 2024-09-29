@@ -4,7 +4,7 @@
 //echo "ce_gc_galerie_heike.html5 <br>";
 /* CSS for the frontend-output */
 
-use Markocupic\GalleryCreatorBundle\GcHelpers;
+//use Markocupic\GalleryCreatorBundle\GcHelpers;
 use Contao\FilesModel;
 
 //$GLOBALS['TL_CSS'][] = 'system/modules/gallery_creator/assets/css/gallery_creator_fe.css';
@@ -389,6 +389,7 @@ $hourglass='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AA
   }  // if no items
 
 
+//echo "PBD vor items:" . \Input::get('items') . "<br>";
 //--------------ITEMs vorhanden---------------------------------------------------------------- 
   if (\Input::get('items')) {
     //  gallery_creator - album preview -->
@@ -414,7 +415,9 @@ $hourglass='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AA
       echo "<div class='albumname'><h2>" . $this->Albumname . "</h2></div>\n";  
     }
     $albumId = $this->arrAlbumdata['id'];
-    $arrSubalbums = GcHelpers::getSubalbumsInformationArray($albumId,$this->objElement);
+    $arrSubalbums=[];
+    //$arrSubalbums = GcHelpers::getSubalbumsInformationArray($albumId,$this->objElement); pbd das funktioniert so bei gallerycreator nicht mehr
+    //                diese funktion ist ausgela
     //echo "PBD albumname: " . $this->Albumname . " albumID: $albumId Anzahl: " . count($arrSubalbums) . " " . count($this->arrAlbums) . "<br>";
     $col=0;
     //if (count($this->arrAlbums)>0)

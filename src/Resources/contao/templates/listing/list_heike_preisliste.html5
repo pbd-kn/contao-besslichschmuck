@@ -11,6 +11,7 @@ if ($this->searchable) {
           echo '<input type="hidden" name="order_by" value="'.$this->order_by.'">';
           echo '<input type="hidden" name="sort" value="'.$this->sort.' ">';
           echo '<input type="hidden" name="per_page" value="'.$this->per_page.'">';
+          echo '<input type="hidden" name="per_kategorie" value="'.$this->per_kategorie.'">';
           echo '<div class="widget widget-select">';
             echo '<label for="ctrl_search" class="invisible">'.$this->fields_label.'</label>';
             echo '<select name="search" id="ctrl_search" class="select">'.$this->search_fields.'</select>';
@@ -27,6 +28,7 @@ if ($this->searchable) {
     echo '</div>';
     echo '<br>';
 }
+
 if ($this->per_page) {
     echo '<div class="list_per_page">';
       echo '<form method="get">';
@@ -35,6 +37,7 @@ if ($this->per_page) {
           echo '<input type="hidden" name="sort" value="'.$this->sort.'">';
           echo '<input type="hidden" name="search" value="'.$this->search.'">';
           echo '<input type="hidden" name="for" value="'.$this->for.'">';
+          echo '<input type="hidden" name="per_kategorie" value="'.$this->per_kategorie.'">';
           echo '<div class="widget widget-select">';
             echo '<label for="ctrl_per_page" class="invisible">'.$this->per_page_label.'</label>';
             echo '<select name="per_page" id="ctrl_per_page" class="select">';
@@ -64,6 +67,7 @@ if ($this->per_page) {
           echo '<input type="hidden" name="sort" value="'.$this->sort.'">';
           echo '<input type="hidden" name="search" value="'.$this->search.'">';
           echo '<input type="hidden" name="for" value="'.$this->for.'">';
+          echo '<input type="hidden" name="per_page" value="'.$this->per_page.'">';
           echo '<div class="widget widget-select">';
             echo '<label for="ctrl_per_kategorie" class="invisible">'.$this->preisKategorie_label.'</label>';
             echo '<select name="per_kategorie" id="ctrl_per_kategorie" class="select">';
@@ -80,21 +84,23 @@ if ($this->per_page) {
     echo '</div>';
 
 echo"<br>";
-if ($this->headline) {
+echo "<div class='list-headline'";
+  if ($this->headline) {
     echo '<'.$this->hl.'>'.$this->headline.'</'.$this->hl.'>';
-}
+  }
+  if ($this->per_kategorie) echo "<div class='list-Preis'>Preise aus Preis".$this->per_kategorie."<br></div>";
+echo '</div>';
 if ($this->searchable && $this->for && empty($this->tbody)) {
       echo $this->no_results;
 } else {
 
-      if ($this->preislisteKategorie) echo "<div class='list-Preis'>Preise aus Preis".$this->preislisteKategorie."<br></div>";
       echo '<table class="all_records">';
 
       echo '<thead>';
         echo '<tr>';
-        echo '<th class="head ">bild</th>';
-        echo '<th class="head ">artikeltext</th>';
-        echo '<th class="head ">preisliste</th>';
+        echo '<th class="head headBild">bild</th>';
+        echo '<th class="head headText">artikeltext</th>';
+        echo '<th class="head headPreisliste">preisliste</th>';
         echo '</tr>';
       echo '</thead>';
 
@@ -110,11 +116,12 @@ if ($this->searchable && $this->for && empty($this->tbody)) {
         $zusatzinfo=$row['zusatzinfo'];                          // Zwischenspeicher für subkategorie
         $customTpl=$row['customTpl'];                          // Zwischenspeicher für subkategorie
 
-        echo "<tr class='$class'>\n";   // artikel ausgeben
-        echo "<td>$artikelname<br><img class='artikelImg artikelImgList' src=$imgstr /></td>";
+        echo "<tr class='$class bodyRow'>\n";   // artikel ausgeben
+        echo "<td class='bodyImg'>$artikelname<br><img class='artikelImg artikelImgList' src=$imgstr /></td>";
         
-        if (isset($text))echo '<td>'.$text.'</td>';else echo '<td>Kein Artikeltext zu '.$artikelname.'</td>';
-        echo '<td>'.$PreislisteRend.'</td>';
+        if (isset($text))echo "<td class='bodyText'>$text</td>"; 
+        else echo "<td class='bodyText bodyTextError'>Kein Artikeltext zu $artikelname</td>";
+        echo "<td class='bodyPreisliste'>$PreislisteRend</td>";
         echo '</tr>';
       } 
 

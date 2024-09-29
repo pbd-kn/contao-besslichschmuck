@@ -252,7 +252,7 @@ class ModuleHeikePreisliste extends Module
           $this->Template->headline=$this->headline;
           $this->Template->hl=$this->hl;
         }
-        $this->Template->preislisteKategorie=$strpreiskategorie;
+        $this->Template->per_kategorie=$strpreiskategorie;
         $this->Template->tbody=$bodyArray;
         $this->Template->errArr=$errArray;
         		// Pagination

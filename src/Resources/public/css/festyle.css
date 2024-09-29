@@ -1,6 +1,8 @@
 /* Contao Besslich Schmuck style sheet */
 /* FE */
-/* Styling Preisliste */
+@import url('print2.css');            /*  steuert den print Vorgang */
+
+/* styling Preisliste */
   .tl_preisliste {
      display: inline-block;                 /* damit width Angabe wirkt */
   }

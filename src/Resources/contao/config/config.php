@@ -26,10 +26,13 @@ $GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
 
 // Auflistung schmuckartikel nach preiskategorie
 // Dieser Name Heike_Preisliste wird in der Palettenbeschreibung verwendet
+/*
 array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['application']), array
 (
 	'Heike_Preisliste' => ModuleHeikePreisliste::class
 ));
+*/
+$GLOBALS['FE_MOD']['application']['Heike_Preisliste'] = \Pbdkn\ContaoBesslichschmuck\Resources\contao\modules\ModuleHeikePreisliste::class;
 
 
 /* css einbinden */
