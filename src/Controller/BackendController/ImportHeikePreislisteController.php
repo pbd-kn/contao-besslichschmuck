@@ -227,7 +227,7 @@ class ImportHeikePreislisteController extends AbstractBackendController
                 return new Response($strResp);
             }
         }
-        return new Response($this->Template->parse());
+        return new Response($strT);
 
     }
     
@@ -562,12 +562,11 @@ function getCsvFilesFromContaoDirectory($directoryPath)
     // Ordner durchgehen und Dateien abrufen
     $folder = new Folder($directoryPath);
     $files = scandir(TL_ROOT . '/' . $folder->path);
-
     foreach ($files as $file) {
         if ($file !== '.' && $file !== '..') {
-            $filePath = $directoryPath . '/' . $file;
+            $filePath = $folder->path . '/' . $file;
             $fileModel = FilesModel::findByPath($filePath);
-            
+            if ($fileModel==null) echo "filePath $filePath nicht im Filemodel Abhilfe im Dateimanager dierekt beafbeiten uns speichern<br>";
             if ($fileModel !== null && $fileModel->extension === 'csv') {
                 $csvFiles[] = $filePath;
             }
