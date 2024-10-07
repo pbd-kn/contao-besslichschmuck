@@ -35,9 +35,10 @@ array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['applic
 $GLOBALS['FE_MOD']['application']['Heike_Preisliste'] = \Pbdkn\ContaoBesslichschmuck\Resources\contao\modules\ModuleHeikePreisliste::class;
 
 
-/* css einbinden */
+/* css js einbinden */
 if (TL_MODE == 'FE') {
     $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/festyle.css|static';
+    $GLOBALS['TL_JAVASCRIPT'][] = '/bundles/contaobesslichschmuck/js/schriftart-select.js';
 }
 
 

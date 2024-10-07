@@ -7,7 +7,9 @@
 
 @media print {
 /** Seitenränder einstellen */  
-
+.noPrint {
+ display:none !important;
+}
 @page { margin: 2cm }
 @page {
   size: A4 portrait;
@@ -44,19 +46,32 @@ h2, h3, h4 {
 font-size: 14pt;
 margin-top: 25px;
 } 
-.list_search, .list_per_page, .select_Preiskategorie, .list-headline {   /* suchfelder ausblenden, werden im template gesetzt */
-    display:none 
-}
-.pagination {   /* suchfelder ausblenden, werden im template gesetzt */
-    display:none 
-}
-.listError {   /* suchfelder ausblenden, werden im template gesetzt */
+/*
+.list_search, .list_per_page, .select_Preiskategorie, .list-headline {
     display:none 
 }
 
-.search-block, .nav--horizontal,.nav-toggler__button, .logo, .no-print {
+.pagination {   
+    display:none 
+}
+.listError {   
+    display:none 
+}
+
+.search-block, .nav--horizontal,.nav-toggler__button, .logo {
   display:none;
+}
+
+#header-widgets, nav, aside.mashsb-container, 
+.sidebar, .mashshare-top, .mashshare-bottom, 
+.content-ads, .make-comment, .author-bio, 
+.heading, .related-posts, #decomments-form-add-comment, 
+#breadcrumbs, #footer, .post-byline, .meta-single, 
+.site-title img, .post-tags, .readability 
+{
+display: none;
 }   
+*/
 .page-new {page-break-before: always;}
  
 /* Alle Seitenumbrüche definieren */
@@ -91,11 +106,7 @@ a[href^=http]:after {
       content:" <" attr(href) "> ";
 }
 
-/*
-$a:after > img {
-   content: "";
-}
-*/
+
 article a[href^="#"]:after {
    content: "";
 }
@@ -121,17 +132,7 @@ a:not(:local-link):after {
   overflow: hidden;
 }
     
-/* Unnötige Elemente ausblenden für den Druck */
 
-#header-widgets, nav, aside.mashsb-container, 
-.sidebar, .mashshare-top, .mashshare-bottom, 
-.content-ads, .make-comment, .author-bio, 
-.heading, .related-posts, #decomments-form-add-comment, 
-#breadcrumbs, #footer, .post-byline, .meta-single, 
-.site-title img, .post-tags, .readability 
-{
-display: none;
-}
     
 /* Benutzerdefinierte Nachrichten vor und nach dem Inhalt einfügen */
 .entry:after {

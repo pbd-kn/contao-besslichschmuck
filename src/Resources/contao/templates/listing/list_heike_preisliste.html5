@@ -1,9 +1,6 @@
 <?php
 
-if ($this->style) $style='style="'.$this->style.' ';
-else $style='';
-echo '<div class="'.$this->class.' ce_table listing block '.$this->cssID.'" $style >';
-
+echo "<div class='noPrint'>";
 if ($this->searchable) {
     echo '<div class="list_search">';
       echo '<form method="get">';
@@ -83,7 +80,10 @@ if ($this->per_page) {
       echo '</form>';
     echo '</div>';
 
-echo"<br>";
+echo"</div><br>";
+if ($this->style) $style='style="'.$this->style.' ';
+else $style='';
+echo '<div class="'.$this->class.' ce_table listing block '.$this->cssID.'" $style >';
 echo "<div class='list-headline'";
   if ($this->headline) {
     echo '<'.$this->hl.'>'.$this->headline.'</'.$this->hl.'>';
@@ -136,7 +136,7 @@ if ($this->searchable && $this->for && empty($this->tbody)) {
 
 echo '</div>';
 if (count($this->errArr)>0) {  // Fehler ausgeben
-  echo "<div class='listError'>";
+  echo "<div class='listError noPrint'>";
   echo "Fehlermeldungen<br>";
   foreach ($this->errArr as $txt) echo "$txt<br>";
   echo "</div>";
