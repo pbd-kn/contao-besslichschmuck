@@ -83,8 +83,8 @@ if ($this->per_page) {
 echo"</div><br>";
 if ($this->style) $style='style="'.$this->style.' ';
 else $style='';
-echo '<div class="'.$this->class.' ce_table listing block '.$this->cssID.'" $style >';
-echo "<div class='list-headline'";
+echo '<div class="'.$this->class.' ce_table listing block '.$this->cssID.'"'. $style. ' >';
+echo "<div class='list-headline'>";
   if ($this->headline) {
     echo '<'.$this->hl.'>'.$this->headline.'</'.$this->hl.'>';
   }
@@ -129,7 +129,7 @@ if ($this->searchable && $this->for && empty($this->tbody)) {
     echo '</table>';
   }
   if ($this->pagination) {
-        echo "<div class='pagination'>";
+        echo "<div class='pagination noPrint'>";
         echo $this->pagination;
         echo "</div>";
   }
