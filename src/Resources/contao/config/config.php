@@ -37,11 +37,11 @@ $GLOBALS['FE_MOD']['application']['Heike_Preisliste'] = \Pbdkn\ContaoBesslichsch
 
 /* css js einbinden */
 if (TL_MODE == 'FE') {
-    $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/print2.css|static';
+/*    $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/print2.css|static'; nach festyle migriert */
     $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/festyle.css|static';
-    $GLOBALS['TL_JAVASCRIPT'][] = '/bundles/contaobesslichschmuck/js/schriftart-select.js';
+/*    $GLOBALS['TL_JAVASCRIPT'][] = '/bundles/contaobesslichschmuck/js/schriftart-select.js'; */
 }
 
 
 
-?>
+?> 

@@ -88,7 +88,7 @@ echo "<div class='list-headline'>";
   if ($this->headline) {
     echo '<'.$this->hl.'>'.$this->headline.'</'.$this->hl.'>';
   }
-  if ($this->per_kategorie) echo "<div class='list-Preis'>Preise aus Preis".$this->per_kategorie."<br></div>";
+  if ($this->per_kategorie) echo "<div class='list-Preis noPrint'>Preise aus Preis".$this->per_kategorie."<br></div>";
 echo '</div>';
 if ($this->searchable && $this->for && empty($this->tbody)) {
       echo $this->no_results;
