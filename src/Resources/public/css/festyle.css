@@ -2,6 +2,7 @@
 /* FE */
 
 /* styling Preisliste */
+
   .tl_preisliste {
      display: inline-block;                 /* damit width Angabe wirkt */
   }
@@ -54,6 +55,39 @@
     width:8em;
     height:auto;
   }
+  
+  /* styling schmuckartikel darstellung */  
+  .image_container {      /* abstand Auflistung Bilder schmuckartikel */
+    margin:0.8em;
+  }
+  .image_container img {
+    vertical-align:top;
+    object-fit: scale-down;
+  }
+  /* styling schmuckartikel mit flex */
+  .album_preview {
+            display: flex;                /* Flexbox aktivieren */
+            flex-direction: row;           /* Items horizontal anordnen (Standard) */
+            flex-wrap: wrap;               /* Umbruch bei Überlauf */
+            gap: 10px;                     /* Abstand zwischen den Items und Zeilen */
+            justify-content: flex-start;
+            align-items: stretch;
+  }
+
+  .album_preview_item {
+    display: inline;
+  }
+  .album_preview_item img{
+    width: 10em; /* Bild passt sich an die Breite des Items an */
+    height: auto; /* Höhe des Bildes bleibt proportional */
+    border-radius: 50%;
+    margin: 0.2em;
+  }
+  .detail-img-zoom {   //
+    border: 3px solid blue;
+    border: 3px solid var(--hb-arikel-img-border);
+  }
+  
   
   /* styling tabelle */
   .headBild {
