@@ -225,9 +225,9 @@
 }
 
 .carousel-inner {
-  /*flex-grow: 1;  Nutzt den verbleibenden Platz für die Slides */
-  padding-left: 20px;
-  padding-right: 20px;
+  flex-grow: 1;  /*Nutzt den verbleibenden Platz für die Slides */
+  //padding-left: 20px;
+  //padding-right: 20px;
 }
 
   @media screen and (min-width: 992px) {

@@ -110,10 +110,10 @@ class DetailArtikelDisplay extends Module
             
             $spalte.= "</div>\n";  // ende div carouselDetailIndicators
 
-            $spalte.= "<div class='detail-linkback'>";
-            $spalte.= "<a href='javascript:history.go(-1)' title='Zurück'>";
+            $spalte.= "<div class='detail-linkback'><p>&nbsp;</p>";            
+            $spalte.= "<p><a href='javascript:history.go(-1)' title='Zurück'>";
             $spalte.= "<span class='fa fa-chevron-left'>&nbsp;</span><span class=detail-linkback-txt>zurück</span>";
-            $spalte.= "</a></div>";
+            $spalte.= "</a></p></div>";
             // caruosell starten wenn alles geladen
             $spalte.="\n<script>";
             $spalte.="document.addEventListener('DOMContentLoaded', function () { \n";
