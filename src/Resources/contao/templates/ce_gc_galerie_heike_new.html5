@@ -107,7 +107,7 @@ EOT;
 //echo "displayImages detailseite $detailseite<br>";
       if ($arrPictures) {
         $col=0;
-        //$detailseite='detail-schmuckartikel';  // globale Detail seite
+        $detailseite='detail-schmuckartikel';  // globale Detail seite
         // untersuchen ob Detailseite da ist
         $ps="{{link::" . $detailseite . "}}";                // inserttag davon bilden
         $urldetail =\Controller::replaceInsertTags( $ps );   // insertag umwandeln
@@ -116,7 +116,8 @@ EOT;
         if ( $urldetail == "") {
           $detailseite_da = false;
           echo "keine seitenalias $detailseite fuer detailseite<br>";
-        }
+        } 
+        
         //echo "urldetail $urldetail detailseite_da $detailseite_da<br>";
         foreach ($arrPictures as $Picture) { 
 //        echo "name: ".$Picture['name']."<br>";   

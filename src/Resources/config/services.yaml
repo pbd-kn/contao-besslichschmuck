@@ -23,9 +23,13 @@ services:
         arguments:
             $connection: '@database_connection'       # Die Doctrine DBAL-Verbindung
             $cgiUtil: '@Pbdkn.ContaoBesslichschmuck.util.cgi_util'  # Der CgiUtil-Dienst
-
-
-
             
+    Pbdkn\ContaoBesslichschmuck\Controller\DetailArtikelDisplayController:
+        public: true
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: contao.frontend_module category:"besslich_schmuck"}
+
 
       

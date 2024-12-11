@@ -1,0 +1,9 @@
+<h1>{{ headline }}</h1>
+{% if debugtxt %}
+    <p>Debug:<br>{{ debugtxt  | raw }}</p>
+{% endif %}
+<div class="row">
+    {{ linkerRand | raw }}    {# raw bewirkt, dass html gerendert wird #}
+    {{ detailanfrage | raw }}
+    {{ kontaktanfrage | raw }}    
+</div>

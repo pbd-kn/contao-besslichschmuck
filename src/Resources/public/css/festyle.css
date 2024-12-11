@@ -78,10 +78,10 @@
     display: inline;
   }
   .album_preview_item img{
-    width: 10em; /* Bild passt sich an die Breite des Items an */
+    width: 9em; /* Bild passt sich an die Breite des Items an */
     height: auto; /* Höhe des Bildes bleibt proportional */
     border-radius: 50%;
-    margin: 0.2em;
+    margin: 0.3em;
   }
   .detail-img-zoom {   //
     border: 3px solid blue;
@@ -118,6 +118,123 @@
   nav.pagination ul li {
     margin: 0;               /* Entfernt den Standard-Rand */
     padding: 0;              /* Entfernt das Standard-Padding */
+  }
+  
+  /* konfiguration Jpegslider in detail ansicht 
+    .carousel-item {
+      position: absolute;
+      width: 100%;
+      display: block;
+      transform: translateX(100%);
+      transition: transform 0.6s ease-in-out;
+    }
+  */
+  .carousel-item {
+    position: relative;
+    transition: transform 0.6s ease-in-out;
+  }
+.carousel-item.active {
+    display: block !important;  /* Wichtiger Fix */
+    position: relative;
+    transition: transform 0.6s ease-in-out;
+}
+
+/*
+    .carousel-item.active {
+      transform: translateX(0);
+      z-index: 2;
+      width: 330px;
+    }
+*/
+    .carousel-item.active img {
+      border-radius:50%;
+      border: 3px solid var(--hb-arikel-img-border)
+    }
+    .carousel-item-next {
+      transform: translateX(100%);
+    }
+
+    .carousel-item-prev {
+      transform: translateX(-100%);
+    }
+    .carousel-indicators {
+      list-style: none; /* Entfernt die Zahlen */
+      margin: 5em;
+      padding: 0;
+      position: static;
+      display: flex;
+      flex-direction: column; /* Stellt die Thumbnails vertikal dar */
+      justify-content: center; /* Zentriert die Thumbnails vertikal */
+      align-items: center; /* Zentriert die Buttons */
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      height: 100%; /* Gleiche Höhe wie das Carousel */
+      width: 50px; /* Breite der Thumbnail-Spalte */
+    }
+    .carousel-control-prev:hover, .carousel-control-next:hover {
+      background:transparent;
+    }
+    .carousel-control-next, .carousel-control-prev {
+       width: 6%;     /* breite der Schaltfläche */
+    }
+  .carousel-control-next {    /* abs. position pfeil nächstes Bild Achtung auf bildgröße achten*/
+    right: 0px;
+  }
+  .carousel-control-prev {    /* abs. position pfeil vorheriges Bild */
+    left: 50px;
+  }
+
+  /* Rechts-Pfeil drehen, um einen Pfeil nach unten zu erzeugen */
+  .carousel-control-prev-icon, .carousel-control-next-icon {
+    transform: rotate(90deg);   /* Pfeil nach unten */
+    background-size: 100%;
+  }
+    
+  .carousel-indicators button.thumbnail {
+    width: 100px;
+  }
+  .carousel-indicators button.thumbnail:not(.active) {
+    opacity: 0.7;
+  }
+/*    thumbnail links */
+.carousel.slide {
+  display: flex; /* Ermöglicht horizontales Layout */
+  align-items: center; /* Zentriert die Thumbnails vertikal */
+  gap: 10px;
+}
+
+
+.carousel-indicators button {
+  width: 12px; /* Größe der Thumbnails */
+  height: 12px;
+  margin: 5px 0; /* Abstand zwischen den Thumbnails */
+  background-color: transparent; 
+}
+.carousel-indicators button img {
+  border-radius: 50%; /* Runde Thumbnails */
+}
+.carousel-indicators [data-bs-target] {
+  background-color: transparent; /* Farbe für die inaktiven Thumbnail */
+}
+.carousel-indicators button.active {
+  background-color: transparent; /* Farbe für den aktiven Thumbnail */
+}
+.carousel-indicators button.active img {
+  border: 1px solid gray;
+}
+
+.carousel-inner {
+  /*flex-grow: 1;  Nutzt den verbleibenden Platz für die Slides */
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+  @media screen and (min-width: 992px) {
+    .carousel {
+      max-width: 70%;
+      margin-left: 0;
+    }
   }
   
 /* css mediaprint */
