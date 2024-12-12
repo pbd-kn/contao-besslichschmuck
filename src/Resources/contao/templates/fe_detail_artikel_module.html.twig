@@ -3,7 +3,20 @@
     <p>Debug:<br>{{ debugtxt  | raw }}</p>
 {% endif %}
 <div class="row">
-    {{ linkerRand | raw }}    {# raw bewirkt, dass html gerendert wird #}
-    {{ detailanfrage | raw }}
-    {{ kontaktanfrage | raw }}    
+    <div class='col-md-1'></div>    
+    <div class='col-md-6 detailanfrage'>
+      <div class='detail_header'><h3>artikelbeschreibung {{ name | raw }}</h3></div> {# raw bewirkt, dass html gerendert wird #}    
+      <div class='detail_bild'>{{ bild | raw }}</div> {# raw bewirkt, dass html gerendert wird #}
+      <div class='detail_text'>{{ text | raw }}</div>
+      <div class='detail_zusatz'>{{ artikelzusatz | raw }}</div>
+      <div class='detail_linkback'><p>&nbsp;</p>            
+        <p>
+          <a href='javascript:history.go(-1)' title='Zurück'>
+            <span class='fa fa-chevron-left'>&nbsp;</span><span class=detail-linkback-txt>zurück</span>
+          </a></p>
+      </div>
+    </div>
+    <div class='col-md-4 detail_kontakt'>
+      {{ kontaktanfrage | raw }}
+    </div>    
 </div>

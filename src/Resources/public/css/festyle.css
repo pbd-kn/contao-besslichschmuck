@@ -159,19 +159,24 @@
     }
     .carousel-indicators {
       list-style: none; /* Entfernt die Zahlen */
+      margin-bottom: -2em;
+    }
+    /* css für indicator links
+    .carousel-indicators {
       margin: 5em;
       padding: 0;
       position: static;
       display: flex;
-      flex-direction: column; /* Stellt die Thumbnails vertikal dar */
-      justify-content: center; /* Zentriert die Thumbnails vertikal */
-      align-items: center; /* Zentriert die Buttons */
+      flex-direction: column;  Stellt die Thumbnails vertikal dar 
+      justify-content: center;  Zentriert die Thumbnails vertikal 
+      align-items: center;  Zentriert die Buttons 
       margin: 0;
       padding: 0;
       list-style: none;
-      height: 100%; /* Gleiche Höhe wie das Carousel */
-      width: 50px; /* Breite der Thumbnail-Spalte */
+      height: 100%;  Gleiche Höhe wie das Carousel 
+      width: 50px;  Breite der Thumbnail-Spalte 
     }
+    */
     .carousel-control-prev:hover, .carousel-control-next:hover {
       background:transparent;
     }
@@ -182,14 +187,15 @@
     right: 0px;
   }
   .carousel-control-prev {    /* abs. position pfeil vorheriges Bild */
-    left: 50px;
+    left: 00px;
   }
 
-  /* Rechts-Pfeil drehen, um einen Pfeil nach unten zu erzeugen */
+  /* Rechts-Pfeil drehen, um einen Pfeil nach unten zu erzeugen 
   .carousel-control-prev-icon, .carousel-control-next-icon {
-    transform: rotate(90deg);   /* Pfeil nach unten */
+    transform: rotate(90deg);    Pfeil nach unten 
     background-size: 100%;
   }
+  */
     
   .carousel-indicators button.thumbnail {
     width: 100px;
@@ -225,15 +231,14 @@
 }
 
 .carousel-inner {
-  flex-grow: 1;  /*Nutzt den verbleibenden Platz für die Slides */
-  //padding-left: 20px;
-  //padding-right: 20px;
+/*  flex-grow: 1;  Nutzt den verbleibenden Platz für die Slides ????*/
 }
 
   @media screen and (min-width: 992px) {
     .carousel {
-      max-width: 70%;
-      margin-left: 0;
+      max-width: 90%;
+      margin-left: 1em;
+      margin-bottom: 50px;  // damit nächster div noch platz hat;       
     }
   }
   
