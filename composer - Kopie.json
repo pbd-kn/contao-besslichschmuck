@@ -13,10 +13,8 @@
     ],
     "require": {
         "php": "^7.2 || ^8.0",
-        "contao/core-bundle": "^4.9",
-        "pbd-kn/contao-efg-bundle": "^1.",
-        "markocupic/gallery-creator-bundle": "^1.2",
-        "markocupic/import-from-csv-bundle": "^4.6",
+        "contao/core-bundle": "^4.9 || ^4.13",
+        "markocupic/gallery-creator-bundle": "^1.2 || ^2.0 ||",
         "symfony/dependency-injection": "^4.4 || ^5.1",
         "symfony/http-kernel": "^4.4 || ^5.1"
     },
@@ -31,15 +29,15 @@
     },
     "autoload": {
         "psr-4": {
-            "PBDKN\\ContaoBesslichschmuck\\": "src/"
+            "Pbdkn\\ContaoBesslichschmuck\\": "src/"
         }
     },
     "extra": {
-        "contao-manager-plugin": "PBDKN\\ContaoBesslichschmuck\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Pbdkn\\ContaoBesslichschmuck\\ContaoManager\\Plugin"
     },
     "autoload-dev": {
         "psr-4": {
-            "PBDKN\\ContaoBesslichschmuck\\Tests\\": "tests/"
+            "Pbdkn\\ContaoBesslichschmuck\\Tests\\": "tests/"
         }
     },
     "support": {
