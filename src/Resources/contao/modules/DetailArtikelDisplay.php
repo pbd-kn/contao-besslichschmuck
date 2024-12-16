@@ -114,7 +114,29 @@ class DetailArtikelDisplay extends Module
           } else {
             $spalte.= "<div class='carousel-item'>";
           }
-          $spalte.= "<img src=".$picture." class='d-block w-100' alt='Bild: $i' title='tit $i'>";
+          // auf mp4 
+          $debugtxt.= "bearbeiten $picture <br>";
+          if (strpos($picture, '.mp3') !== false) {
+            $debugtxt.= "Die Datei $picture enthält '.mp3<br>";
+            continue;  // detaildarstellung in Gallery creator geht nicht
+            $spalte.='<div class="ratio ratio-1x1">';
+              $spalte.='<video controls>';
+                $spalte.='<source src="'.$picture.'" type="audio/mpeg">';
+                $spalte.='Ihr Browser unterstützt kein HTML5-Video.';
+              $spalte.='</video>';
+            $spalte.='</div>';
+          } else if (strpos($picture, '.mp4') !== false) {
+            continue;  // detaildarstellung in Gallery creator geht nicht
+            $debugtxt.= "Die Datei $picture enthält '.mp4 kann noch nicht ausgewertet werden<br>"; 
+            $spalte.='<div class="ratio ratio-16x9">';
+              $spalte.='<video controls>';
+                $spalte.='<source src="video2.mp4" type="video/mp4">';
+                $spalte.='Ihr Browser unterstützt kein HTML5-Video.';
+              $spalte.='</video>';
+            $spalte.='</div>';
+          } else {
+            $spalte.= "<img src=".$picture." class='d-block w-100' alt='Bild: $i' title='tit $i'>";
+          }
           $spalte.= "</div>\n";
           $i++;
         }
@@ -136,7 +158,7 @@ class DetailArtikelDisplay extends Module
         $spalte.=   "var myCarousel = document.querySelector('#carouselDetailIndicators');\n";
         $spalte.=   "if (myCarousel) {\n";
         $spalte.=    "console.log('#carouselDetailIndicators gefunden:' + myCarousel);\n";
-        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 5000 , ride: 'carousel'});\n";
+        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 500000 , ride: 'carousel'});\n";
         $spalte.=    "console.log('Bootstrap Carousel-Instanz: ', carouselInstance);\n";
         $spalte.="  } else {\n";
         $spalte.=     "console.error('#carouselDetailIndicators wurde nicht gefunden!');\n";
