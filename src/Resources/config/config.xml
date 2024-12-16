@@ -1,0 +1,3 @@
+# src/Resources/config/config.xml
+markocupic_gallery_creator:
+    valid_extensions: ['jpg', 'jpeg', 'gif', 'png', 'webp', 'svg', 'svgz', 'mp4']

@@ -67,33 +67,43 @@ class DetailArtikelDisplay extends Module
         if ($album !== null) {
 //          $debugtxt .="Album mit alias gefunden: $albumAlias Titel: " . $album->name." gefunden<br>";
           $pictures = GalleryCreatorPicturesModel::findBy('pid', $album->id);
+//          $debugtxt.="findby pid: ".$album->id."<br>";
+          
           $this->Template->detailanfrage="start detailanfrage<br>";
           if ($pictures !== null) {    // Pfade detailbilder nach $arrPiclistPaths
             $anzPic = count($pictures);
 //          $debugtxt.="anzahl Bilder $anzPic<br>";
             foreach ($pictures as $picture) { // pictures pfade in array übernehmen
-              $arrPiclistPaths[]=$picture->path;
+              // besorge abs. Pathname
+              $objFile = \FilesModel::findByUuid($picture->uuid);
+              if ($objFile !== null) {
+                $arrPiclistPaths[] = $objFile->path;
+//                $debugtxt.="add Path: ".$objFile->path."<br>";
+              } else $debugtxt.='Pfad Original: nicht vorhanden <br>';
             }
           }   // pictures !== null
-        }
+        }     // $album !== null
+        $cntPiclist=count($arrPiclistPaths);
           
         // scrollcontainer aufbauen
         $spalte.="\n<div id='carouselDetailIndicators' class='carousel slide' data-bs-ride='carousel' >";
-        $spalte.="<ol class='carousel-indicators'>";
-        $first=true;
-        $i=0;
-        foreach ($arrPiclistPaths as $picture) { // pictures in carousell buttons uebernehmen
-          if ($first) {
-            $first=false;
-            $spalte.="<button type='button' data-bs-target='#carouselDetailIndicators' data-bs-slide-to='$i' class='active' aria-current='true' title='..$i'>";
-          } else {
-            $spalte.="<button type='button' data-bs-target='#carouselDetailIndicators' data-bs-slide-to='$i' title='..$i'>";
+        if ($cntPiclist > 1) {
+          $spalte.="<ol class='carousel-indicators'>";
+          $first=true;
+          $i=0;
+          foreach ($arrPiclistPaths as $picture) { // pictures in carousell buttons uebernehmen
+            if ($first) {
+              $first=false;
+              $spalte.="<button type='button' data-bs-target='#carouselDetailIndicators' data-bs-slide-to='$i' class='active' aria-current='true' title='..$i'>";
+            } else {
+              $spalte.="<button type='button' data-bs-target='#carouselDetailIndicators' data-bs-slide-to='$i' title='..$i'>";
+            }
+            $spalte.="<img src=".$picture." class='d-block w-100'>";
+            $spalte.="</button>\n";
+            $i++;
           }
-          $spalte.="<img src=".$picture." class='d-block w-100'>";
-          $spalte.="</button>\n";
-          $i++;
+          $spalte.= "</ol>\n";
         }
-        $spalte.= "</ol>\n";
         $spalte.= "<div class='carousel-inner'>";
         $first=true;
         $i=0;
@@ -109,14 +119,16 @@ class DetailArtikelDisplay extends Module
           $i++;
         }
         $spalte.= "</div>\n";    // ende carousel-inner
-        $spalte.= "<a class='carousel-control-prev' href='#carouselDetailIndicators' role='button' data-bs-slide='prev'>";
-          $spalte.= "<span class='carousel-control-prev-icon' aria-hidden='true'></span>";
-          $spalte.= "<span class='visually-hidden'>b</span>";
-        $spalte.= "</a>";
-        $spalte.= "<a class='carousel-control-next' href='#carouselDetailIndicators' role='button' data-bs-slide='next'>";
-          $spalte.= "<span class='carousel-control-next-icon' aria-hidden='true'></span>";
-          $spalte.= "<span class='visually-hidden'>v</span>";
-        $spalte.= "</a>";            
+        if ($cntPiclist > 1) {
+          $spalte.= "<a class='carousel-control-prev' href='#carouselDetailIndicators' role='button' data-bs-slide='prev'>";
+            $spalte.= "<span class='carousel-control-prev-icon' aria-hidden='true'></span>";
+            $spalte.= "<span class='visually-hidden'>b</span>";
+          $spalte.= "</a>";
+          $spalte.= "<a class='carousel-control-next' href='#carouselDetailIndicators' role='button' data-bs-slide='next'>";
+            $spalte.= "<span class='carousel-control-next-icon' aria-hidden='true'></span>";
+            $spalte.= "<span class='visually-hidden'>v</span>";
+          $spalte.= "</a>";
+        }            
         $spalte.= "</div>\n";  // ende div carouselDetailIndicators
         // caruosell starten wenn alles geladen
         $spalte.="\n<script>";
@@ -124,7 +136,7 @@ class DetailArtikelDisplay extends Module
         $spalte.=   "var myCarousel = document.querySelector('#carouselDetailIndicators');\n";
         $spalte.=   "if (myCarousel) {\n";
         $spalte.=    "console.log('#carouselDetailIndicators gefunden:' + myCarousel);\n";
-        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 5000 , ride: 'carousel'});\n";
+        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 500000 , ride: 'carousel'});\n";
         $spalte.=    "console.log('Bootstrap Carousel-Instanz: ', carouselInstance);\n";
         $spalte.="  } else {\n";
         $spalte.=     "console.error('#carouselDetailIndicators wurde nicht gefunden!');\n";
