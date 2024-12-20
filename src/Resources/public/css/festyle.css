@@ -146,7 +146,7 @@
       width: 330px;
     }
 */
-    .carousel-item.active img {
+    .carousel-item.active img, .carousel-item.active video {
       border-radius:50%;
       border: 3px solid var(--hb-arikel-img-border)
     }
@@ -159,7 +159,7 @@
     }
     .carousel-indicators {
       list-style: none; /* Entfernt die Zahlen */
-      margin-bottom: -2em;
+      margin-bottom: -4em;
     }
     /* css für indicator links
     .carousel-indicators {
@@ -190,12 +190,6 @@
     left: 00px;
   }
 
-  /* Rechts-Pfeil drehen, um einen Pfeil nach unten zu erzeugen 
-  .carousel-control-prev-icon, .carousel-control-next-icon {
-    transform: rotate(90deg);    Pfeil nach unten 
-    background-size: 100%;
-  }
-  */
     
   .carousel-indicators button.thumbnail {
     width: 100px;
@@ -212,8 +206,7 @@
 
 
 .carousel-indicators button {
-  width: 12px; /* Größe der Thumbnails */
-  height: 12px;
+
   margin: 5px 0; /* Abstand zwischen den Thumbnails */
   background-color: transparent; 
 }
@@ -222,16 +215,64 @@
 }
 .carousel-indicators [data-bs-target] {
   background-color: transparent; /* Farbe für die inaktiven Thumbnail */
+  opacity: 1;
+  width: 4em; /* Größe der Thumbnails */
+  height: 4em;
+  margin-top:2em;
 }
 .carousel-indicators button.active {
   background-color: transparent; /* Farbe für den aktiven Thumbnail */
 }
 .carousel-indicators button.active img {
-  border: 1px solid gray;
+  border: 2px solid var(--hb-arikel-img-border);
 }
-
+  /* Rechts-Pfeil drehen, um einen Pfeil nach unten zu erzeugen 
+  .carousel-control-prev-icon, .carousel-control-next-icon {
+    transform: rotate(90deg);    Pfeil nach unten 
+    background-size: 100%;
+  }
+  */
+.carousel-control-next-icon, .carousel-control-prev-icon {
+    color: var(--hb-arikel-img-border); /* SVG-Farbe durch CSS */
+}
+.carousel-control-next-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+.carousel-control-prev-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");
+}
 .carousel-inner {
 /*  flex-grow: 1;  Nutzt den verbleibenden Platz für die Slides ????*/
+  padding-bottom: 1em;
+}
+/* Play-Icon Styling */
+.play-icon-wrapper {
+    position: relative;
+    width: 100%; /* Gleiche Breite wie das Bild */
+    height: auto; /* Automatische Höhe */
+    /* display: inline-block; */
+}
+
+
+.play-icon {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.play-icon-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid var(--hb-arikel-img-border);;  /* Dreieck zeichnen */
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+      opacity: 0.2;
+
 }
 
   @media screen and (min-width: 992px) {

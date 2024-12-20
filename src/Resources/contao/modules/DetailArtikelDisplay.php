@@ -4,6 +4,7 @@ namespace Pbdkn\ContaoBesslichschmuck\Resources\contao\modules;
 use Contao\Input;
 use Contao\Module;
 use Contao\ContentModel;
+use Contao\FilesModel;
 use Markocupic\GalleryCreatorBundle\Model\GalleryCreatorAlbumsModel;
 use Markocupic\GalleryCreatorBundle\Model\GalleryCreatorPicturesModel;
 use Markocupic\GalleryCreatorBundle\Util\GalleryCreatorUtil;
@@ -54,35 +55,35 @@ class DetailArtikelDisplay extends Module
         // Pfad original Bild
         $arrPiclistPaths = array();
         $objFile = \FilesModel::findByUuid($schmuckArtikel->singleSRC);
-        if ($objFile !== null) $arrPiclistPaths[] = $objFile->path;
-        else $debugtxt.='Pfad Original: nicht vorhanden <br>';
+        $schmuckArtikelPfad="";
+        if ($objFile !== null) {
+          $arrPiclistPaths[] = $objFile->path;
+          $schmuckArtikelPfad=$objFile->path;    // dies wird als ersatz im Button bei videos angezeigt
+        } else $debugtxt.="Bild zum Original: $name nicht vorhanden <br>";
         $this->Template->text=$schmuckArtikel->text;
         $this->Template->name=$name;
         $this->Template->artikelzusatz=$schmuckArtikel->artikelzusatz;
 
-//        $spalte.="<div class='col-md-6 detailanfrage'>";
         // detailAlbum anhand des Alias suchen
         $albumAlias = "$name-detail";
-        $album = GalleryCreatorAlbumsModel::findByAlias($albumAlias);
-        if ($album !== null) {
-//          $debugtxt .="Album mit alias gefunden: $albumAlias Titel: " . $album->name." gefunden<br>";
-          $pictures = GalleryCreatorPicturesModel::findBy('pid', $album->id);
-//          $debugtxt.="findby pid: ".$album->id."<br>";
-          
-          $this->Template->detailanfrage="start detailanfrage<br>";
-          if ($pictures !== null) {    // Pfade detailbilder nach $arrPiclistPaths
-            $anzPic = count($pictures);
-//          $debugtxt.="anzahl Bilder $anzPic<br>";
-            foreach ($pictures as $picture) { // pictures pfade in array übernehmen
-              // besorge abs. Pathname
-              $objFile = \FilesModel::findByUuid($picture->uuid);
-              if ($objFile !== null) {
-                $arrPiclistPaths[] = $objFile->path;
-//                $debugtxt.="add Path: ".$objFile->path."<br>";
-              } else $debugtxt.='Pfad Original: nicht vorhanden <br>';
-            }
-          }   // pictures !== null
-        }     // $album !== null
+          // suchen ob ein detail-directory existiert
+        $directory = 'files/DetailSchmuckartikel/'.$albumAlias.'/';
+        $files = FilesModel::findBy(
+          ['path LIKE ?', 'type="file"'], 
+          [$directory . '%'], 
+          ['order' => 'name ASC'] );
+        
+//        $album = GalleryCreatorAlbumsModel::findByAlias($albumAlias);
+        if ($files === null) {
+          //$debugtxt.="Das Verzeichnis '$directory' existiert nicht oder ist leer.<br>";
+        } else {
+          //$debugtxt.="Dateien im Verzeichnis $directory:<br>";
+          // Dateien durchlaufen
+          foreach ($files as $file) {
+              $arrPiclistPaths[] = $file->path;
+              //$debugtxt.="add Path: ".$file->path."<br>";
+          }          
+        }        
         $cntPiclist=count($arrPiclistPaths);
           
         // scrollcontainer aufbauen
@@ -91,6 +92,13 @@ class DetailArtikelDisplay extends Module
           $spalte.="<ol class='carousel-indicators'>";
           $first=true;
           $i=0;
+          // beispiel eigens icon in button
+          //<button type="button" data-bs-target="#customCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1">
+          //  <img src="thumb1.jpg" class="img-fluid" alt="Thumbnail 1">
+// ich schreibe es mal hier auf wie mov dateiewn verkleinert werden
+// ffmpeg -i "Inputfile.mov" -c:v libx264 -preset slower -crf 28 -c:a aac -b:a 96k -movflags +faststart -vf scale=1280:720 outputfile.mp4
+// ffmpeg -i "Inputfile.mov" -c:v libvpx-vp9 -b:v 2M   -an -vf scale=800:-1 -b:v 2M -fs 1000000000 output.webm
+// ffmpeg -i "Inputfile.mov" -vf "scale=640:-1" -c:v libvpx-vp9 -b:v 500k -crf 40 -c:a libopus -b:a 64k anton.webm
           foreach ($arrPiclistPaths as $picture) { // pictures in carousell buttons uebernehmen
             if ($first) {
               $first=false;
@@ -98,7 +106,19 @@ class DetailArtikelDisplay extends Module
             } else {
               $spalte.="<button type='button' data-bs-target='#carouselDetailIndicators' data-bs-slide-to='$i' title='..$i'>";
             }
-            $spalte.="<img src=".$picture." class='d-block w-100'>";
+            //$debugtxt.="einfügen $picture:<br>";
+
+            if (strpos($picture, '.mp4') !== false ||
+                     strpos($picture, '.webm') !== false ||
+                     strpos($picture, '.mp3') !== false
+             ) {   // video
+              $spalte.="<div class='play-icon-wrapper'>";
+              $spalte.="<img src='".$schmuckArtikelPfad."'' class='d-block w-100 play-icon'>";
+              $spalte.="</div>";
+//              $spalte.="<span class='play-icon'></span>";
+            } else { 
+              $spalte.="<img src='".$picture."' class='d-block w-100'>";
+            }
             $spalte.="</button>\n";
             $i++;
           }
@@ -115,27 +135,22 @@ class DetailArtikelDisplay extends Module
             $spalte.= "<div class='carousel-item'>";
           }
           // auf mp4 
-          $debugtxt.= "bearbeiten $picture <br>";
-          if (strpos($picture, '.mp3') !== false) {
-            $debugtxt.= "Die Datei $picture enthält '.mp3<br>";
-            continue;  // detaildarstellung in Gallery creator geht nicht
+          //$debugtxt.= "bearbeiten $picture <br>";
+          if (strpos($picture, '.mp4') !== false ||
+                     strpos($picture, '.webm') !== false ||
+                     strpos($picture, '.mp3') !== false
+             ) {
             $spalte.='<div class="ratio ratio-1x1">';
-              $spalte.='<video controls>';
+              //$debugtxt.="!!MP4 Picture: $picture<br>";
+              $spalte.='<video  autoplay muted loop playsinline>';
+                $spalte.='<source src="'.$picture.'"  type="video/mp4">';
                 $spalte.='<source src="'.$picture.'" type="audio/mpeg">';
-                $spalte.='Ihr Browser unterstützt kein HTML5-Video.';
-              $spalte.='</video>';
-            $spalte.='</div>';
-          } else if (strpos($picture, '.mp4') !== false) {
-            continue;  // detaildarstellung in Gallery creator geht nicht
-            $debugtxt.= "Die Datei $picture enthält '.mp4 kann noch nicht ausgewertet werden<br>"; 
-            $spalte.='<div class="ratio ratio-16x9">';
-              $spalte.='<video controls>';
-                $spalte.='<source src="video2.mp4" type="video/mp4">';
-                $spalte.='Ihr Browser unterstützt kein HTML5-Video.';
+                $spalte.='<source src="'.$picture.'" type="video/webm">';
+                $spalte.='Ihr Browser unterstützt dieses Format nicht';
               $spalte.='</video>';
             $spalte.='</div>';
           } else {
-            $spalte.= "<img src=".$picture." class='d-block w-100' alt='Bild: $i' title='tit $i'>";
+            $spalte.= '<img src="'.$picture.'" class="d-block w-100" alt=" Bild: '.$i.' title="tit $i">';
           }
           $spalte.= "</div>\n";
           $i++;
@@ -158,7 +173,7 @@ class DetailArtikelDisplay extends Module
         $spalte.=   "var myCarousel = document.querySelector('#carouselDetailIndicators');\n";
         $spalte.=   "if (myCarousel) {\n";
         $spalte.=    "console.log('#carouselDetailIndicators gefunden:' + myCarousel);\n";
-        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 500000 , ride: 'carousel'});\n";
+        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 10000 , ride: 'carousel'});\n";
         $spalte.=    "console.log('Bootstrap Carousel-Instanz: ', carouselInstance);\n";
         $spalte.="  } else {\n";
         $spalte.=     "console.error('#carouselDetailIndicators wurde nicht gefunden!');\n";

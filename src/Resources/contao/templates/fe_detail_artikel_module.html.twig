@@ -4,7 +4,7 @@
 {% endif %}
 <div class="row">
     <div class='col-md-1'></div>    
-    <div class='col-md-6 detailanfrage'>
+    <div class='col-md-5 detailanfrage'>
       <div class='detail_header'><h3>artikelbeschreibung {{ name | raw }}</h3></div> {# raw bewirkt, dass html gerendert wird #}    
       <div class='detail_bild'>{{ bild | raw }}</div> {# raw bewirkt, dass html gerendert wird #}
       <div class='detail_text'>{{ text | raw }}</div>
@@ -16,7 +16,7 @@
           </a></p>
       </div>
     </div>
-    <div class='col-md-4 detail_kontakt'>
+    <div class='col-md-5 detail_kontakt'>
       {{ kontaktanfrage | raw }}
     </div>    
 </div>
