@@ -96,9 +96,7 @@ class DetailArtikelDisplay extends Module
           //<button type="button" data-bs-target="#customCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1">
           //  <img src="thumb1.jpg" class="img-fluid" alt="Thumbnail 1">
 // ich schreibe es mal hier auf wie mov dateiewn verkleinert werden
-// ffmpeg -i "Inputfile.mov" -c:v libx264 -preset slower -crf 28 -c:a aac -b:a 96k -movflags +faststart -vf scale=1280:720 outputfile.mp4
-// ffmpeg -i "Inputfile.mov" -c:v libvpx-vp9 -b:v 2M   -an -vf scale=800:-1 -b:v 2M -fs 1000000000 output.webm
-// ffmpeg -i "Inputfile.mov" -vf "scale=640:-1" -c:v libvpx-vp9 -b:v 500k -crf 40 -c:a libopus -b:a 64k anton.webm
+// ffmpeg -i "Inputfile.mov" -vf "scale=640:-1" -c:v libx264 -b:v 500k -crf 30 -c:a libopus -b:a 64k -an -pix_fmt yuv420p anton1.mp4
           foreach ($arrPiclistPaths as $picture) { // pictures in carousell buttons uebernehmen
             if ($first) {
               $first=false;

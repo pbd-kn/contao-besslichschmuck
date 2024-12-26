@@ -161,22 +161,6 @@
       list-style: none; /* Entfernt die Zahlen */
       margin-bottom: -4em;
     }
-    /* css für indicator links
-    .carousel-indicators {
-      margin: 5em;
-      padding: 0;
-      position: static;
-      display: flex;
-      flex-direction: column;  Stellt die Thumbnails vertikal dar 
-      justify-content: center;  Zentriert die Thumbnails vertikal 
-      align-items: center;  Zentriert die Buttons 
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      height: 100%;  Gleiche Höhe wie das Carousel 
-      width: 50px;  Breite der Thumbnail-Spalte 
-    }
-    */
     .carousel-control-prev:hover, .carousel-control-next:hover {
       background:transparent;
     }
@@ -245,14 +229,13 @@
 /*  flex-grow: 1;  Nutzt den verbleibenden Platz für die Slides ????*/
   padding-bottom: 1em;
 }
-/* Play-Icon Styling */
+/* Play-Icon Video Styling */
 .play-icon-wrapper {
     position: relative;
     width: 100%; /* Gleiche Breite wie das Bild */
     height: auto; /* Automatische Höhe */
     /* display: inline-block; */
 }
-
 
 .play-icon {
     width: 100%;
@@ -274,6 +257,32 @@
       opacity: 0.2;
 
 }
+/*            Styling startseite  */
+
+.start {       /* artikel startseite */
+  height: 800px;
+
+}
+.startseite { position:absolute; }
+.startseite.item1 { top: 16%;  left:12%; visibility: visible;animation-duration: 2s;animation-iteration-count: 1;animation-name: slideInDown;}
+.startseite.item2 { top: 8%;  left:30%; visibility: visible; animation-duration: 5s;animation-iteration-count: 1;animation-name: slideInUp; }
+.startseite.item3 { top: 8%;  left:65%; visibility: visible; animation-duration: 5s;animation-name: slideInRight;}
+.startseite.item4 { top: 42%; left:15%; width: 10em;}
+.startseite.item5 { top: 46%; left:50%; }
+.startseite.item6 { top: 46%; left:35%; }
+.startseite.item7 { bottom: 0%; left:10%; visibility: visible;animation-duration: 2s;animation-iteration-count: 3;animation-name: bounceIn; }
+.startseite.item8 { bottom: 20%; left:30%; visibility: visible;animation-duration: 2s;animation-iteration-count: 1;animation-name: fadeInLeft; }
+.startseite.item9 { bottom: 5%; left:65%; visibility: visible;animation-duration: 3s;animation-name: fadeInDownBig; }
+.startseite.item1 img{ width:12em; }
+.startseite.item2 img{ width:13em; }
+.startseite.item3 img{ width:16em; }
+.startseite.item4 img{ width:5em; }
+.startseite.item5 img{ width:5em; }
+.startseite.item6 img{ width:5em; }
+.startseite.item6 p{ margin:1em; }
+.startseite.item7 img{ width:12em; }
+.startseite.item8 img{ width:8em; }
+.startseite.item9 img{ width:18em; }
 
   @media screen and (min-width: 992px) {
     .carousel {
