@@ -220,29 +220,30 @@ echo '</ul>';
                 $arrPictures = array();
                 while ($pictures->next()) {
                   // build up $arrPictures
-
+                  if ($pictures->published) {
 //echo "strImageSrc $strImageSrc<br>";
-                  $filePath = \FilesModel::findByUuid($pictures->uuid)->path;
-                  $objFile = new \File($filePath, true);
-                  $strImageSrc = $objFile->filename;
-                  $href = \System::urlEncode($strImageSrc);
-                  // daten des Bildes in Array uebernehmen
-                  $arrPicture = array( //[int] id picture_id
-                    'id'               => $pictures->id,    //[int] pid parent Album-Id
-                    'pid'              => $pictures->pid,   //[int] das Datum, welches fuer das Bild gesetzt werden soll (= in der Regel das Upload-Datum)
-                    'album_id'         => $pictures->pid,  //[int] album_id oder pid                             
-                    'name'             => $objFile->filename, // ohne extension
-                    'path'             => $objFile->path,   //[string] Pfad zur Datei
-                    'alt'              => specialchars($pictures->title ? $pictures->title : $pictures->name),//[string] alt-attribut
-                    'title'            => specialchars($pictures->title), //[string] title-attribut
-                    'comment'          => specialchars($pictures->comment),//[string] Bildkommentar oder Bildbeschreibung
-                    'image_src'        => $strImageSrc, //[string] path to the image,
-                    'published'        => $pictures->published, //[boolean] veroeffentlicht (true/false)
-                    'href'             => TL_FILES_URL . $href, //[string] path to media (video, picture, sound...)
-                    'filename'         => $objFile->filename,  //[string] filename without extension
-                  );
+                    $filePath = \FilesModel::findByUuid($pictures->uuid)->path;
+                    $objFile = new \File($filePath, true);
+                    $strImageSrc = $objFile->filename;
+                    $href = \System::urlEncode($strImageSrc);
+                    // daten des Bildes in Array uebernehmen
+                    $arrPicture = array( //[int] id picture_id
+                      'id'               => $pictures->id,    //[int] pid parent Album-Id
+                      'pid'              => $pictures->pid,   //[int] das Datum, welches fuer das Bild gesetzt werden soll (= in der Regel das Upload-Datum)
+                      'album_id'         => $pictures->pid,  //[int] album_id oder pid                             
+                      'name'             => $objFile->filename, // ohne extension
+                      'path'             => $objFile->path,   //[string] Pfad zur Datei
+                      'alt'              => specialchars($pictures->title ? $pictures->title : $pictures->name),//[string] alt-attribut
+                      'title'            => specialchars($pictures->title), //[string] title-attribut
+                      'comment'          => specialchars($pictures->comment),//[string] Bildkommentar oder Bildbeschreibung
+                      'image_src'        => $strImageSrc, //[string] path to the image,
+                      'published'        => $pictures->published, //[boolean] veroeffentlicht (true/false)
+                      'href'             => TL_FILES_URL . $href, //[string] path to media (video, picture, sound...)
+                      'filename'         => $objFile->filename,  //[string] filename without extension
+                    );
 //echo "single_image_url: ".$arrPicture['single_image_url']."<br>\n";
-                  $arrPictures[$pictures->id] = $arrPicture;
+                    $arrPictures[$pictures->id] = $arrPicture;
+                  }
                 } // foreach images
               }  else {
                 // keine bilder
