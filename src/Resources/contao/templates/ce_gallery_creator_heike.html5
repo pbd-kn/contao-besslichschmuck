@@ -207,7 +207,7 @@ echo '</ul>';
 //      foreach ($this->arrAlbums as $Album) {
       foreach ($this->albums as $Album) {
           echo "<li>";
-            $atext =  $Album['description'] != "" ? $Album['description']:$Album['name'];
+            $atext =  $Album['caption'] != "" ? $Album['caption']:$Album['name'];
             echo "<h2>" . mb_strtolower ($atext) . "</h2>\n";
             echo "<div class='album_preview'>\n";       // div um ein album
 //echo "<p>Albumname:     " . $Album['name']. "</p>";
