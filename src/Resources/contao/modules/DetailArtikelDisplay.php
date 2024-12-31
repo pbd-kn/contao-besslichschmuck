@@ -73,7 +73,6 @@ class DetailArtikelDisplay extends Module
           [$directory . '%'], 
           ['order' => 'name ASC'] );
         
-//        $album = GalleryCreatorAlbumsModel::findByAlias($albumAlias);
         if ($files === null) {
           //$debugtxt.="Das Verzeichnis '$directory' existiert nicht oder ist leer.<br>";
         } else {

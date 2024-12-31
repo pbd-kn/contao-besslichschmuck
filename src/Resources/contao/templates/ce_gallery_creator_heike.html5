@@ -1,21 +1,21 @@
 <?php
 
 // ce element zum auflisten aller schmuckartikel die aus den Bildern des Galleriecreators stammen
-//echo "ce_gc_galerie_heike.html5 <br>";
+// es werden alle Bilder der übergebenen Alben angezeigt
+// 
+//echo "ce_galerie_creator_heike.html5 <br>";
 /* CSS for the frontend-output */
 
-//use Markocupic\GalleryCreatorBundle\GcHelpers;
-//use Contao\FilesModel;
-use GalleryCreator\AlbumsModel;
 use Markocupic\GalleryCreatorBundle\Model\GalleryCreatorAlbumsModel;
 use Markocupic\GalleryCreatorBundle\Model\GalleryCreatorPicturesModel;
 
 global $objPage;
 
-$palias=$objPage->alias;
+  $palias=$objPage->alias;  // alias der aktuellen seite z.B. anhaenger mit routenpfad /anhaenger{parameters}.html
   $mystyle = "";
   global $jsexist;
-  if (!isset ( $jsexist )) {   // ist das js schon ausgegeben bzw function displayImages schon definiert??
+  if (!isset ( $jsexist )) {   // ist das js schon ausgegeben bzw. function displayImages schon definiert??
+                               // template wir u.u. mehrfach aufgerufen.
     //echo "jsexist false <br>";
     $jsexist=true;
     $mein_init_txt = <<< EOT
@@ -53,24 +53,12 @@ console.log('pbd at ' + at);
         artikel=jQuery(acl).find('.article-detail')[0];
 console.log('pbd artikel ' + artikel);
         
-        //var logo =  jQuery(container).find('.logo').css("border","2px solid blue");
-        //at = at.replace("schmuck-detail", "schmuck-detail-inside"); 
         var logo =  jQuery(container).find('.logo').html(at);        // schreibe an die Stelle von Logo html at
         var l = jQuery(container).find('.logo');
         l.css('position', 'relative');
         l.css('top', offset+'px');
 console.log('pbd set position von top ' + offset +'px');
         l.focus();
-/*
-        var img = jQuery(logo).find('img');   //image im Logobereich einstellen
-
-        if ( typeof oldzoom !== 'undefined') { // alten zoom löschen
-                //oldzoom.removeData(oldzoom, 'elevateZoom');//remove zoom instance from image
-                jQuery('.zoomContainer').remove();// remove zoom container from DOM
-//console.log("old zoom gelöscht");
-        }
-        oldzoom=img;
-*/
 console.log("pbd <- hover");
         },                                       
         function() {
@@ -96,11 +84,18 @@ EOT;
  
     echo  $mein_init_txt."\n";
     
-    $this->getMetaContent = function($id) {
+    $this->getMetaContent = function($id) {      // zu was das benötigt wird weiß ich nicht
       return NULL;
     }; 
+    
     /* rendert die bilder eines Albums incl hover und verstecktem div
+     * arrPictures Feld enhält die Pictures mit den entspechenden Daten
+     * detailseite, wird derzeit nicht ausgewertet. 
+     * Ist der aliasName der Detailseite z.B. detail-anhaenger
+     * wird aber derzeit nicht ausgewertet.
+     * als globale Seite wird der Alias detail-schmuckartikel zum Darstellen des Details verwendet
      */
+
     function displayImages($arrPictures,$detailseite) { 
   //---------------------------  Bilder Ausgeben ----------------------------------------
 //echo "displayImages detailseite $detailseite<br>";
@@ -120,25 +115,7 @@ EOT;
         //echo "urldetail $urldetail detailseite_da $detailseite_da<br>";
         foreach ($arrPictures as $Picture) { 
 //        echo "name: ".$Picture['name']."<br>";   
-/*
-          $objOtherPage = \PageModel::findByAlias($detailseite);
-
-          if ($objOtherPage !== null) {
-            // Generiere die URL basierend auf dem Alias der anderen Seite
-            $single_image_url = \Controller::generateFrontendUrl(
-            $objOtherPage->row(), // Verwende die Daten der gefundenen Seite
-            ($GLOBALS['TL_CONFIG']['useAutoItem'] ? '/' : '/items/') . \Input::get('items') . '/img/' . $Picture['name'], 
-            $objOtherPage->language // Sprache der anderen Seite
-            );
-
-            // Ausgabe der generierten URL
-            echo "single image url: $single_image_url<br>";
-          } else {
-            echo 'Seite mit dem Alias "' . $alias . '" wurde nicht gefunden.';
-          }
-*/
-          $name = $Picture['name'];   // lade artikel für hover  artikel_detail enthält den gerenderten artikel
-//echo "name: $name <br>";
+          $name = $Picture['name'];   // artikelName  artikel_detail enthält den gerenderten artikel
           $artikel_detail =  \Controller::replaceInsertTags("{{insert_article::" . $name . "}}",false);
           if (strlen($artikel_detail) == 0 || (strpos($artikel_detail, "existiert leider nicht")) !== FALSE) 
           { 
@@ -149,14 +126,13 @@ EOT;
             $artikel_detail .= "</div>";
             $artikel_da=false;     // keine Artikelbeschreibung da
           } else {
-//echo "artikel da";
-            $artikel_da = true;  // voreinstellung
+            $artikel_da = true;  // voreinstellung artikel_detail enthält den gerenderten Artikel
           }
           // in artikel_detail ist der gerendrte Artikel
           echo "<div class='album_preview_item'>\n";            // flex item
 //echo "album_preview_item  Picture['name'] " . $Picture['filename'] . "  <br>";  
           $urldetail="";
-          if ($detailseite_da && $artikel_da) {            // seite und artikel vorhanden info Button ausgeben
+          if ($detailseite_da && $artikel_da) {            // seite und artikel vorhanden
             $parameter = "?name=$name&page=full" ;   // fuer link Detail-seitenaufruf
             $urldetail = "{{link_url::$detailseite}}$parameter";  // aufbereitete Url für detailseite
             $onc="onClick='location.href=\"$urldetail\"'";
@@ -168,9 +144,7 @@ EOT;
           echo "<img   class='detail-img-zoom' src='$hourglass' data-src='" . $Picture['path'] . "' alt='" . $Picture['alt'] . "'  $onc/>\n";
           // versteckter div für die Detail Darstellung ausgeben div wird per hover js s. oben auf .logo eingeblendet
           $atd=str_replace ( "schmuck-detail" , "schmuck-detail-inside" , $artikel_detail );   //  dient dazu, dass durch die versteckten divs kein zoom ausgelöst wird
-//echo "len atd ".strlen($atd)."<br>";
           echo "<div class='article-detail' style='display:none'>$atd</div>";
-//break; // !!!!!!!!!!!!!!!!!!!!!! nur ein bild
         }  // foreach pictures
       } // end arrPictures
     } // end displayimages
@@ -186,42 +160,31 @@ EOT;
     if ($this->style) {
       $mystyle = "style='" . $this->style . "'";
     }
+    $gcPictureSorting=$this->gcPictureSorting;
+    $gcPictureSortingDirection=$this->gcPictureSortingDirection;
+    echo 'gcPictureSorting: '.$gcPictureSorting.' gcPictureSortingDirection: '.$gcPictureSortingDirection.'<br>';
+    
     echo "<div class='".$this->class." gallery_creator block ". $this->cssID. "' ".$mystyle.">\n";    // div über alle alben
 
       if ($this->headline) {
         echo "<" . $this->hl . ">" . $this->headline . "</" . $this->hl . ">";
       }
-/*
-$vars = get_defined_vars();
-echo '<ul>';
-foreach ($vars as $key => $value) {
-    echo '<li><strong>'.htmlspecialchars($key).'</strong>'; 
-    //echo $value;
-    echo '</li>';
-}
-echo '</ul>';
-*/
-//      if (count($this->arrAlbums)>0){              // schleife über alle Alben
       if (count($this->albums)>0){              // schleife über alle Alben
       echo "<ul class='list_albums'>\n";         // alben werden noch in einer liste abgelegt
-//      foreach ($this->arrAlbums as $Album) {
       foreach ($this->albums as $Album) {
+//echo '<p>Albumname: '.$Album['name'].' Albumcaption: '.$Album['caption'].' AlbumId '.$Album['id'].'</p>';
           echo "<li>";
             $atext =  $Album['caption'] != "" ? $Album['caption']:$Album['name'];
             echo "<h2>" . mb_strtolower ($atext) . "</h2>\n";
             echo "<div class='album_preview'>\n";       // div um ein album
-//echo "<p>Albumname:     " . $Album['name']. "</p>";
-//echo "<p>Albumcomentar: " . $Album['comment'] . "</p>";
             // Bilder zum Album einlesen
-              $pictures = GalleryCreatorPicturesModel::findBy('pid', $Album['id']); // 'pid' ist die Album-ID (Parent-ID)
-//echo "AlbumId ".$Album['id']."<br>";
+              $pictures = GalleryCreatorPicturesModel::findBy('pid', $Album['id'], array('order' => $gcPictureSorting.' '.$gcPictureSortingDirection)); // 'pid' ist die Album-ID (Parent-ID)
               if ($pictures !== null) {
                 // Durch alle Bilder iterieren
                 $arrPictures = array();
                 while ($pictures->next()) {
                   // build up $arrPictures
                   if ($pictures->published) {
-//echo "strImageSrc $strImageSrc<br>";
                     $filePath = \FilesModel::findByUuid($pictures->uuid)->path;
                     $objFile = new \File($filePath, true);
                     $strImageSrc = $objFile->filename;
@@ -241,7 +204,6 @@ echo '</ul>';
                       'href'             => TL_FILES_URL . $href, //[string] path to media (video, picture, sound...)
                       'filename'         => $objFile->filename,  //[string] filename without extension
                     );
-//echo "single_image_url: ".$arrPicture['single_image_url']."<br>\n";
                     $arrPictures[$pictures->id] = $arrPicture;
                   }
                 } // foreach images
@@ -250,14 +212,14 @@ echo '</ul>';
               }
               if ($arrPictures) {
                 // detail seite bestimmen Bilder ausgeben
-                $detailseite = "detail-$palias";
+                $detailseite = "detail-$palias";     // falls es eine Seitenspezifische Detail-Seite geben sollte
 //echo "PBD Pictures da detailseite $detailseite<br>";
-                displayImages($arrPictures,$detailseite,$this->imagemargin);
+                //displayImages($arrPictures,$detailseite,$this->imagemargin);
+                displayImages($arrPictures,$detailseite);
               } else { 
 //echo "keine Pictures"; 
               }
             echo "</div>";  // class album_preview
-//           echo "ende album<br>";
           echo "</li>\n";
         }          // foreach album schleife über alle Alben
         echo "</ul>\n";  // ende ul class list_albums
