@@ -162,7 +162,7 @@ EOT;
     }
     $gcPictureSorting=$this->gcPictureSorting;
     $gcPictureSortingDirection=$this->gcPictureSortingDirection;
-    echo 'gcPictureSorting: '.$gcPictureSorting.' gcPictureSortingDirection: '.$gcPictureSortingDirection.'<br>';
+//echo 'gcPictureSorting: '.$gcPictureSorting.' gcPictureSortingDirection: '.$gcPictureSortingDirection.'<br>';
     
     echo "<div class='".$this->class." gallery_creator block ". $this->cssID. "' ".$mystyle.">\n";    // div über alle alben
 
