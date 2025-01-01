@@ -42,6 +42,7 @@ class DetailArtikelDisplay extends Module
       /* 
        *  erstellung linke column
        */
+      $spalte="<div class='box'></div>";             // nimmt den Text für Spalte auf
       $spalte="";             // nimmt den Text für Spalte auf
       if ($page=="full") {
         $schmuckArtikel = ContentModel::findBy(
@@ -137,6 +138,7 @@ class DetailArtikelDisplay extends Module
                      strpos($picture, '.webm') !== false ||
                      strpos($picture, '.mp3') !== false
              ) {
+            $spalte.='<a href="'.$picture.'" class="glightbox2" data-lightbox="box">';
             $spalte.='<div class="ratio ratio-1x1">';
               //$debugtxt.="!!MP4 Picture: $picture<br>";
               $spalte.='<video  autoplay muted loop playsinline>';
@@ -146,8 +148,11 @@ class DetailArtikelDisplay extends Module
                 $spalte.='Ihr Browser unterstützt dieses Format nicht';
               $spalte.='</video>';
             $spalte.='</div>';
+            $spalt.='</a>';
           } else {
+            $spalte.='<a href="'.$picture.'" class="glightbox" data-lightbox="box" >';
             $spalte.= '<img src="'.$picture.'" class="d-block w-100" alt=" Bild: '.$i.' title="tit $i">';
+            $spalte.='</a>';
           }
           $spalte.= "</div>\n";
           $i++;
