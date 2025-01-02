@@ -1,6 +1,8 @@
 <?php
 
 namespace Pbdkn\ContaoBesslichschmuck\Resources\contao\modules;
+use Contao\System;
+
 use Contao\Input;
 use Contao\Module;
 use Contao\ContentModel;
@@ -13,6 +15,8 @@ class DetailArtikelDisplay extends Module
 {
     protected $strTemplate = 'fe_detail_artikel_module';
 
+    private $besslichUtil;
+
     /**
      * Modul-Konstruktor
      */
@@ -23,6 +27,17 @@ class DetailArtikelDisplay extends Module
         parent::__construct($objModule, $strColumn);
     }
     */
+    /**
+     * Modul initialisieren
+     */
+    public function generate()
+    {
+
+        $container = System::getContainer();
+        $this->besslichUtil=$besslichUtil = $container->get('Pbdkn.ContaoBesslichschmuck.util.besslich_util');
+
+        return parent::generate();
+    }
     /**
      * Verarbeite die Daten und fülle das Template
      */
@@ -148,7 +163,7 @@ class DetailArtikelDisplay extends Module
                 $spalte.='Ihr Browser unterstützt dieses Format nicht';
               $spalte.='</video>';
             $spalte.='</div>';
-            $spalt.='</a>';
+            $spalte.='</a>';
           } else {
             $spalte.='<a href="'.$picture.'" class="glightbox" data-lightbox="box" >';
             $spalte.= '<img src="'.$picture.'" class="d-block w-100" alt=" Bild: '.$i.' title="tit $i">';
@@ -196,6 +211,20 @@ class DetailArtikelDisplay extends Module
       }
       $this->Template->kontaktanfrage=$spalte;
 //      $debugtxt.="kontaktanfrage ok<br>";  
+        $preisListenArray=$schmuckArtikel->preisliste;
+      $preisArtikelNamen=[];
+      $preisArtikelNamen[]=$name;
+      
+      if (isset($preisListenArray) &&  ($preisListenArray!= '')) {  // prüfen ob zusaetzliche Preise  da  
+            $arr =  deserialize($preisListenArray, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
+            foreach ($arr as $k=>$v) {
+              $preisArtikelNamen[]=$v;
+            }   
+      }
+      $this->Template->divpreisliste='<strong>preise</strong><br>'.$this->besslichUtil->createPreislisteRender('23',$preisArtikelNamen);
+        
+        //echo 'preisListenArray count: '.$preisListenArray.'<br>';                                            
+
       $this->Template->debugtxt = $debugtxt;
     }
 }
