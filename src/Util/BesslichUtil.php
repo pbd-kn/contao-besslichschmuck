@@ -55,9 +55,31 @@ class BesslichUtil
     }
     return $resarr;
   }  
+ /* 
+   * erzeugt eine gerenderte Preisliste 
+   *              für den $schmuckartikel
+   *              und macht evtl. die deserialize für die zusatzartikel
+   * Art = EK Einkauf
+   *     = 23 VK 2.3
+   *     = 25 VK 2.5
+   *  Default bei falscher eingabe 23
+   */
+   public function createFullPreislisteRender (string $art, $schmuckartikel,  $serialarrNamen): string
+  {
+      $preisArtikelNamen=[];
+      $preisArtikelNamen[]=$schmuckartikel;  // preis des schmuckartikel selbst
+      
+      if (isset($serialarrNamen) &&  ($serialarrNamen!= '')) {  // prüfen ob zusaetzliche Preise  da  
+            $arr =  deserialize($serialarrNamen, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
+            foreach ($arr as $k=>$v) {
+              $preisArtikelNamen[]=$v;  // zusatzartikel übenehmen
+            }   
+      }
+      return $this->createPreislisteRender($art,$preisArtikelNamen);  
+  }
   
   /* 
-   * erzeugt eine gerenderte Preisliste
+   * erzeugt eine gerenderte Preisliste aller in array $arrNamen enthaltenen Felder
    * Art = EK Einkauf
    *     = 23 VK 2.3
    *     = 25 VK 2.5
@@ -77,7 +99,6 @@ class BesslichUtil
         $indPaar='PreisPaarEK';
       }
       $html=$c->div(array("class"=>"preistabelle"));
-      //$html.="indStueck $indStueck indPaar $indPaar<br>";
       $html.=$c->table(array("class"=>"tablepreistabelle"));
       $html.=$c->tbody();      
       foreach ($arrNamen as $name) {
@@ -104,7 +125,6 @@ class BesslichUtil
 //          $html.='<br>';
         }
         $html.=$c->end_tr();
-
       }
       $html.=$c->end_tbody();
       $html.=$c->end_table();

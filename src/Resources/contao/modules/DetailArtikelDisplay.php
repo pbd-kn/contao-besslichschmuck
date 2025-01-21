@@ -211,7 +211,7 @@ class DetailArtikelDisplay extends Module
       }
       $this->Template->kontaktanfrage=$spalte;
 //      $debugtxt.="kontaktanfrage ok<br>";  
-        $preisListenArray=$schmuckArtikel->preisliste;
+/*        $preisListenArray=$schmuckArtikel->preisliste;
       $preisArtikelNamen=[];
       $preisArtikelNamen[]=$name;
       
@@ -221,7 +221,9 @@ class DetailArtikelDisplay extends Module
               $preisArtikelNamen[]=$v;
             }   
       }
-      $this->Template->divpreisliste='<strong>preise</strong><br>'.$this->besslichUtil->createPreislisteRender('23',$preisArtikelNamen);
+      //$this->Template->divpreisliste='<strong>preise</strong><br>'.$this->besslichUtil->createPreislisteRender('23',$preisArtikelNamen);
+*/
+      $this->Template->divpreisliste='<strong>preise</strong><br>'.$this->besslichUtil->createFullPreislisteRender('23',$name,$schmuckArtikel->preisliste);
         
         //echo 'preisListenArray count: '.$preisListenArray.'<br>';                                            
 

@@ -118,6 +118,7 @@ class ContentSchmuckartikel extends \Contao\ContentElement
       } else {
         $this->Template->schmuckImage="";
       }
+/*
       $preisArtikelNamen=[];
       $preisArtikelNamen[]=$this->schmuckartikelname;
       
@@ -127,7 +128,9 @@ class ContentSchmuckartikel extends \Contao\ContentElement
               $preisArtikelNamen[]=$v;
             }   
       }
-      $this->Template->divpreisliste=$this->besslichUtil->createPreislisteRender('23',$preisArtikelNamen);
+      //$this->Template->divpreisliste=$this->besslichUtil->createPreislisteRender('23',$preisArtikelNamen);
+*/
+      $this->Template->divpreisliste='<strong>preise</strong><br>'.$this->besslichUtil->createFullPreislisteRender('23',$this->schmuckartikelname,$this->preisliste);
     }
 }
 

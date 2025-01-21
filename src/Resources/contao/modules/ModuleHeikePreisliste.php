@@ -228,6 +228,7 @@ class ModuleHeikePreisliste extends Module
           } else { 
             $errArray[]='Kein Artikeltext zu '.$artikelname;continue;
           }
+          /*
           if (isset($dataArr['artikelzusatz']))$arr['artikelzusatz']=$dataArr['artikelzusatz'];
           else $arr['artikelzusatz']="";
 
@@ -240,6 +241,8 @@ class ModuleHeikePreisliste extends Module
           $artikelNmListe[]=$artikelname;
           foreach ($arrZus as $nm) $artikelNmListe[]=$nm;
           $arr['PreislisteRend']=$this->besslichUtil->createPreislisteRender ($strpreiskategorie, $artikelNmListe);
+*/
+          $arr['PreislisteRend']='<strong>preise</strong><br>'.$this->besslichUtil->createFullPreislisteRender('23',$artikelname,$dataArr['preisliste']);
           if (isset($dataArr['zusatzinfo']))$arr['zusatzinfo']=$dataArr['zusatzinfo'];
           else $arr['zusatzinfo']="";
           if (isset($dataArr['customTpl']))$arr['customTpl']=$dataArr['customTpl'];
