@@ -254,7 +254,7 @@
     border-left: 20px solid var(--hb-arikel-img-border);;  /* Dreieck zeichnen */
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-      opacity: 0.2;
+    opacity: 0.5;          /* Movepfeil helligkeit */
 
 }
 /*            Styling startseite  */
@@ -284,13 +284,20 @@
 .startseite.item8 img{ width:8em; }
 .startseite.item9 img{ width:18em; }
 
-  @media screen and (min-width: 992px) {
+@media screen and (min-width: 992px) {
     .carousel {
       max-width: 90%;
       margin-left: 1em;
-      margin-bottom: 50px;  // damit nächster div noch platz hat;       
+      margin-bottom: 5em;  // damit nächster div noch platz hat;       
     }
-  }
+}
+@media screen and (max-width: 768px) {
+    .carousel {
+        max-width: 100%;
+        margin-left: 0;
+        margin-bottom: 5em; /* Weniger Platz unten für kompakte Darstellung */
+    }
+}
   
 /* css mediaprint */
 @media print {

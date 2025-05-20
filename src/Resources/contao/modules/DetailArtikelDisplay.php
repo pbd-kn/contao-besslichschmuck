@@ -190,7 +190,7 @@ class DetailArtikelDisplay extends Module
         $spalte.=   "var myCarousel = document.querySelector('#carouselDetailIndicators');\n";
         $spalte.=   "if (myCarousel) {\n";
         $spalte.=    "console.log('#carouselDetailIndicators gefunden:' + myCarousel);\n";
-        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 10000 , ride: 'carousel'});\n";
+        $spalte.=    "var carouselInstance = new bootstrap.Carousel(myCarousel,{ interval: 3000 , ride: 'carousel'});\n";
         $spalte.=    "console.log('Bootstrap Carousel-Instanz: ', carouselInstance);\n";
         $spalte.="  } else {\n";
         $spalte.=     "console.error('#carouselDetailIndicators wurde nicht gefunden!');\n";
