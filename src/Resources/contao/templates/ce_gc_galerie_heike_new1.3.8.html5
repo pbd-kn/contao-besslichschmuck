@@ -1,5 +1,5 @@
 <?php
-
+/* ist wohl veraltet. (Sicherung ) die richtige ist ce_gallery_creator_heike.html5 */
 // ce element zum auflisten aller schmuckartikel die aus den Bildern des Galleriecreators stammen
 //echo "ce_gc_galerie_heike.html5 <br>";
 /* CSS for the frontend-output */

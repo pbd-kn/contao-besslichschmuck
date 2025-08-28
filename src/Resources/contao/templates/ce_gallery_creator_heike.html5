@@ -31,19 +31,19 @@ global $objPage;
         }
         jQuery(this).addClass('iconborder');
         oldicon=this;
-console.log("pbd -> hover");
+//console.log("pbd -> hover");
 //debugger;                
         // position bestimmen
         var container=jQuery(this).closest('#main');   // position main <main id="main">
         var containerRect = jQuery(container)[0].getBoundingClientRect();
-console.log("pbd containerRect.top: "+containerRect.top+" containerRect.right: "+containerRect.right+" containerRect.bottom: "+containerRect.bottom+" containerRect.left: "+containerRect.left);      
+//console.log("pbd containerRect.top: "+containerRect.top+" containerRect.right: "+containerRect.right+" containerRect.bottom: "+containerRect.bottom+" containerRect.left: "+containerRect.left);      
         var acl=jQuery(this).closest('.album_preview_item');   // <div class="album_preview_item">
         var elemRect = jQuery(acl)[0].getBoundingClientRect(); // rechteck um acl
-console.log("pbd elemRect.top: "+elemRect.top+" elemRect.right: "+elemRect.right+" elemRect.bottom: "+elemRect.bottom+" elemRect.left: "+elemRect.left);      
+//console.log("pbd elemRect.top: "+elemRect.top+" elemRect.right: "+elemRect.right+" elemRect.bottom: "+elemRect.bottom+" elemRect.left: "+elemRect.left);      
         var offset   = elemRect.top - containerRect.top;  
-console.log("pbd containerRect "+containerRect+"offset " + offset);
+//console.log("pbd containerRect "+containerRect+"offset " + offset);
         var at = jQuery(acl).find('.article-detail').html();
-console.log('pbd at ' + at);
+//console.log('pbd at ' + at);
 /*
         if (at.indexOf('existiert leider nicht') !== -1 ) {   // duerfte eigentlich nicht mhr passiern, da jetzt das Imgage als default drinn ist
           var res = at.split('"');
@@ -51,15 +51,15 @@ console.log('pbd at ' + at);
         }
 */
         artikel=jQuery(acl).find('.article-detail')[0];
-console.log('pbd artikel ' + artikel);
+//console.log('pbd artikel ' + artikel);
         
         var logo =  jQuery(container).find('.logo').html(at);        // schreibe an die Stelle von Logo html at
         var l = jQuery(container).find('.logo');
         l.css('position', 'relative');
         l.css('top', offset+'px');
-console.log('pbd set position von top ' + offset +'px');
+//console.log('pbd set position von top ' + offset +'px');
         l.focus();
-console.log("pbd <- hover");
+//console.log("pbd <- hover");
         },                                       
         function() {
           //jQuery(this).removeClass('iconborder');
