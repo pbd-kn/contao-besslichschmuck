@@ -236,4 +236,4 @@ EOT;
 
 <!-- Variante A – Long-Touch-Script aus dem Bundle contaobesslichschmuck 
 dieses script soll verhindern, dass beim smartphone beim srollen nicht aus versehen ein touch event ausgelöst wird -->
-<script src="{{ asset('bundles/contaobesslichschmuck/js/gallery-touch.js') }}"></script>
+<script src="<?= $this->asset('bundles/contaobesslichschmuck/js/gallery-touch.js'); ?>"></script>
