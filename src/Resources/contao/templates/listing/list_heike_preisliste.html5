@@ -68,9 +68,9 @@ if ($this->per_page) {
           echo '<div class="widget widget-select">';
             echo '<label for="ctrl_per_kategorie" class="invisible">'.$this->preisKategorie_label.'</label>';
             echo '<select name="per_kategorie" id="ctrl_per_kategorie" class="select">';
-              echo '<option value="EK"';if ('EK' == $this->preiskategorie)echo 'selected';echo '>EK</option>';
+              //echo '<option value="EK"';if ('EK' == $this->preiskategorie)echo 'selected';echo '>EK</option>';
               echo '<option value="23"';if ('23' == $this->preiskategorie)echo 'selected';echo '>23</option>';
-              echo '<option value="25"';if ('25' == $this->preiskategorie)echo 'selected';echo '>25</option>';
+              //echo '<option value="25"';if ('25' == $this->preiskategorie)echo 'selected';echo '>25</option>';
             echo '</select>';
           echo '</div>';
           echo '<div class="widget widget-submit">';
@@ -88,7 +88,7 @@ echo "<div class='list-headline'>";
   if ($this->headline) {
     echo '<'.$this->hl.'>'.$this->headline.'</'.$this->hl.'>';
   }
-  if ($this->per_kategorie) echo "<div class='list-Preis noPrint'>Preise aus Preis".$this->per_kategorie."<br></div>";
+  //if ($this->per_kategorie) echo "<div class='list-Preis noPrint'>Preise aus Preis".$this->per_kategorie."<br></div>";
 echo '</div>';
 if ($this->searchable && $this->for && empty($this->tbody)) {
       echo $this->no_results;
@@ -111,7 +111,12 @@ if ($this->searchable && $this->for && empty($this->tbody)) {
         $subkategorie=$row['Subkategorie'];                          // Zwischenspeicher für subkategorie
         $imgstr=$row['imgstr'];                          // Zwischenspeicher für subkategorie
         $text=$row['text'];                          // Zwischenspeicher für subkategorie
-        $artikelzusatz=$row['artikelzusatz'];                          // Zwischenspeicher für subkategorie
+        if (array_key_exists('artikelzusatz', $row)) {
+            $artikelzusatz = $row['artikelzusatz'];
+        } else {
+            $artikelzusatz = null;
+        }
+
         $PreislisteRend=$row['PreislisteRend'];                          // Zwischenspeicher für subkategorie        
         $zusatzinfo=$row['zusatzinfo'];                          // Zwischenspeicher für subkategorie
         $customTpl=$row['customTpl'];                          // Zwischenspeicher für subkategorie
@@ -142,3 +147,84 @@ if (count($this->errArr)>0) {  // Fehler ausgeben
   echo "</div>";
 }
 ?>
+<style>
+@media print {
+
+  /* ---------- ALLES NICHT DRUCKEN ---------- */
+  .noPrint,
+  .list_search,
+  .list_per_page,
+  .select_Preiskategorie,
+  .pagination {
+    display: none !important;
+  }
+
+  /* ---------- SEITENRAND ---------- */
+  @page {
+    margin: 20mm;
+  }
+
+  body {
+    font-size: 9pt;
+    line-height: 1.2;
+  }
+
+  /* ---------- ÜBERSCHRIFT ---------- */
+  .list-headline h1,
+  .list-headline h2,
+  .list-headline h3 {
+    font-size: 12pt;
+    margin-bottom: 5mm;
+  }
+
+  /* ---------- TABELLE ---------- */
+  table.all_records {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  table.all_records th,
+  table.all_records td {
+    padding: 4px;
+    font-size: 8.5pt;
+    vertical-align: top;
+  }
+
+  table.all_records th {
+    border-bottom: 1px solid #000;
+  }
+
+  table.all_records td {
+    border-bottom: 1px solid #ccc;
+  }
+
+  /* ---------- BILDER ---------- */
+  img.artikelImgList {
+    max-width: 60px;
+    max-height: 60px;
+  }
+
+  /* ---------- SPALTENBREITEN ---------- */
+  .headBild,
+  .bodyImg {
+    width: 20%;
+  }
+
+  .headText,
+  .bodyText {
+    width: 20em;
+  }
+
+  .headPreisliste,
+  .bodyPreisliste {
+    width: 30%;
+  }
+
+  /* ---------- ZEILENUMBRÜCHE ---------- */
+  tr {
+    page-break-inside: avoid;
+  }
+
+}
+</style>
+

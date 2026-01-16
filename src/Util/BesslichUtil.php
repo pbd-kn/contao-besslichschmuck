@@ -164,7 +164,7 @@ class BesslichUtil
         $dataArr['schmuckartikelname']=$schmuckartikel->schmuckartikelname;
         //$text = preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $schmuckartikel->text);
         $dataArr['text']=$schmuckartikel->text;
-        $dataArr['singleSRC']=utf8_encode($schmuckartikel->singleSRC);
+        $dataArr['singleSRC']=utf8_encode((string)$schmuckartikel->singleSRC);
         // Suche das FileModel anhand der UUID
         $fileModel = FilesModel::findByUuid($schmuckartikel->singleSRC);
         if ($fileModel === null) {

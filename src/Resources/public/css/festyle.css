@@ -31,6 +31,10 @@
     background-image: url("/bundles/contaobesslichschmuck/icons/paarpreis.png");
   }
 
+/* styling detailansicht */
+  .detail_text {
+    padding-top: 1rem;            /* abstand zum indicator carousell */
+  }
 /* styling artikelimage */
 
   .artikelImg {
@@ -159,7 +163,7 @@
     }
     .carousel-indicators {
       list-style: none; /* Entfernt die Zahlen */
-      margin-bottom: -4em;
+      margin-bottom: -0.8em !important;
     }
     .carousel-control-prev:hover, .carousel-control-next:hover {
       background:transparent;
