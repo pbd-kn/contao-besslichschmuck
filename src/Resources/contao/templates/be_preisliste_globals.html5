@@ -1,0 +1,141 @@
+<?php $this->extend('be_main'); ?>
+
+<?php $this->block('main'); ?>
+<style>
+.hp-backend { margin: 18px; max-width: 1180px; color: #222; font: 13px/1.45 Arial, sans-serif; }
+.hp-backend h2 { margin: 0 0 16px; font-size: 22px; font-weight: 600; }
+.hp-panel { margin: 0 0 18px; border: 1px solid #cdd3d8; border-radius: 3px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.hp-panel__head { padding: 12px 16px; border-bottom: 1px solid #e5e9ec; background: #f6f7f8; font-weight: 600; }
+.hp-panel__body { padding: 16px; }
+.hp-grid { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 4px 18px; }
+.hp-field { min-width: 0; margin: 0 0 14px; }
+.hp-field label { display: block; margin: 0 0 5px; font-weight: 600; color: #444; }
+.hp-field input { box-sizing: border-box; width: 100%; padding: 7px 8px; border: 1px solid #aaa; border-radius: 2px; font: 13px Arial, sans-serif; }
+.hp-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hp-table-wrap { overflow-x: auto; }
+.hp-table { width: 100%; border-collapse: collapse; }
+.hp-table th, .hp-table td { padding: 8px 10px; border-bottom: 1px solid #e5e9ec; text-align: left; vertical-align: top; }
+.hp-table th { background: #f6f7f8; font-weight: 600; white-space: nowrap; }
+.hp-table td:last-child { white-space: nowrap; text-align: right; }
+.hp-inline-form { margin: 0; }
+.hp-note { margin: 0 0 14px; padding: 10px 12px; border: 1px solid #cdd3d8; background: #f8fafc; color: #444; }
+.hp-code { font-family: Consolas, monospace; }
+@media (max-width: 900px) { .hp-backend { margin: 12px; } .hp-grid { grid-template-columns: 1fr; } }
+</style>
+
+<?php $editRow = $this->editRow ?: array(); ?>
+
+<div class="hp-backend">
+  <h2><?= htmlspecialchars($this->headline) ?></h2>
+  <?= Contao\Message::generate() ?>
+
+  <p class="hp-note">
+    Diese Variablen werden in Formelregeln ueber ihren Namen verwendet, z.B.
+    <span class="hp-code">material + arbeitszeit + R5</span>. Die Defaultwerte werden automatisch angelegt,
+    koennen hier aber ueberschrieben werden.
+  </p>
+
+  <section class="hp-panel">
+    <div class="hp-panel__head">Variable speichern</div>
+    <div class="hp-panel__body">
+      <form method="post">
+        <input type="hidden" name="FORM_SUBMIT" value="tl_preisliste_globals">
+        <input type="hidden" name="REQUEST_TOKEN" value="<?= REQUEST_TOKEN ?>">
+        <input type="hidden" name="action" value="save">
+
+        <div class="hp-grid">
+          <div class="hp-field">
+            <label for="ctrl_param_key">Formelname</label>
+            <input type="text" name="param_key" id="ctrl_param_key" value="<?= htmlspecialchars((string) ($editRow['param_key'] ?? '')) ?>" required>
+          </div>
+          <div class="hp-field">
+            <label for="ctrl_label">Beschreibung</label>
+            <input type="text" name="label" id="ctrl_label" value="<?= htmlspecialchars((string) ($editRow['label'] ?? '')) ?>">
+          </div>
+          <div class="hp-field">
+            <label for="ctrl_param_value">Wert</label>
+            <input type="text" name="param_value" id="ctrl_param_value" value="<?= htmlspecialchars((string) ($editRow['param_value'] ?? '')) ?>" required>
+          </div>
+          <div class="hp-field">
+            <label for="ctrl_unit">Einheit</label>
+            <input type="text" name="unit" id="ctrl_unit" value="<?= htmlspecialchars((string) ($editRow['unit'] ?? '')) ?>">
+          </div>
+        </div>
+
+        <div class="hp-actions">
+          <button class="tl_submit" type="submit">Speichern</button>
+          <?php if ($editRow): ?>
+            <a class="tl_submit" href="<?= $this->globalsUrl ?? '' ?>">Neue Variable</a>
+          <?php endif; ?>
+          <a class="tl_submit" href="<?= $this->backUrl ?>">Zur&uuml;ck</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="hp-panel">
+    <div class="hp-panel__head">Gespeicherte Variablen</div>
+    <div class="hp-table-wrap">
+      <table class="hp-table">
+        <thead>
+          <tr>
+            <th>Formelname</th>
+            <th>Beschreibung</th>
+            <th>Wert</th>
+            <th>Einheit</th>
+            <th>Geaendert</th>
+            <th>Aktion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($this->rows as $row): ?>
+            <tr>
+              <td><?= htmlspecialchars($row['param_key']) ?></td>
+              <td><?= htmlspecialchars($row['label']) ?></td>
+              <td><?= htmlspecialchars($row['param_value']) ?></td>
+              <td><?= htmlspecialchars($row['unit']) ?></td>
+              <td><?= htmlspecialchars($row['updated_at']) ?></td>
+              <td>
+                <a class="tl_submit" href="?edit=<?= urlencode($row['param_key']) ?>">Bearbeiten</a>
+                <form class="hp-inline-form" method="post" onsubmit="return confirm('Variable wirklich loeschen?');">
+                  <input type="hidden" name="FORM_SUBMIT" value="tl_preisliste_globals_delete">
+                  <input type="hidden" name="REQUEST_TOKEN" value="<?= REQUEST_TOKEN ?>">
+                  <input type="hidden" name="action" value="delete">
+                  <input type="hidden" name="param_key" value="<?= htmlspecialchars($row['param_key']) ?>">
+                  <button class="tl_submit" type="submit">Loeschen</button>
+                </form>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="hp-panel">
+    <div class="hp-panel__head">Defaultwerte als Referenz</div>
+    <div class="hp-table-wrap">
+      <table class="hp-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Beschreibung</th>
+            <th>Default</th>
+            <th>Einheit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($this->defaultRows as $row): ?>
+            <tr>
+              <td class="hp-code"><?= htmlspecialchars($row[0]) ?></td>
+              <td><?= htmlspecialchars($row[1]) ?></td>
+              <td><?= htmlspecialchars((string) $row[2]) ?></td>
+              <td><?= htmlspecialchars($row[3]) ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<?php $this->endblock(); ?>

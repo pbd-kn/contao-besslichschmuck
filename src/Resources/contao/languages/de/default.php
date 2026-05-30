@@ -9,3 +9,5 @@
  */
 $GLOBALS['TL_LANG']['CTE']['besslichschmuck']      = array('Besslich-Schmuck');
 $GLOBALS['TL_LANG']['CTE']['schmuckartikel'] = array('Schmuckartikel');
+
+$GLOBALS['TL_LANG']['MOD']['PreislisteKonfiguration'] = array('Preisliste Eingaben', 'Globale Variablen und Formelregeln der Preisliste pflegen.');

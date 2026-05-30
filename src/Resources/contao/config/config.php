@@ -8,15 +8,25 @@ $GLOBALS['BE_FFL']['schmuckartikel'] = 'schmuckartikel';
 $GLOBALS['BE_FFL']['comment'] = 'comment';
 
 
-if (TL_MODE == 'BE') {
-array_insert($GLOBALS['BE_MOD'], 1, array('Tabellen' => array()));
+$GLOBALS['BE_MOD']['Tabellen'] = $GLOBALS['BE_MOD']['Tabellen'] ?? array();
 $GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
    (
-	'tables'     => ['tl_heike_preisliste'],
-	'icon'       => 'bundles/contaobesslichschmuck/icons/formdata_all.gif',
+    'tables'     => ['tl_heike_preisliste'],
+    'icon'       => 'bundles/contaobesslichschmuck/icons/formdata_all.gif',
     'stylesheet' => 'bundles/contaobesslichschmuck/css/style.css',
     );
-}
+$GLOBALS['BE_MOD']['Tabellen']['PreislisteOdt'] = array
+   (
+    'tables'     => ['tl_heike_preisliste_odt'],
+    'icon'       => 'bundles/contaobesslichschmuck/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaobesslichschmuck/css/style.css',
+    );
+$GLOBALS['BE_MOD']['Tabellen']['PreislisteKonfiguration'] = array
+   (
+    'callback'   => 'Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\backend\PreislisteConfigBackendModule',
+    'icon'       => 'bundles/contaobesslichschmuck/icons/formdata.gif',
+    'stylesheet' => 'bundles/contaobesslichschmuck/css/style.css',
+    );
 
 /**
  * -------------------------------------------------------------------------

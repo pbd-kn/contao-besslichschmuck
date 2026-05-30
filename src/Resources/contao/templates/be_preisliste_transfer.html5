@@ -1,0 +1,56 @@
+<?php $this->extend('be_main'); ?>
+
+<?php $this->block('main'); ?>
+<style>
+.hp-backend { margin: 18px; max-width: 1180px; color: #222; font: 13px/1.45 Arial, sans-serif; }
+.hp-backend h2 { margin: 0 0 16px; font-size: 22px; font-weight: 600; }
+.hp-panel { margin: 0 0 18px; border: 1px solid #cdd3d8; border-radius: 3px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.hp-panel__head { padding: 12px 16px; border-bottom: 1px solid #e5e9ec; background: #f6f7f8; font-weight: 600; }
+.hp-panel__body { padding: 16px; }
+.hp-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hp-note { margin: 0 0 14px; padding: 10px 12px; border: 1px solid #cdd3d8; background: #f8fafc; color: #444; }
+.hp-fields { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.hp-fields li { padding: 3px 7px; border: 1px solid #cdd3d8; border-radius: 3px; background: #f6f7f8; font-family: Consolas, monospace; }
+</style>
+
+<div class="hp-backend">
+  <h2><?= htmlspecialchars($this->headline) ?></h2>
+  <?= Contao\Message::generate() ?>
+
+  <section class="hp-panel">
+    <div class="hp-panel__head">Übertragung</div>
+    <div class="hp-panel__body">
+      <p class="hp-note">
+        Es werden nur Felder übertragen, die in der DCA von <strong>tl_heike_preisliste</strong> beschrieben sind
+        und in beiden Tabellen als Spalte existieren. Die DCA-Datei wird dabei nicht verändert.
+      </p>
+
+      <p>
+        Quelle: <strong>tl_heike_preisliste_odt</strong> (<?= (int) $this->sourceCount ?> Datensätze)<br>
+        Ziel: <strong>tl_heike_preisliste</strong> (<?= (int) $this->targetCount ?> Datensätze)
+      </p>
+
+      <?php if (!$this->fields): ?>
+        <p class="tl_error">Keine passenden Felder gefunden oder die Zieltabelle existiert nicht.</p>
+      <?php else: ?>
+        <p>Diese Felder werden übernommen:</p>
+        <ul class="hp-fields">
+          <?php foreach ($this->fields as $field): ?>
+            <li><?= htmlspecialchars((string) $field) ?></li>
+          <?php endforeach; ?>
+        </ul>
+
+        <form method="post" style="margin-top:16px">
+          <input type="hidden" name="FORM_SUBMIT" value="tl_preisliste_transfer">
+          <input type="hidden" name="REQUEST_TOKEN" value="<?= REQUEST_TOKEN ?>">
+          <input type="hidden" name="action" value="transfer">
+          <div class="hp-actions">
+            <button class="tl_submit" type="submit">Jetzt übertragen</button>
+            <a class="tl_submit" href="<?= $this->backUrl ?>">Zurück</a>
+          </div>
+        </form>
+      <?php endif; ?>
+    </div>
+  </section>
+</div>
+<?php $this->endblock(); ?>
