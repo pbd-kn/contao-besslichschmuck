@@ -37,6 +37,9 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
                 'Artikel' => 'index'
             ]
         ],
+        'onsubmit_callback' => [
+            ['tl_heike_preisliste_odt', 'recalculatePairPrices'],
+        ],
 
     ],
 
@@ -185,7 +188,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
             'search'  => true,
             'sorting' => true,
             'filter'  => false,
-            'eval'    => ['rgxp'=>'digit'],
+            'eval'    => ['tl_class'=>'w50'],
             'sql'     => "varchar(255) NOT NULL default ''"
         ],
         'PreisPaar2_5' => [
@@ -195,7 +198,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
             'search'  => true,
             'sorting' => true,
             'filter'  => false,
-            'eval'    => ['rgxp'=>'digit'],
+            'eval'    => ['tl_class'=>'w50'],
             'sql'     => "varchar(255) NOT NULL default ''"
         ],
         'PreisStueck2_3' => [
@@ -205,7 +208,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
             'search'  => true,
             'sorting' => true,
             'filter'  => false,
-            'eval'    => ['rgxp'=>'digit'],
+            'eval'    => ['tl_class'=>'w50'],
             'sql'     => "varchar(255) NOT NULL default ''"
         ],
         'PreisPaar2_3' => [
@@ -215,7 +218,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
             'search'  => true,
             'sorting' => true,
             'filter'  => false,
-            'eval'    => ['rgxp'=>'digit'],
+            'eval'    => ['tl_class'=>'w50'],
             'sql'     => "varchar(255) NOT NULL default ''"
         ],
         'PreisStueckEK' => [
@@ -225,7 +228,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
             'search'  => true,
             'sorting' => true,
             'filter'  => false,
-            'eval'    => ['rgxp'=>'digit'],
+            'eval'    => ['tl_class'=>'w50'],
             'sql'     => "varchar(255) NOT NULL default ''"
         ],
         'PreisPaarEK' => [
@@ -235,7 +238,7 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
             'search'  => true,
             'sorting' => true,
             'filter'  => false,
-            'eval'    => ['rgxp'=>'digit'],
+            'eval'    => ['tl_class'=>'w50'],
             'sql'     => "varchar(255) NOT NULL default ''"
         ],
         'Beschreibung' => [
@@ -266,20 +269,20 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt'] = [
 
 $GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['palettes']['default'] =
     '{stammdaten_legend},Artikel,Kategorie,Subkategorie,Beschreibung;'
-    .'{kalkulation_basis_legend},bild,ag_in_g,ag_incl_verlust,au_in_g,au_incl_verlust,zeit_in_h,artikel_zusatz;'
+    .'{kalkulation_basis_legend},ag_in_g,ag_incl_verlust,au_in_g,au_incl_verlust,zeit_in_h,artikel_zusatz,ist_paar;'
     .'{steine_legend},stueck_1,steine_perlen_ek,steine_messe,artikel_2,stueck_2,furnituren_steine_ek,steine_messe_2,plattierung_oxidation,schnur_2;'
-    .'{preise_legend},ek,PreisStueckEK,PreisPaarEK,vkstk_ek_2_5_ungerundet,PreisStueck2_5,paarpreis_vk_2_5_ungerundet,PreisPaar2_5,vkstk_ek_2_3_ungerundet,PreisStueck2_3,vkpaar_ek_2_3_ungerundet,PreisPaar2_3;'
+    .'{preise_legend},ek,PreisStueckEK,PreisPaarEK,PreisStueck2_5,PreisPaar2_5,PreisStueck2_3,PreisPaar2_3;'
     .'{import_legend:hide},artikelnr,nochmals_artikel,leer_1,leer_2,reserve_1,reserve_2,reserve_3,reserve_4;'
     .'{template_legend:hide},listTpl';
 
 $technicalFields = array(
-    'bild' => 'Bild',
     'ag_in_g' => 'AG in g',
     'ag_incl_verlust' => 'AG inkl. Verlust',
     'au_in_g' => 'AU in g',
     'au_incl_verlust' => 'AU inkl. Verlust',
     'zeit_in_h' => 'Zeit in h',
     'artikel_zusatz' => 'Artikel Zusatz',
+    'ist_paar' => 'Als Paar verkauft',
     'stueck_1' => 'Stueck 1',
     'steine_perlen_ek' => 'Steine/Perlen EK',
     'steine_messe' => 'Steine Messe',
@@ -293,11 +296,7 @@ $technicalFields = array(
     'leer_2' => 'Leer 2',
     'artikelnr' => 'Artikelnummer',
     'ek' => 'EK',
-    'vkstk_ek_2_5_ungerundet' => 'VK Stueck 2,5 ungerundet',
-    'paarpreis_vk_2_5_ungerundet' => 'Paarpreis 2,5 ungerundet',
     'nochmals_artikel' => 'Nochmals Artikel',
-    'vkstk_ek_2_3_ungerundet' => 'VK Stueck 2,3 ungerundet',
-    'vkpaar_ek_2_3_ungerundet' => 'Paarpreis 2,3 ungerundet',
     'reserve_1' => 'Reserve 1',
     'reserve_2' => 'Reserve 2',
     'reserve_3' => 'Reserve 3',
@@ -319,6 +318,41 @@ foreach ($technicalFields as $fieldName => $label) {
     }
 }
 
+$GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields']['ist_paar']['inputType'] = 'checkbox';
+$GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields']['ist_paar']['eval'] = array('tl_class' => 'w50');
+$GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields']['ist_paar']['sql'] = "char(1) NOT NULL default ''";
+
+$formulaPlaceholders = array(
+    'ag_incl_verlust' => 'ag_in_g * (1 + C3)',
+    'au_incl_verlust' => 'au_in_g * (1 + C5)',
+    'stueck_1' => 'Anzahl Steine/Furnituren Stück 1',
+    'steine_messe' => 'stueck_1 * steine_messe, sonst steine_perlen_ek * 1.5',
+    'stueck_2' => 'Anzahl Steine/Furnituren Stück 2',
+    'furnituren_steine_ek' => 'Basis für Stück 2, wenn steine_messe_2 leer ist',
+    'steine_messe_2' => 'stueck_2 * steine_messe_2, sonst furnituren_steine_ek * 1.5',
+    'plattierung_oxidation' => 'z.B. D13 oder fester Betrag',
+    'schnur_2' => 'z.B. H5 oder fester Betrag',
+    'ek' => 'Material + Arbeitszeit + Steine/Furnituren + Plattierung + Schnur + Zuschläge',
+    'PreisStueckEK' => 'ceil(ek), wenn kein importierter Stück-EK vorhanden ist',
+    'PreisPaarEK' => 'Nur befüllen, wenn der Artikel als Paar verkauft wird',
+    'PreisStueck2_5' => 'ceil(PreisStueckEK * 2.5)',
+    'PreisPaar2_5' => 'ceil(PreisPaarEK * 2.5)',
+    'PreisStueck2_3' => 'ceil(PreisStueckEK * 2.3)',
+    'PreisPaar2_3' => 'ceil(PreisPaarEK * 2.3)',
+);
+
+foreach ($formulaPlaceholders as $fieldName => $placeholder) {
+    if (isset($GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields'][$fieldName])) {
+        unset($GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields'][$fieldName]['eval']['placeholder']);
+
+        if (!isset($GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields'][$fieldName]['label']) || !is_array($GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields'][$fieldName]['label'])) {
+            $GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields'][$fieldName]['label'] = array($fieldName, '');
+        }
+
+        $GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields'][$fieldName]['label'][1] = 'Default: '.$placeholder;
+    }
+}
+
 $GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields']['Beschreibung']['sql'] = "text NULL";
 
 
@@ -328,6 +362,63 @@ $GLOBALS['TL_DCA']['tl_heike_preisliste_odt']['fields']['Beschreibung']['sql'] =
 // diese Klasse wird benötigt um den Button Callback auf eine route umzulenktn
 class tl_heike_preisliste_odt extends Backend
 {
+    public function recalculatePairPrices(DataContainer $dc): void
+    {
+        if (!$dc->id) {
+            return;
+        }
+
+        $db = \Contao\Database::getInstance();
+        $row = $db
+            ->prepare('SELECT ist_paar, PreisStueckEK FROM tl_heike_preisliste_odt WHERE id=?')
+            ->execute($dc->id);
+
+        if (!$row->numRows) {
+            return;
+        }
+
+        if ((string) $row->ist_paar !== '1') {
+            $db
+                ->prepare("UPDATE tl_heike_preisliste_odt SET PreisPaarEK='', PreisPaar2_5='', PreisPaar2_3='' WHERE id=?")
+                ->execute($dc->id);
+
+            return;
+        }
+
+        $preisStueckEk = $this->parseDecimal((string) $row->PreisStueckEK);
+        if ($preisStueckEk <= 0) {
+            return;
+        }
+
+        $preisPaarEk = $preisStueckEk * 2;
+        $db
+            ->prepare('UPDATE tl_heike_preisliste_odt SET PreisPaarEK=?, PreisPaar2_5=?, PreisPaar2_3=? WHERE id=?')
+            ->execute(
+                number_format($preisPaarEk, 2, '.', ''),
+                number_format(ceil($preisPaarEk * 2.5), 2, '.', ''),
+                number_format(ceil($preisPaarEk * 2.3), 2, '.', ''),
+                $dc->id
+            );
+    }
+
+    private function parseDecimal(string $value): float
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return 0.0;
+        }
+
+        if (strpos($value, ',') !== false && strpos($value, '.') !== false) {
+            $value = str_replace('.', '', $value);
+            $value = str_replace(',', '.', $value);
+        } elseif (strpos($value, ',') !== false) {
+            $value = str_replace(',', '.', $value);
+        }
+
+        return is_numeric($value) ? (float) $value : 0.0;
+    }
+
     /**
      * Erzeugt den CSV-Import-Button mit einer Route.
      */

@@ -97,7 +97,7 @@ class PreislisteConfigController extends AbstractBackendController
         $template->fieldLabels = $this->preislisteFieldLabels();
         $template->q = $q;
         $template->backUrl = $this->backendUrl('PreislisteKonfiguration');
-        $template->editUrl = $this->backendUrl('Preisliste', array('table' => 'tl_heike_preisliste_odt'));
+        $template->editUrl = $this->backendUrl('PreislisteOdt', array('table' => 'tl_heike_preisliste_odt'));
 
         return $this->renderBackendTemplate($template);
     }
@@ -118,7 +118,7 @@ class PreislisteConfigController extends AbstractBackendController
         $template->fields = $fields;
         $template->q = '';
         $template->backUrl = $this->backendUrl('PreislisteKonfiguration');
-        $template->editUrl = $this->backendUrl('Preisliste', array('table' => 'tl_heike_preisliste_odt'));
+        $template->editUrl = $this->backendUrl('PreislisteOdt', array('table' => 'tl_heike_preisliste_odt'));
 
         return $this->renderBackendTemplate($template);
     }
@@ -237,6 +237,7 @@ class PreislisteConfigController extends AbstractBackendController
         $template = new BackendTemplate('be_preisliste_edit');
         $template->fieldGroups = $this->preislisteFieldGroups();
         $template->fieldLabels = $this->preislisteFieldLabels();
+        $template->fieldPlaceholders = $this->preislisteFieldPlaceholders();
         $template->headline = 'Datensatz ändern';
         $template->fields = $fields;
         $template->row = $row;
@@ -508,13 +509,13 @@ class PreislisteConfigController extends AbstractBackendController
     private function technicalPreislisteFields()
     {
         return array(
-            'bild',
             'ag_in_g',
             'ag_incl_verlust',
             'au_in_g',
             'au_incl_verlust',
             'zeit_in_h',
             'artikel_zusatz',
+            'ist_paar',
             'stueck_1',
             'steine_perlen_ek',
             'steine_messe',
@@ -528,11 +529,7 @@ class PreislisteConfigController extends AbstractBackendController
             'leer_2',
             'artikelnr',
             'ek',
-            'vkstk_ek_2_5_ungerundet',
-            'paarpreis_vk_2_5_ungerundet',
             'nochmals_artikel',
-            'vkstk_ek_2_3_ungerundet',
-            'vkpaar_ek_2_3_ungerundet',
             'reserve_1',
             'reserve_2',
             'reserve_3',
@@ -544,9 +541,9 @@ class PreislisteConfigController extends AbstractBackendController
     {
         return array(
             'Stammdaten' => array('Artikel', 'Kategorie', 'Subkategorie', 'Beschreibung'),
-            'Kalkulation Basis' => array('bild', 'ag_in_g', 'ag_incl_verlust', 'au_in_g', 'au_incl_verlust', 'zeit_in_h', 'artikel_zusatz'),
-            'Steine, Furnituren, Zuschlaege' => array('stueck_1', 'steine_perlen_ek', 'steine_messe', 'artikel_2', 'stueck_2', 'furnituren_steine_ek', 'steine_messe_2', 'plattierung_oxidation', 'schnur_2'),
-            'Preise und Zwischenergebnisse' => array('ek', 'PreisStueckEK', 'PreisPaarEK', 'vkstk_ek_2_5_ungerundet', 'PreisStueck2_5', 'paarpreis_vk_2_5_ungerundet', 'PreisPaar2_5', 'vkstk_ek_2_3_ungerundet', 'PreisStueck2_3', 'vkpaar_ek_2_3_ungerundet', 'PreisPaar2_3'),
+            'Kalkulation Basis' => array('ag_in_g', 'ag_incl_verlust', 'au_in_g', 'au_incl_verlust', 'zeit_in_h', 'artikel_zusatz', 'ist_paar'),
+            'Steine, Furnituren, Zuschläge' => array('stueck_1', 'steine_perlen_ek', 'steine_messe', 'artikel_2', 'stueck_2', 'furnituren_steine_ek', 'steine_messe_2', 'plattierung_oxidation', 'schnur_2'),
+            'Preise und Zwischenergebnisse' => array('ek', 'PreisStueckEK', 'PreisPaarEK', 'PreisStueck2_5', 'PreisPaar2_5', 'PreisStueck2_3', 'PreisPaar2_3'),
             'Import / Reserve' => array('artikelnr', 'nochmals_artikel', 'leer_1', 'leer_2', 'reserve_1', 'reserve_2', 'reserve_3', 'reserve_4'),
         );
     }
@@ -555,9 +552,7 @@ class PreislisteConfigController extends AbstractBackendController
     {
         return array(
             'PreisPaarEK',
-            'paarpreis_vk_2_5_ungerundet',
             'PreisPaar2_5',
-            'vkpaar_ek_2_3_ungerundet',
             'PreisPaar2_3',
         );
     }
@@ -569,18 +564,18 @@ class PreislisteConfigController extends AbstractBackendController
             'Kategorie' => 'Kategorie',
             'Subkategorie' => 'Subkategorie',
             'Beschreibung' => 'Beschreibung',
-            'bild' => 'Bild',
             'ag_in_g' => 'AG in g',
             'ag_incl_verlust' => 'AG inkl. Verlust',
             'au_in_g' => 'AU in g',
             'au_incl_verlust' => 'AU inkl. Verlust',
             'zeit_in_h' => 'Zeit in h',
             'artikel_zusatz' => 'Artikel Zusatz',
-            'stueck_1' => 'Stueck 1',
+            'ist_paar' => 'Als Paar verkauft',
+            'stueck_1' => 'Stück 1',
             'steine_perlen_ek' => 'Steine/Perlen EK',
             'steine_messe' => 'Steine Messe',
             'artikel_2' => 'Artikel 2',
-            'stueck_2' => 'Stueck 2',
+            'stueck_2' => 'Stück 2',
             'furnituren_steine_ek' => 'Furnituren/Steine EK',
             'steine_messe_2' => 'Steine Messe 2',
             'plattierung_oxidation' => 'Plattierung/Oxidation',
@@ -589,21 +584,39 @@ class PreislisteConfigController extends AbstractBackendController
             'leer_2' => 'Leer 2',
             'artikelnr' => 'Artikelnummer',
             'ek' => 'EK',
-            'PreisStueckEK' => 'Preis Stueck EK',
+            'PreisStueckEK' => 'Preis Stück EK',
             'PreisPaarEK' => 'Preis Paar EK',
-            'vkstk_ek_2_5_ungerundet' => 'VK Stueck 2,5 ungerundet',
-            'PreisStueck2_5' => 'Preis Stueck 2,5',
-            'paarpreis_vk_2_5_ungerundet' => 'Paarpreis 2,5 ungerundet',
+            'PreisStueck2_5' => 'Preis Stück 2,5',
             'PreisPaar2_5' => 'Preis Paar 2,5',
-            'vkstk_ek_2_3_ungerundet' => 'VK Stueck 2,3 ungerundet',
-            'PreisStueck2_3' => 'Preis Stueck 2,3',
-            'vkpaar_ek_2_3_ungerundet' => 'Paarpreis 2,3 ungerundet',
+            'PreisStueck2_3' => 'Preis Stück 2,3',
             'PreisPaar2_3' => 'Preis Paar 2,3',
             'nochmals_artikel' => 'Nochmals Artikel',
             'reserve_1' => 'Reserve 1',
             'reserve_2' => 'Reserve 2',
             'reserve_3' => 'Reserve 3',
             'reserve_4' => 'Reserve 4',
+        );
+    }
+
+    private function preislisteFieldPlaceholders()
+    {
+        return array(
+            'ag_incl_verlust' => 'ag_in_g * (1 + C3)',
+            'au_incl_verlust' => 'au_in_g * (1 + C5)',
+            'stueck_1' => 'Anzahl Steine/Furnituren für Stück 1',
+            'steine_messe' => 'stueck_1 * steine_messe, sonst steine_perlen_ek * 1.5',
+            'stueck_2' => 'Anzahl Steine/Furnituren für Stück 2',
+            'furnituren_steine_ek' => 'Basis für Stück 2, wenn steine_messe_2 leer ist',
+            'steine_messe_2' => 'stueck_2 * steine_messe_2, sonst furnituren_steine_ek * 1.5',
+            'plattierung_oxidation' => 'z.B. D13 oder fester Betrag',
+            'schnur_2' => 'z.B. H5 oder fester Betrag',
+            'ek' => 'material + arbeitszeit + stueck_1_messe + stueck_2_messe + plattierung_oxidation + schnur_2 + fixkosten_r5 + fixkosten_s + metall_zuschlag_s',
+            'PreisStueckEK' => 'ceil(ek), wenn kein importierter Stück-EK vorhanden ist',
+            'PreisPaarEK' => 'Nur befüllen, wenn der Artikel als Paar verkauft wird',
+            'PreisStueck2_5' => 'ceil(PreisStueckEK * 2.5)',
+            'PreisPaar2_5' => 'ceil(PreisPaarEK * 2.5)',
+            'PreisStueck2_3' => 'ceil(PreisStueckEK * 2.3)',
+            'PreisPaar2_3' => 'ceil(PreisPaarEK * 2.3)',
         );
     }
 
@@ -673,11 +686,7 @@ class PreislisteConfigController extends AbstractBackendController
                 continue;
             }
 
-            if (in_array($preislisteField, $this->preislistePairFields(), true)) {
-                $assignments[] = 't.'.$preislisteField.' = c.'.$catalogField;
-            } else {
-                $assignments[] = 't.'.$preislisteField.' = IF(t.'.$preislisteField." IS NULL OR t.".$preislisteField." = '', c.".$catalogField.', t.'.$preislisteField.')';
-            }
+            $assignments[] = 't.'.$preislisteField.' = IF(t.'.$preislisteField." IS NULL OR t.".$preislisteField." = '', c.".$catalogField.', t.'.$preislisteField.')';
         }
 
         if (!$assignments) {
@@ -858,7 +867,7 @@ class PreislisteConfigController extends AbstractBackendController
             return;
         }
 
-        if (!$this->columnExists('tl_heike_preisliste', 'Artikel') || !$this->columnExists('tl_heike_preisliste_odt', 'Artikel') || !$this->columnExists('tl_heike_preisliste_odt', 'PreisPaarEK')) {
+        if (!$this->columnExists('tl_heike_preisliste', 'Artikel') || !$this->columnExists('tl_heike_preisliste_odt', 'Artikel') || !$this->columnExists('tl_heike_preisliste_odt', 'ist_paar')) {
             return;
         }
 
@@ -876,14 +885,13 @@ class PreislisteConfigController extends AbstractBackendController
         $this->connection->executeStatement(
             'UPDATE tl_heike_preisliste t INNER JOIN tl_heike_preisliste_odt o ON LOWER(t.Artikel) = LOWER(o.Artikel) '.
             'SET '.implode(',', $set).' '.
-            "WHERE TRIM(COALESCE(o.PreisPaarEK, '')) = ''"
+            "WHERE COALESCE(o.ist_paar, '') <> '1'"
         );
     }
 
     private function catalogToPreislisteFieldMap()
     {
         return array(
-            'bild' => 'bild',
             'ag_in_g' => 'ag_in_g',
             'ag_incl_verlust' => 'ag_incl_verlust',
             'au_in_g' => 'au_in_g',
@@ -904,16 +912,9 @@ class PreislisteConfigController extends AbstractBackendController
             'artikelnr' => 'artikelnr',
             'ek' => 'ek',
             'preis_stueck_ek' => 'PreisStueckEK',
-            'preis_paar_ek' => 'PreisPaarEK',
-            'vkstk_ek_2_5_ungerundet' => 'vkstk_ek_2_5_ungerundet',
             'preis_stueck_2_5' => 'PreisStueck2_5',
-            'paarpreis_vk_2_5_ungerundet' => 'paarpreis_vk_2_5_ungerundet',
-            'preis_paar_2_5' => 'PreisPaar2_5',
             'nochmals_artikel' => 'nochmals_artikel',
-            'vkstk_ek_2_3_ungerundet' => 'vkstk_ek_2_3_ungerundet',
             'preis_stueck_2_3' => 'PreisStueck2_3',
-            'vkpaar_ek_2_3_ungerundet' => 'vkpaar_ek_2_3_ungerundet',
-            'preis_paar_2_3' => 'PreisPaar2_3',
             'reserve_1' => 'reserve_1',
             'reserve_2' => 'reserve_2',
             'reserve_3' => 'reserve_3',
@@ -961,6 +962,10 @@ class PreislisteConfigController extends AbstractBackendController
             return 'text NULL';
         }
 
+        if ($field === 'ist_paar') {
+            return "char(1) NOT NULL default ''";
+        }
+
         return "varchar(255) NOT NULL default ''";
     }
 
@@ -994,8 +999,8 @@ class PreislisteConfigController extends AbstractBackendController
             'au_incl_verlust' => 'AU inkl. Verlust',
             'material' => 'Material',
             'arbeitszeit' => 'Arbeitszeit',
-            'stueck_1_messe' => 'Stueck 1 / Messe',
-            'stueck_2_messe' => 'Stueck 2 / Messe',
+            'stueck_1_messe' => 'Stück 1 / Messe',
+            'stueck_2_messe' => 'Stück 2 / Messe',
             'plattierung_oxidation' => 'Plattierung / Oxidation',
             'schnur_2' => 'Schnur 2',
             'fixkosten_r5' => 'Fixkosten R5',
@@ -1004,15 +1009,11 @@ class PreislisteConfigController extends AbstractBackendController
             'ek' => 'EK',
             'factor_25' => 'Faktor VK 2,5',
             'factor_23' => 'Faktor VK 2,3',
-            'preis_stueck_ek' => 'Preis Stueck EK',
+            'preis_stueck_ek' => 'Preis Stück EK',
             'preis_paar_ek' => 'Preis Paar EK',
-            'vkstk_ek_2_5_ungerundet' => 'VK Stueck 2,5 ungerundet',
-            'preis_stueck_2_5' => 'Preis Stueck 2,5',
-            'paarpreis_vk_2_5_ungerundet' => 'Paarpreis 2,5 ungerundet',
+            'preis_stueck_2_5' => 'Preis Stück 2,5',
             'preis_paar_2_5' => 'Preis Paar 2,5',
-            'vkstk_ek_2_3_ungerundet' => 'VK Stueck 2,3 ungerundet',
-            'preis_stueck_2_3' => 'Preis Stueck 2,3',
-            'vkpaar_ek_2_3_ungerundet' => 'VK Paar 2,3 ungerundet',
+            'preis_stueck_2_3' => 'Preis Stück 2,3',
             'preis_paar_2_3' => 'Preis Paar 2,3',
         );
     }
@@ -1029,13 +1030,13 @@ class PreislisteConfigController extends AbstractBackendController
             'fixkosten_r5' => 'Verwendet R5 bei Silber, nicht bei Gold/Ohrsteckern.',
             'fixkosten_s' => 'Verwendet R3 + S3 bei Ohrsteckern oder S9 bei Gold.',
             'metall_zuschlag_s' => 'Verwendet S7 bei Silber oder S11 bei bestimmten Gold-Artikeln.',
-            'ek' => 'Summiert Material, Arbeitszeit, Steine/Furnituren, Plattierung, Schnur und Zuschlaege.',
+            'ek' => 'Summiert Material, Arbeitszeit, Steine/Furnituren, Plattierung, Schnur und Zuschläge.',
             'preis_stueck_ek' => 'Standard ist default_preis_stueck_ek, also aufgerundeter EK.',
-            'preis_paar_ek' => 'Standard ist der importierte Wert aus PreisPaarEK. Wenn PreisPaarEK leer ist, ist es ein Einzelartikel.',
+            'preis_paar_ek' => 'Nur wenn "Als Paar verkauft" gesetzt ist. Standard ist dann Preis Stück EK * 2.',
             'preis_stueck_2_5' => 'Standard ist default_preis_stueck_2_5, also aufgerundeter VK 2,5.',
-            'preis_paar_2_5' => 'Standard ist default_preis_paar_2_5, berechnet aus PreisPaarEK * Faktor 2,5. Wenn PreisPaarEK leer ist, bleibt es leer.',
+            'preis_paar_2_5' => 'Standard ist default_preis_paar_2_5, berechnet aus PreisPaarEK * Faktor 2,5. Ohne "Als Paar verkauft" bleibt es leer.',
             'preis_stueck_2_3' => 'Standard ist default_preis_stueck_2_3, also aufgerundeter VK 2,3.',
-            'preis_paar_2_3' => 'Standard ist default_preis_paar_2_3, berechnet aus PreisPaarEK * Faktor 2,3. Wenn PreisPaarEK leer ist, bleibt es leer.',
+            'preis_paar_2_3' => 'Standard ist default_preis_paar_2_3, berechnet aus PreisPaarEK * Faktor 2,3. Ohne "Als Paar verkauft" bleibt es leer.',
         );
     }
 
@@ -1048,7 +1049,7 @@ class PreislisteConfigController extends AbstractBackendController
                 'furnituren_steine_ek', 'steine_messe_2', 'plattierung_oxidation', 'schnur_2',
                 'material', 'arbeitszeit', 'stueck_1_messe', 'stueck_2_messe',
                 'fixkosten_r5', 'fixkosten_s', 'metall_zuschlag_s',
-                'ek', 'factor_25', 'factor_23', 'preis_stueck_ek', 'preis_stueck_2_5', 'preis_stueck_2_3',
+                'ek', 'factor_25', 'factor_23', 'preis_stueck_ek', 'source_preis_paar_ek', 'preis_stueck_2_5', 'preis_stueck_2_3',
                 'A3', 'A5', 'A7', 'B3', 'C3', 'C5', 'R3', 'R5', 'S3', 'S7', 'S9', 'S11', 'MULT_VK',
             ),
             array_map(function ($field) {
@@ -1283,13 +1284,9 @@ class PreislisteConfigController extends AbstractBackendController
             'factor_23' => '2.3',
             'preis_stueck_ek' => 'default_preis_stueck_ek',
             'preis_paar_ek' => 'default_preis_paar_ek',
-            'vkstk_ek_2_5_ungerundet' => 'default_vkstk_ek_2_5_ungerundet',
             'preis_stueck_2_5' => 'default_preis_stueck_2_5',
-            'paarpreis_vk_2_5_ungerundet' => 'default_paarpreis_vk_2_5_ungerundet',
             'preis_paar_2_5' => 'default_preis_paar_2_5',
-            'vkstk_ek_2_3_ungerundet' => 'default_vkstk_ek_2_3_ungerundet',
             'preis_stueck_2_3' => 'default_preis_stueck_2_3',
-            'vkpaar_ek_2_3_ungerundet' => 'default_vkpaar_ek_2_3_ungerundet',
             'preis_paar_2_3' => 'default_preis_paar_2_3',
         );
     }
@@ -1345,7 +1342,7 @@ class PreislisteConfigController extends AbstractBackendController
                 continue;
             }
 
-            throw new \RuntimeException('Ungueltiger Ausdruck in Formel: '.$token);
+            throw new \RuntimeException('Ungültiger Ausdruck in Formel: '.$token);
         }
 
         set_error_handler(function () {
@@ -1485,13 +1482,9 @@ class PreislisteConfigController extends AbstractBackendController
             'ek' => 'ek',
             'PreisStueckEK' => 'preis_stueck_ek',
             'PreisPaarEK' => 'preis_paar_ek',
-            'vkstk_ek_2_5_ungerundet' => 'vkstk_ek_2_5_ungerundet',
             'PreisStueck2_5' => 'preis_stueck_2_5',
-            'paarpreis_vk_2_5_ungerundet' => 'paarpreis_vk_2_5_ungerundet',
             'PreisPaar2_5' => 'preis_paar_2_5',
-            'vkstk_ek_2_3_ungerundet' => 'vkstk_ek_2_3_ungerundet',
             'PreisStueck2_3' => 'preis_stueck_2_3',
-            'vkpaar_ek_2_3_ungerundet' => 'vkpaar_ek_2_3_ungerundet',
             'PreisPaar2_3' => 'preis_paar_2_3',
         );
         $pairFields = $this->preislistePairFields();
@@ -1509,6 +1502,12 @@ class PreislisteConfigController extends AbstractBackendController
 
     private function isPairArticle(array $row)
     {
+        if (array_key_exists('ist_paar', $row)) {
+            $value = strtolower(trim((string) $row['ist_paar']));
+
+            return $value !== '' && $value !== '0' && $value !== 'false' && $value !== 'nein' && $value !== 'no';
+        }
+
         return $this->parseDecimal((string) ($row['preis_paar_ek'] ?? $row['PreisPaarEK'] ?? '')) > 0;
     }
 
@@ -1546,8 +1545,8 @@ class PreislisteConfigController extends AbstractBackendController
         $formulaVars['default_preis_stueck_ek'] = $this->repairScaledPriceValue($defaultPreisStueckEk, $ek);
         $preisStueckEk = $this->evalCatalogFormula($rules['preis_stueck_ek'], $formulaVars);
         $formulaVars['preis_stueck_ek'] = $preisStueckEk;
-        $defaultPreisPaarEk = $isPairArticle ? $this->parseFormulaOrDecimal($sourcePreisPaarEk, $formulaVars) : 0.0;
-        $formulaVars['default_preis_paar_ek'] = $isPairArticle ? $this->repairScaledPriceValue($defaultPreisPaarEk, max($preisStueckEk * 2, $ek)) : 0.0;
+        $formulaVars['source_preis_paar_ek'] = $sourcePreisPaarEk !== '' ? $this->parseFormulaOrDecimal($sourcePreisPaarEk, $formulaVars) : 0.0;
+        $formulaVars['default_preis_paar_ek'] = $isPairArticle ? $preisStueckEk * 2 : 0.0;
         $preisPaarEk = $this->evalCatalogFormula($rules['preis_paar_ek'], $formulaVars);
         if (!$isPairArticle) {
             $preisPaarEk = 0.0;
@@ -1555,19 +1554,11 @@ class PreislisteConfigController extends AbstractBackendController
         $formulaVars['preis_paar_ek'] = $preisPaarEk;
         $factor25 = $this->evalCatalogFormula($rules['factor_25'], $formulaVars);
         $formulaVars['factor_25'] = $factor25;
-        $formulaVars['default_vkstk_ek_2_5_ungerundet'] = $preisStueckEk * $factor25;
-        $vk25 = $this->evalCatalogFormula($rules['vkstk_ek_2_5_ungerundet'], $formulaVars);
-        $formulaVars['vkstk_ek_2_5_ungerundet'] = $vk25;
+        $vk25 = $preisStueckEk * $factor25;
         $formulaVars['default_preis_stueck_2_5'] = ceil($vk25);
         $preis25 = $this->evalCatalogFormula($rules['preis_stueck_2_5'], $formulaVars);
         $formulaVars['preis_stueck_2_5'] = $preis25;
-        $formulaVars['default_paarpreis_vk_2_5_ungerundet'] = $isPairArticle ? $preisPaarEk * $factor25 : 0.0;
-        $paarVk25 = $this->evalCatalogFormula($rules['paarpreis_vk_2_5_ungerundet'], $formulaVars);
-        if (!$isPairArticle) {
-            $paarVk25 = 0.0;
-        }
-        $formulaVars['paarpreis_vk_2_5_ungerundet'] = $paarVk25;
-        $formulaVars['default_preis_paar_2_5'] = $isPairArticle ? ceil($paarVk25) : 0.0;
+        $formulaVars['default_preis_paar_2_5'] = $isPairArticle ? ceil($preisPaarEk * $factor25) : 0.0;
         $preisPaar25 = $this->evalCatalogFormula($rules['preis_paar_2_5'], $formulaVars);
         if (!$isPairArticle) {
             $preisPaar25 = 0.0;
@@ -1575,19 +1566,11 @@ class PreislisteConfigController extends AbstractBackendController
         $formulaVars['preis_paar_2_5'] = $preisPaar25;
         $factor23 = $this->evalCatalogFormula($rules['factor_23'], $formulaVars);
         $formulaVars['factor_23'] = $factor23;
-        $formulaVars['default_vkstk_ek_2_3_ungerundet'] = $preisStueckEk * $factor23;
-        $vk23 = $this->evalCatalogFormula($rules['vkstk_ek_2_3_ungerundet'], $formulaVars);
-        $formulaVars['vkstk_ek_2_3_ungerundet'] = $vk23;
+        $vk23 = $preisStueckEk * $factor23;
         $formulaVars['default_preis_stueck_2_3'] = ceil($vk23);
         $preis23 = $this->evalCatalogFormula($rules['preis_stueck_2_3'], $formulaVars);
         $formulaVars['preis_stueck_2_3'] = $preis23;
-        $formulaVars['default_vkpaar_ek_2_3_ungerundet'] = $isPairArticle ? $preisPaarEk * $factor23 : 0.0;
-        $paarVk23 = $this->evalCatalogFormula($rules['vkpaar_ek_2_3_ungerundet'], $formulaVars);
-        if (!$isPairArticle) {
-            $paarVk23 = 0.0;
-        }
-        $formulaVars['vkpaar_ek_2_3_ungerundet'] = $paarVk23;
-        $formulaVars['default_preis_paar_2_3'] = $isPairArticle ? ceil($paarVk23) : 0.0;
+        $formulaVars['default_preis_paar_2_3'] = $isPairArticle ? ceil($preisPaarEk * $factor23) : 0.0;
         $preisPaar23 = $this->evalCatalogFormula($rules['preis_paar_2_3'], $formulaVars);
         if (!$isPairArticle) {
             $preisPaar23 = 0.0;
@@ -1602,12 +1585,10 @@ class PreislisteConfigController extends AbstractBackendController
                 array('preis_stueck_ek', $rules['preis_stueck_ek'].'; default_preis_stueck_ek = ceil(ek)', $preisStueckEk),
                 array('preis_paar_ek', $rules['preis_paar_ek'], $preisPaarEk),
                 array('factor_25', $rules['factor_25'], $factor25),
-                array('vkstk_ek_2_5_ungerundet', $rules['vkstk_ek_2_5_ungerundet'].'; default = preis_stueck_ek * factor_25', $vk25),
-                array('preis_stueck_2_5', $rules['preis_stueck_2_5'].'; default = ceil(vkstk_ek_2_5_ungerundet)', $preis25),
+                array('preis_stueck_2_5', $rules['preis_stueck_2_5'].'; default = ceil(preis_stueck_ek * factor_25)', $preis25),
                 array('preis_paar_2_5', $rules['preis_paar_2_5'], $preisPaar25),
                 array('factor_23', $rules['factor_23'], $factor23),
-                array('vkstk_ek_2_3_ungerundet', $rules['vkstk_ek_2_3_ungerundet'].'; default = preis_stueck_ek * factor_23', $vk23),
-                array('preis_stueck_2_3', $rules['preis_stueck_2_3'].'; default = ceil(vkstk_ek_2_3_ungerundet)', $preis23),
+                array('preis_stueck_2_3', $rules['preis_stueck_2_3'].'; default = ceil(preis_stueck_ek * factor_23)', $preis23),
                 array('preis_paar_2_3', $rules['preis_paar_2_3'], $preisPaar23),
             ),
         );
@@ -1695,13 +1676,9 @@ class PreislisteConfigController extends AbstractBackendController
             'factor_23',
             'preis_stueck_ek',
             'preis_paar_ek',
-            'vkstk_ek_2_5_ungerundet',
             'preis_stueck_2_5',
-            'paarpreis_vk_2_5_ungerundet',
             'preis_paar_2_5',
-            'vkstk_ek_2_3_ungerundet',
             'preis_stueck_2_3',
-            'vkpaar_ek_2_3_ungerundet',
             'preis_paar_2_3',
         );
     }

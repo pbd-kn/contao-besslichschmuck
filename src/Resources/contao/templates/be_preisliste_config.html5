@@ -12,16 +12,19 @@
   <h2><?= htmlspecialchars($this->headline) ?></h2>
 
   <div class="hp-menu">
-    <div class="hp-card"><div><strong>Formelregeln</strong><span>Default-Formeln und artikel_code-spezifische Regeln pflegen.</span></div><a class="tl_submit" href="<?= $this->rulesUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>Berechnung anzeigen</strong><span>Artikel suchen und vorhandene EK-/Preisfelder anzeigen.</span></div><a class="tl_submit" href="<?= $this->calculationUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>Katalogansicht</strong><span>Alle Daten aus tl_heike_preisliste_odt anzeigen und filtern.</span></div><a class="tl_submit" href="<?= $this->catalogUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>Neuen Satz anlegen</strong><span>Neuen Datensatz über die Contao-DCA erfassen.</span></div><a class="tl_submit" href="<?= $this->createUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>Satz &auml;ndern</strong><span>Vorhandene Datensätze suchen und bearbeiten.</span></div><a class="tl_submit" href="<?= $this->editUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>Satz löschen</strong><span>Datensätze über die Contao-DCA löschen.</span></div><a class="tl_submit" href="<?= $this->deleteUrl ?>">&Ouml;ffnen</a></div>
+    <div class="hp-card"><div><strong>Artikelansicht</strong><span>Alle Artikel aus tl_heike_preisliste_odt anzeigen und filtern.</span></div><a class="tl_submit" href="<?= $this->catalogUrl ?>">&Ouml;ffnen</a></div>
+    <div class="hp-card"><div><strong>Neuen Artikelsatz anlegen</strong><span>Direkt einen neuen Artikel in tl_heike_preisliste_odt erfassen.</span></div><a class="tl_submit" href="<?= $this->createUrl ?>">&Ouml;ffnen</a></div>
+    <div class="hp-card"><div><strong>Artikelsatz &auml;ndern</strong><span>Vorhandene Artikel aus tl_heike_preisliste_odt suchen und bearbeiten.</span></div><a class="tl_submit" href="<?= $this->editUrl ?>">&Ouml;ffnen</a></div>
+    <div class="hp-card"><div><strong>Artikel l&ouml;schen</strong><span>Artikel &uuml;ber die Contao-DCA l&ouml;schen.</span></div><a class="tl_submit" href="<?= $this->deleteUrl ?>">&Ouml;ffnen</a></div>
     <div class="hp-card"><div><strong>Globale Variablen</strong><span>Materialpreise, Faktoren und feste Werte zentral pflegen.</span></div><a class="tl_submit" href="<?= $this->globalsUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>Liste (neueste 500)</strong><span>Kompakte Übersicht der letzten Einträge.</span></div><a class="tl_submit" href="<?= $this->listUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>Druckansicht</strong><span>Druckfreundliche Katalogansicht.</span></div><a class="tl_submit" href="<?= $this->printUrl ?>" target="_blank">&Ouml;ffnen</a></div>
+    <div class="hp-card"><div><strong>Formelregeln</strong><span>Default-Formeln und Artikel_code-spezifische Regeln pflegen.</span></div><a class="tl_submit" href="<?= $this->rulesUrl ?>">&Ouml;ffnen</a></div>
+    <div class="hp-card"><div><strong>Berechnung anzeigen</strong><span>Artikel suchen und vorhandene EK-/Preisfelder anzeigen.</span></div><a class="tl_submit" href="<?= $this->calculationUrl ?>">&Ouml;ffnen</a></div>
+
+<!--
+    <div class="hp-card"><div><strong>Liste (neueste 500)</strong><span>Kompakte &Uuml;bersicht der letzten Eintr&auml;ge.</span></div><a class="tl_submit" href="<?= $this->listUrl ?>">&Ouml;ffnen</a></div>
+-->
+    <div class="hp-card"><div><strong>Druckansicht</strong><span>Druckfreundliche Artikelansicht.</span></div><a class="tl_submit" href="<?= $this->printUrl ?>" target="_blank">&Ouml;ffnen</a></div>
     <div class="hp-card"><div><strong>CSV-Import</strong><span>CSV-Datei in tl_heike_preisliste_odt importieren.</span></div><a class="tl_submit" href="<?= $this->importUrl ?>">&Ouml;ffnen</a></div>
-    <div class="hp-card"><div><strong>In Preisliste übertragen</strong><span>Daten aus tl_heike_preisliste_odt nach tl_heike_preisliste übernehmen.</span></div><a class="tl_submit" href="<?= $this->transferUrl ?>">Öffnen</a></div>
+    <div class="hp-card"><div><strong>Artikel in Preisliste &uuml;bernehmen</strong><span>Artikel aus tl_heike_preisliste_odt nach tl_heike_preisliste &uuml;bernehmen.</span></div><a class="tl_submit" href="<?= $this->transferUrl ?>">&Ouml;ffnen</a></div>
   </div>
 </div>

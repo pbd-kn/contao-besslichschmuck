@@ -30,9 +30,9 @@
   <?= Contao\Message::generate() ?>
 
   <p class="hp-note">
-    Diese Variablen werden in Formelregeln ueber ihren Namen verwendet, z.B.
+    Diese Variablen werden in Formelregeln &uuml;ber ihren Namen verwendet, z.B.
     <span class="hp-code">material + arbeitszeit + R5</span>. Die Defaultwerte werden automatisch angelegt,
-    koennen hier aber ueberschrieben werden.
+    k&ouml;nnen hier aber &uuml;berschrieben werden.
   </p>
 
   <section class="hp-panel">
@@ -97,12 +97,12 @@
               <td><?= htmlspecialchars($row['updated_at']) ?></td>
               <td>
                 <a class="tl_submit" href="?edit=<?= urlencode($row['param_key']) ?>">Bearbeiten</a>
-                <form class="hp-inline-form" method="post" onsubmit="return confirm('Variable wirklich loeschen?');">
+                <form class="hp-inline-form" method="post" onsubmit="return confirm('Variable wirklich l&ouml;schen?');">
                   <input type="hidden" name="FORM_SUBMIT" value="tl_preisliste_globals_delete">
                   <input type="hidden" name="REQUEST_TOKEN" value="<?= REQUEST_TOKEN ?>">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="param_key" value="<?= htmlspecialchars($row['param_key']) ?>">
-                  <button class="tl_submit" type="submit">Loeschen</button>
+                  <button class="tl_submit" type="submit">L&ouml;schen</button>
                 </form>
               </td>
             </tr>
