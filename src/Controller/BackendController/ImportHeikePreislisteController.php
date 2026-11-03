@@ -375,7 +375,6 @@ class ImportHeikePreislisteController extends AbstractBackendController
                     continue;
             }
             
-            $this->setPairFlagFromImportData($insertData, $arrDcaFields);
             $insertData['tstamp']=time();
             $res['debug'][]='<pre>' . htmlspecialchars(print_r($insertData,true)) . '</pre>';
             try {
@@ -394,28 +393,6 @@ class ImportHeikePreislisteController extends AbstractBackendController
         }
       $res['res'][]="eingelesene Zeilen $cnt gespeicherte Einträge $linesOK";
       return $res;
-    }
-
-    private function setPairFlagFromImportData(array &$insertData, array $arrDcaFields): void
-    {
-        if ($this->strTable !== 'tl_heike_preisliste_odt' || !isset($arrDcaFields['ist_paar'])) {
-            return;
-        }
-
-        $pairEk = $insertData['PreisPaarEK'] ?? '';
-        $normalizedPairEk = str_replace(',', '.', trim((string) $pairEk));
-        $isPair = $normalizedPairEk !== '' && (!is_numeric($normalizedPairEk) || (float) $normalizedPairEk > 0);
-        $insertData['ist_paar'] = $isPair ? '1' : '';
-
-        if ($isPair) {
-            return;
-        }
-
-        foreach (array('PreisPaarEK', 'PreisPaar2_5', 'PreisPaar2_3') as $pairField) {
-            if (isset($arrDcaFields[$pairField])) {
-                $insertData[$pairField] = '';
-            }
-        }
     }
     
     // von efg DC_formdata übernommen wird beim aufbaut des filetrees mitgeliefert.

@@ -112,7 +112,7 @@ $money = function ($value) {
     </section>
 
     <section class="hp-panel">
-      <div class="hp-panel__head">Preisberechnung Schritt f&uuml;r Schritt</div>
+      <div class="hp-panel__head">Preisberechnung Schritt fuer Schritt</div>
       <div class="hp-table-wrap">
         <table class="hp-table">
           <thead>

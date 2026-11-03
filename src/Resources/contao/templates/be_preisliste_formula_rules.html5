@@ -50,9 +50,9 @@
 
         <div class="hp-grid">
           <div class="hp-field">
-            <label for="ctrl_artikel_code">Gilt f&uuml;r Artikel</label>
+            <label for="ctrl_artikel_code">Gilt fuer Artikel</label>
             <input type="text" name="artikel_code" id="ctrl_artikel_code" value="<?= htmlspecialchars((string) ($editRule['artikel_code'] ?? '')) ?>" placeholder="leer = alle Artikel">
-            <p class="hp-help">Leer lassen f&uuml;r Standardregeln. Einen Artikelwert eintragen, wenn die Regel nur f&uuml;r diesen Artikel gelten soll.</p>
+            <p class="hp-help">Leer lassen fuer Standardregeln. Einen Artikelwert eintragen, wenn die Regel nur fuer diesen Artikel gelten soll.</p>
           </div>
           <div class="hp-field">
             <label for="ctrl_target_field">Berechnetes Feld</label>
@@ -89,7 +89,7 @@
       <table class="hp-table">
         <thead>
           <tr>
-            <th>Gilt f&uuml;r</th>
+            <th>Gilt fuer</th>
             <th>Berechnetes Feld</th>
             <th>Formel</th>
             <th>Beschreibung</th>
@@ -107,13 +107,13 @@
               <td><?= $row['active'] ? 'ja' : 'nein' ?></td>
               <td>
                 <a class="tl_submit" href="?artikel_code=<?= urlencode($row['artikel_code']) ?>&amp;target_field=<?= urlencode($row['target_field']) ?>">Bearbeiten</a>
-                <form class="hp-inline-form" method="post" onsubmit="return confirm('Formelregel wirklich l&ouml;schen?');">
+                <form class="hp-inline-form" method="post" onsubmit="return confirm('Formelregel wirklich loeschen?');">
                   <input type="hidden" name="FORM_SUBMIT" value="tl_preisliste_formula_rules_delete">
                   <input type="hidden" name="REQUEST_TOKEN" value="<?= REQUEST_TOKEN ?>">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="artikel_code" value="<?= htmlspecialchars($row['artikel_code']) ?>">
                   <input type="hidden" name="target_field" value="<?= htmlspecialchars($row['target_field']) ?>">
-                  <button class="tl_submit" type="submit">L&ouml;schen</button>
+                  <button class="tl_submit" type="submit">Loeschen</button>
                 </form>
               </td>
             </tr>
