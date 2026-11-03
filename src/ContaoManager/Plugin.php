@@ -22,7 +22,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     //echo "PBD ContaoBesslichschmuck Plugin getBundles ";
         return [
             BundleConfig::create(ContaoBesslichschmuckBundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class]),                
+                ->setLoadAfter([ContaoCoreBundle::class, \PBDKN\TabellenverwaltungBundle\ContaoTabellenverwaltungBundle::class]),
                 ];
     }
 

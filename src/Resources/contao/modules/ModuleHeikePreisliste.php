@@ -41,8 +41,8 @@ class ModuleHeikePreisliste extends Module
     private $perPage=10;
     private $list_fields='Kategorie,Subkategorie,Artikel';    // Felder die aus der Preisliste gelesen werden
     private $list_search='Artikel, Kategorie, Subkategorie'; // Felder die als Suche verwendet werden können
-    private $list_where='';                                   // zwischenspeicher whereclause bei modulelisteing aus dca Bedingung
-    private $list_table='tl_heike_preisliste';
+
+
 
     // Der Konstruktor
     public function __construct(
@@ -99,8 +99,8 @@ class ModuleHeikePreisliste extends Module
         $errArray=[];              // errors aufsammeln
 
 		// Add the search menu
-		$strWhere = '';
-		$varKeyword = '';
+
+
 		$strOptions = '';
 		$strSearch = Input::get('search');
 		$strFor = Input::get('for');
@@ -117,12 +117,6 @@ class ModuleHeikePreisliste extends Module
 				$strSearch = '';
 				$strFor = '';
 			}
-			if ($strSearch && $strFor)
-			{
-				$varKeyword = '%' . $strFor . '%';
-                // $strSearch korrekt als Identifier in SQL-Abfragen
-				$strWhere = (!$this->list_where ? " WHERE " : " AND ") . Database::quoteIdentifier($strSearch) . " LIKE ?";
-			}
 			foreach ($arrSearchFields as $field)
 			{
 				$strOptions .= '  <option value="' . $field . '"' . ($field == $strSearch ? ' selected="selected"' : '') . '>' . $field . '</option>' . "\n";
@@ -130,76 +124,28 @@ class ModuleHeikePreisliste extends Module
 		}
 		$this->Template->search_fields = $strOptions;     // fuer select im template
 
-		// Get the total number of records
-		$strQuery = "SELECT COUNT(*) AS count FROM " . $this->list_table;
-		if ($this->list_where) {
-			$strQuery .= " WHERE (" . $this->list_where . ")";
-		}
-        
-		$strQuery .= $strWhere;
-		$objTotal = $this->Database->prepare($strQuery)->execute($varKeyword);
-
-		// Validate the page count
-		$id = 'page_l' . $this->id;
- 		$page = (int) (Input::get($id) ?? 1);
-		$per_page = (int) Input::get('per_page') ?: $this->perPage;
-		// Thanks to Hagen Klemp (see #4485)
-		if ($per_page > 0 && ($page < 1 || $page > max(ceil($objTotal->count/$per_page), 1))) {
-			throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
-		}
-		// Get the selected records
-		$strQuery = "SELECT " . Database::quoteIdentifier($this->strPk) . ", " . implode(', ', array_map('Database::quoteIdentifier', $arrFields));
-/*
-		if ($this->list_info_where) {
-			$strQuery .= ", (SELECT COUNT(*) FROM " . $this->list_table . " t2 WHERE t2." . Database::quoteIdentifier($this->strPk) . "=t1." . Database::quoteIdentifier($this->strPk) . " AND " . $this->list_info_where . ") AS _details";
-		}
-*/
-		$strQuery .= " FROM " . $this->list_table . " t1";
-
-		if ($this->list_where) {
-			$strQuery .= " WHERE (" . $this->list_where . ")";
-		}
-
-		$strQuery .= $strWhere;
-		// Cast date fields to int (see #5609)
-		$isInt = function ($field) {
-			return ($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['eval']['rgxp'] ?? null) == 'date' || ($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['eval']['rgxp'] ?? null) == 'time' || ($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['eval']['rgxp'] ?? null) == 'datim';
-		};
-		$order_by = Input::get('order_by');
-
-		if ($order_by && !\in_array($order_by, $arrFields, true)) { $order_by = ''; }
-		$sort = Input::get('sort');
-
-		if ($sort && !\in_array($sort, array('asc', 'desc'))) { $sort = ''; }
-
-		// Order by
-		if ($order_by) {
-			if ($isInt($order_by)) {
-				$strQuery .= " ORDER BY CAST(" . $order_by . " AS SIGNED) " . $sort;
-			} else {
-				$strQuery .= " ORDER BY " . Database::quoteIdentifier($order_by) . ' ' . $sort;
-			}
-		} elseif ($this->list_sort) {
-			if ($isInt($this->list_sort)) {
-				$strQuery .= " ORDER BY CAST(" . $this->list_sort . " AS SIGNED)";
-			} else {
-				$strQuery .= " ORDER BY " . $this->list_sort;
-			}
-		}
-        $objDataStmt = $this->Database->prepare($strQuery);
-		// Limit
-        if ($per_page != -1) {
-		  if ($per_page) {
-			$objDataStmt->limit($per_page, (($page - 1) * $per_page));
-		  } elseif ($this->perPage) {
-			$objDataStmt->limit($this->perPage, (($page - 1) * $per_page));
-		  }
+        $filters = [];
+        if ($strSearch && $strFor) { $filters[$strSearch] = '%' . $strFor . '%'; }
+        $preisListenArray = $this->besslichUtil->findPrices($filters);
+        $total = count($preisListenArray);
+        $id = 'page_l' . $this->id;
+        $page = max(1, (int) (Input::get($id) ?? 1));
+        $per_page = (int) Input::get('per_page') ?: $this->perPage;
+        if ($per_page < -1) { $per_page = $this->perPage; }
+        if ($per_page > 0 && $page > max(ceil($total / $per_page), 1)) {
+            throw new \Contao\CoreBundle\Exception\PageNotFoundException('Page not found');
         }
-
-        // Abrufen der Einträge in Preisliste (Anzahl bestimmen)
-		$objData = $objDataStmt->execute($varKeyword);
-
-        $preisListenArray=$objData->fetchAllAssoc();                                            
+        $order_by = Input::get('order_by');
+        if (!in_array($order_by, $arrFields, true)) { $order_by = ''; }
+        $sort = Input::get('sort');
+        if (!in_array($sort, ['asc','desc'], true)) { $sort = 'asc'; }
+        if ($order_by) {
+            usort($preisListenArray, static function (array $a, array $b) use ($order_by, $sort): int {
+                $comparison = strcasecmp((string)$a[$order_by], (string)$b[$order_by]);
+                return ($sort === 'desc' ? -$comparison : $comparison) ?: ($a['id'] <=> $b['id']);
+            });
+        }
+        if ($per_page > 0) { $preisListenArray = array_slice($preisListenArray, ($page - 1) * $per_page, $per_page); }
         // erzeuge BodyAray für Template
         $bodyArray=[];
         foreach ($preisListenArray as $k=>$row){
@@ -259,10 +205,10 @@ class ModuleHeikePreisliste extends Module
         $this->Template->tbody=$bodyArray;
         $this->Template->errArr=$errArray;
         		// Pagination
-		$objPagination = new Pagination($objTotal->count, $per_page, Config::get('maxPaginationLinks'), $id);
+		$objPagination = new Pagination($total, $per_page, Config::get('maxPaginationLinks'), $id);
 		$this->Template->pagination = $objPagination->generate("\n  ");
 		$this->Template->per_page = $per_page;
-		$this->Template->total = $objTotal->count;
+		$this->Template->total = $total;
 
 		// Template variables
 		$this->Template->search_label = StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['search']);

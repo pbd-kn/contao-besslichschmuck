@@ -29,23 +29,14 @@ echo "<div class='schmuck-detail block'>\n";
     echo $this->divpreisliste;
   echo "</div>\n";
 
-  $n=$this->schmuckartikelname;
-  // kategorie und subkategorie aus artikelliste lesen
-  $kategorie =  $this->replaceInsertTags("{{efg_insert::artikelliste::$n::kategorie}}");
-  $subkategorie =  $this->replaceInsertTags("{{efg_insert::artikelliste::$n::subkategorie}}");
-//echo "Kategorie: $kategorie subkategorie: $subkategorie<br>";
-  // evtl. Aliasnamen aus popup-artikel lesen
-  $popup1 =  $this->replaceInsertTags("{{efg_insert::popup-artikel::$kategorie::artikelname}}");
-  $popup2 =  $this->replaceInsertTags("{{efg_insert::popup-artikel::$kategorie$subkategorie::artikelname}}");
-  if ($this->zusatzinfo || !empty($popup1) || !empty($popup2)) {   //Reihenfolge Angabe im Artikel Angabe Kategoriesubkategorie Angabe Kategorie
-    $pop = "";
-    if  (!empty($this->zusatzinfo)) $pop = $this->zusatzinfo;
-    elseif (!empty($popup2))        $pop = $popup2;
-    else                            $pop = $popup1;
-//echo "this->zusatzinfo: " . $this->zusatzinfopopup1 . " $popup1 popup2: $popup2 pop $pop<br>";
+  // EFG was removed. Popup articles are selected explicitly via Zusatzinfo.
+  // Empty/default selections must not produce a non-functional button.
+  $pop = trim((string) $this->zusatzinfo);
+  if ($pop !== '' && $pop !== '0') {
     echo "<div class='popupurl'>\n";
-    $opnstr='AjaxGetArticle("' . $pop . '","' . $GLOBALS['objPage']->id . '");';   // ueber die Pageid wird die Page im Ajaxrequest gesetzt
-    echo "<button onclick='" . $opnstr . "'>auswahl ketten</button>\n";
+    $opnstr = 'AjaxGetArticle(' . json_encode($pop, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
+      . ',' . json_encode((string) $GLOBALS['objPage']->id) . ');';
+    echo '<button type="button" onclick="' . htmlspecialchars($opnstr, ENT_QUOTES, 'UTF-8') . '">auswahl ketten</button>' . "\n";
 /*  Beispiel popup mit neuem Window
     $opnstr='window.open("' . $this->myurl . '", "Popup", "scrollbars=1;width=800,height=1024,left=500,location=0,menubar=0,status=0,titlebar=0,toolbar=0");';
     $mein_init_txt = <<< EOT

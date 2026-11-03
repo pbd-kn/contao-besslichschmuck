@@ -1,0 +1,88 @@
+<?php $escape = static fn($v) => \Contao\StringUtil::specialchars((string)$v); ?>
+<style>
+.heike-import{padding:28px 32px!important;box-sizing:border-box;line-height:1.6;color:#333}
+.heike-import *{box-sizing:border-box}
+.heike-import .hi-intro{margin:0 0 26px;max-width:760px;color:#666;font-size:14px}
+.heike-import h2{font-size:17px;margin:0 0 18px;line-height:1.4}
+.heike-import p{margin:0 0 16px}
+.heike-import .hi-section{padding:24px;margin:0 0 24px;border:1px solid #ddd;border-radius:4px;background:#fff}
+.heike-import .hi-step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;margin-right:10px;border-radius:50%;background:#f0f0f0;color:#555;font-size:13px}
+.heike-import .hi-field{margin-bottom:22px;max-width:620px}
+.heike-import .hi-label{display:block;margin-bottom:7px;font-weight:600}
+.heike-import input[type=file]{display:block;width:100%;padding:12px;border:1px dashed #b8bec4;background:#fafafa;border-radius:3px;line-height:1.6}
+.heike-import input[type=file]::file-selector-button{padding:7px 12px;margin-right:12px;border:1px solid #bbb;border-radius:3px;background:#fff;color:#333;cursor:pointer}
+.heike-import .tl_select{display:block;width:100%;max-width:620px;height:auto;min-height:36px;padding:7px 30px 7px 10px}
+.heike-import .hi-help{font-size:12px;color:#666;margin:7px 0 0;line-height:1.6}
+.heike-import .hi-choices{border:0;margin:0 0 22px;padding:0;max-width:720px;min-width:0}
+.heike-import .hi-choices legend{margin-bottom:9px;font-weight:600}
+.heike-import .hi-choice{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border:1px solid #ddd;border-radius:3px;margin-bottom:10px;cursor:pointer}
+.heike-import .hi-choice:has(input:checked){border-color:#ef8000;background:#fff8ee}
+.heike-import .hi-choice input{flex:0 0 auto;margin:5px 0 0}
+.heike-import .hi-choice strong{display:block;font-weight:600}
+.heike-import .hi-choice small{display:block;color:#666;font-size:12px;line-height:1.6;margin-top:3px}
+.heike-import details{margin:18px 0;color:#555}
+.heike-import summary{cursor:pointer;font-weight:600}
+.heike-import details p,.heike-import details ul{margin:12px 0 0}
+.heike-import details ul{padding-left:20px}
+.heike-import .hi-actions{padding-top:18px;margin-top:22px;border-top:1px solid #eee}
+.heike-import .hi-actions .tl_submit{margin:0;min-height:36px;padding:8px 18px}
+.heike-import .hi-note{padding:12px 16px;border-left:3px solid #ef8000;background:#fff8ee;margin:16px 0}
+.heike-import .hi-stats{display:flex;gap:28px;flex-wrap:wrap;margin:16px 0 22px}
+.heike-import .hi-stats span{color:#666}.heike-import .hi-stats strong{display:block;font-size:24px;color:#333}
+.heike-import .hi-table{overflow:auto;margin:14px 0 22px}
+.heike-import table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
+.heike-import th,.heike-import td{padding:10px 12px;border-bottom:1px solid #ddd;text-align:right}
+.heike-import th{background:#f5f5f5;font-weight:600}.heike-import th:first-child,.heike-import td:first-child{text-align:left}
+.heike-import .hi-confirm{display:flex;align-items:flex-start;gap:10px;max-width:760px}.heike-import .hi-confirm input{margin-top:6px;flex:0 0 auto}
+.heike-import .hi-back{display:inline-block;margin:0 0 8px}
+@media(max-width:700px){.heike-import{padding:18px 14px!important}.heike-import .hi-section{padding:18px 14px}.heike-import .hi-stats{gap:16px}}
+</style>
+<div class="tl_formbody_edit heike-import">
+<p class="hi-intro">Übernimm deine Preislisten-CSV in die Tabellenverwaltung. Wähle eine Datei und die gewünschte Importart. Im nächsten Schritt prüfst du die Vorschau.</p>
+<?php if ($this->error): ?><p class="tl_error"><?= $escape($this->error) ?></p><?php endif; ?>
+<?php if ($this->message): ?><p class="tl_confirm"><?= $escape($this->message) ?></p><?php endif; ?>
+<section class="hi-section">
+<h2><span class="hi-step">1</span>Datei und Importart auswählen</h2>
+<form method="post">
+<input type="hidden" name="FORM_SUBMIT" value="heike_price_csv">
+<input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
+
+<div class="hi-field"><label class="hi-label" for="price_csv_file">CSV-Datei aus der Website</label>
+<select class="tl_select" id="price_csv_file" name="csv_path" required><option value="">Bitte eine Datei auswählen</option>
+<?php foreach ($this->csvFiles as $path): ?><option value="<?= $escape($path) ?>"<?= $this->selectedFile===$path ? ' selected' : '' ?>><?= $escape($path) ?></option><?php endforeach; ?>
+</select>
+<p class="hi-help">Dateien aus dem Website-Verzeichnis files. Der Ordner files/heike-files/downloads/CSV wird zuerst angezeigt. Neue Dateien vorher über die Contao-Dateiverwaltung hochladen.</p>
+<?php if (!$this->csvFiles): ?><p class="tl_info">Im files-Verzeichnis wurden keine CSV-Dateien gefunden.</p><?php endif; ?>
+</div>
+<fieldset class="hi-choices"><legend>Was möchtest du übernehmen?</legend>
+<label class="hi-choice"><input type="radio" name="mode" value="append" checked><span><strong>Einträge ergänzen</strong><small>Die bisherigen Einträge bleiben erhalten. Jede CSV-Zeile wird hinzugefügt; vorhandene Preise werden nicht aktualisiert.</small></span></label>
+<label class="hi-choice"><input type="radio" name="mode" value="replace"><span><strong>Gesamte Preisliste ersetzen</strong><small>Die neue CSV ersetzt die bisherigen Einträge vollständig. Bitte vorher eine Datenbanksicherung erstellen.</small></span></label>
+</fieldset>
+<div class="hi-field"><label class="hi-label" for="price_csv_delimiter">Trennzeichen</label><select class="tl_select" id="price_csv_delimiter" name="delimiter"><option value="auto">Automatisch erkennen</option><option value=";">Semikolon (;)</option><option value=",">Komma (,)</option><option value="&#9;">Tabulator</option></select></div>
+<details><summary>Hinweise zum CSV-Format</summary><p>Die bisherigen Spaltennamen bleiben gültig: Artikel, Kategorie, Subkategorie, Beschreibung, PreisStueck2_5, PreisPaar2_5, PreisStueck2_3, PreisPaar2_3, PreisStueckEK und PreisPaarEK. listTpl ist optional. Beim Ersetzen sind alle anderen genannten Spalten erforderlich.</p><p>Preiswerte werden unverändert übernommen. Zeilen ohne Artikel, Kategorie oder Subkategorie werden wie bisher ausgelassen und in der Vorschau aufgelistet. Zusätzliche Spalten werden ignoriert.</p></details>
+<details><summary>Was geschieht mit mehrfachen Artikeln?</summary><p>Beim Ergänzen können weitere Einträge mit derselben Artikelbezeichnung entstehen. Nach vollständigem Ersetzen bestimmt die Reihenfolge in der CSV den ersten Treffer für den Einzelpreisabruf. Alte Eintrags-IDs bleiben beim Ersetzen nicht erhalten.</p></details>
+<div class="hi-actions"><button class="tl_submit" name="action" value="preview">Vorschau erstellen</button><p class="hi-help">Dabei wird noch nichts gespeichert.</p></div>
+</form>
+</section>
+<?php if ($this->preview): $plan=$this->preview; ?>
+<section class="hi-section">
+<h2><span class="hi-step">2</span>Vorschau prüfen: <?= $escape($plan['title']) ?></h2>
+<?php if (!empty($plan['sourceFile'])): ?><p class="hi-help">Datei: <?= $escape($plan['sourceFile']) ?></p><?php endif; ?>
+<p>Importart: <strong><?= $plan['mode']==='replace' ? 'Gesamte Preisliste ersetzen' : 'Einträge ergänzen' ?></strong></p>
+<div class="hi-stats"><span><strong><?= (int)$plan['oldCount'] ?></strong>Bisherige Einträge</span><span><strong><?= count($plan['rows']) ?></strong>Aus der CSV übernehmen</span><span><strong><?= count($plan['rows'])+($plan['mode']==='append'?$plan['oldCount']:0) ?></strong>Einträge nach dem Import</span></div>
+<?php if ($plan['duplicateNames']): ?><details><summary><?= count($plan['duplicateNames']) ?> mehrfach vorkommende Artikelbezeichnungen</summary><p><?= $escape(implode(', ', $plan['duplicateNames'])) ?>. Alle Varianten bleiben erhalten.</p></details><?php endif; ?>
+<?php if ($plan['ignored']): ?><details><summary><?= count($plan['ignored']) ?> zusätzliche CSV-Spalten werden ignoriert</summary><p><?= $escape(implode(', ', $plan['ignored'])) ?></p></details><?php endif; ?>
+<?php if ($plan['skipped']): ?><p class="hi-note"><?= count($plan['skipped']) ?> von <?= (int)$plan['csvCount'] ?> CSV-Zeilen werden ausgelassen, weil Artikel, Kategorie oder Subkategorie fehlen.</p><details><summary>Ausgelassene Datensätze anzeigen</summary><ul><?php foreach ($plan['skipped'] as $skip): ?><li>CSV-Datensatz <?= (int)$skip['record'] ?>: <?= $escape(implode(', ', $skip['missing'])) ?> fehlt.</li><?php endforeach; ?></ul></details><?php endif; ?>
+<p class="hi-help">Die ersten zehn zu importierenden Einträge:</p>
+<div class="hi-table"><table><thead><tr><th>Artikel</th><th>Stück 2,5</th><th>Paar 2,5</th><th>Stück 2,3</th><th>Paar 2,3</th><th>Stück EK</th><th>Paar EK</th></tr></thead><tbody>
+<?php foreach (array_slice($plan['rows'],0,10) as $row): $values=array_column(unserialize($row['data'],['allowed_classes'=>false]),'value','key'); ?><tr><td><?= $escape($row['title']) ?></td><?php foreach (['PreisStueck2_5','PreisPaar2_5','PreisStueck2_3','PreisPaar2_3','PreisStueckEK','PreisPaarEK'] as $key): ?><td><?= $escape($values[$key]??'') ?></td><?php endforeach; ?></tr><?php endforeach; ?>
+</tbody></table></div>
+<form method="post">
+<input type="hidden" name="FORM_SUBMIT" value="heike_price_csv"><input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>"><input type="hidden" name="nonce" value="<?= $escape($this->nonce) ?>">
+<label class="hi-confirm"><input type="checkbox" name="confirmed" value="1" required><span>Ich habe die Vorschau geprüft<?= $plan['mode']==='replace' ? ', eine Datenbanksicherung erstellt und bestätige das vollständige Ersetzen der Preisliste' : ' und bestätige das Hinzufügen der CSV-Zeilen' ?>.</span></label>
+<div class="hi-actions"><button class="tl_submit" name="action" value="execute">Jetzt importieren</button><p class="hi-help">Die importierten Einträge sind anschließend veröffentlicht und für die Website verfügbar.</p></div>
+</form>
+</section>
+<?php endif; ?>
+<a class="hi-back" href="contao?do=directories">← Zur Tabellenverwaltung</a>
+</div>

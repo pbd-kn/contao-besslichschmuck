@@ -88,20 +88,10 @@ class BesslichAjaxController extends AbstractController
       //$db = Database::getInstance();
 //      $db->query("SET NAMES 'utf8mb4'");
       // Baue die SQL-Abfrage dynamisch auf
-      $sql = "SELECT * FROM tl_heike_preisliste WHERE Artikel LIKE ?";
-      $params = ['%' . $schmuckartikel . '%'];
-
-      if ($kategorie !== 'none') {
-            $sql .= " AND Kategorie LIKE ?";
-            $params[] = '%' . $kategorie . '%';
-      }
-
-      if ($subkategorie !== 'none') {
-            $sql .= " AND Subkategorie ?";
-            $params[] = '%' . $subkategorie . '%';
-      }
-       $resarr=$this->besslichUtil->getSchmuckArtikelFromPreisliste($sql,$params);
-       $arr['data']=$resarr;
+      $filters = ['Artikel' => '%' . $schmuckartikel . '%'];
+      if ($kategorie !== 'none') { $filters['Kategorie'] = '%' . $kategorie . '%'; }
+      if ($subkategorie !== 'none') { $filters['Subkategorie'] = '%' . $subkategorie . '%'; }
+      $resarr = $this->besslichUtil->findPrices($filters);       $arr['data']=$resarr;
        $arr['error']=$errArr;
        $arr['debug']=$debugArr;
        return new JsonResponse($arr);
@@ -139,30 +129,11 @@ class BesslichAjaxController extends AbstractController
         $debugArr[]=utf8_encode("name $name kategorie $kategorie subkategorie $subkategorie");
 
         // Baue die SQL-Abfrage dynamisch auf
-        $sql = "SELECT * FROM tl_heike_preisliste WHERE 1=1";
-        $params = [];
-        if ($name === '') {
-            $sql .= " AND (Artikel IS NULL OR Artikel = '')";
-        } else if ($name !== 'none') {
-            $sql .= " AND Artikel LIKE ?";
-            $params[] = $name;
-        } 
-        if ($subkategorie === '') {
-            $sql .= " AND (Subkategorie IS NULL OR Subkategorie = '')";
-        } else if ($subkategorie !== 'none') {
-            $sql .= " AND Subkategorie LIKE ?";
-            $params[] = $subkategorie;
+        $filters = [];
+        foreach (['Artikel'=>$name, 'Kategorie'=>$kategorie, 'Subkategorie'=>$subkategorie] as $field=>$value) {
+            if ($value !== 'none') { $filters[$field] = $value; }
         }
-        if ($kategorie === '') {
-            $sql .= " AND (Kategorie IS NULL OR Kategorie = '')";
-        } else if ($kategorie !== 'none') {
-            $sql .= " AND Kategorie LIKE ?";
-            $params[] = $kategorie;
-        }
-        $debugArr[]=utf8_encode("debug von getPreisliste sql $sql");
-       // Führe die Abfrage aus
-       $resarr=$this->besslichUtil->getSchmuckArtikelFromPreisliste($sql,$params);
-       $arr['data']=$resarr;
+        $resarr = $this->besslichUtil->findPrices($filters);       $arr['data']=$resarr;
        $arr['error']=$errArr;
        $arr['debug']=$debugArr;
        return new JsonResponse($arr);

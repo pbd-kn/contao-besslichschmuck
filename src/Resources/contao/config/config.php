@@ -9,13 +9,8 @@ $GLOBALS['BE_FFL']['comment'] = 'comment';
 
 
 if (TL_MODE == 'BE') {
-array_insert($GLOBALS['BE_MOD'], 1, array('Tabellen' => array()));
-$GLOBALS['BE_MOD']['Tabellen']['Preisliste'] = array
-   (
-	'tables'     => ['tl_heike_preisliste'],
-	'icon'       => 'bundles/contaobesslichschmuck/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaobesslichschmuck/css/style.css',
-    );
+$GLOBALS['BE_MOD']['table_management']['heike_price_csv'] = ['callback' => \Pbdkn\ContaoBesslichschmuck\Backend\PriceCsvBackend::class];
+$GLOBALS['BE_MOD']['table_management']['heike_price_source'] = ['callback' => \Pbdkn\ContaoBesslichschmuck\Backend\PriceSourceBackend::class];
 }
 
 /**

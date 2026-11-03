@@ -179,13 +179,22 @@ EOT;
             echo "<div class='album_preview'>\n";       // div um ein album
             // Bilder zum Album einlesen
               $pictures = GalleryCreatorPicturesModel::findBy('pid', $Album['id'], array('order' => $gcPictureSorting.' '.$gcPictureSortingDirection)); // 'pid' ist die Album-ID (Parent-ID)
+              $arrPictures = array();
               if ($pictures !== null) {
                 // Durch alle Bilder iterieren
                 $arrPictures = array();
                 while ($pictures->next()) {
                   // build up $arrPictures
                   if ($pictures->published) {
-                    $filePath = \FilesModel::findByUuid($pictures->uuid)->path;
+                    $fileModel = \FilesModel::findByUuid($pictures->uuid);
+                    if ($fileModel === null || !$fileModel->path) {
+                      continue;
+                    }
+                    $filePath = $fileModel->path;
+                    $projectDir = \Contao\System::getContainer()->getParameter('kernel.project_dir');
+                    if (!is_file($projectDir . '/' . $filePath)) {
+                      continue;
+                    }
                     $objFile = new \File($filePath, true);
                     $strImageSrc = $objFile->filename;
                     $href = \System::urlEncode($strImageSrc);

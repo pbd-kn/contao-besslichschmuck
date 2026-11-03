@@ -16,46 +16,29 @@ class BesslichUtil
 {
     private Connection $connection;
     private CgiUtil $cgiUtil;
+    private PriceDirectory $priceDirectory;
     public function __construct( Connection $connection, CgiUtil $cgiUtil,)
     {
             $this->connection = $connection;
             $this->cgiUtil=$cgiUtil;
+            $this->priceDirectory = new PriceDirectory($connection);
     }
     /**
      * @throws \Exception
      */
-  /* liefert die Schmuckartikel aus der preisliste selektiert nach sql
+  /* Liefert veröffentlichte Einträge aus der Tabellenverwaltung.
    */
-  public function getSchmuckArtikelFromPreisliste( string $sql, array $params, array $ignoreFields=[]): array
+  public function findPrices(array $filters = []): array
   {
-    $stmt = $this->connection->prepare($sql);
-    $stmt = $this->connection->executeQuery ($sql, $params);
-    $num_rows = $stmt->rowCount();    
-      
-    $resarr=[];
-    if ($num_rows > 0) {
-      // Iteriere durch die Ergebnisse
-      while (($row = $stmt->fetchAssociative()) !== false) $resarr[]=$row;
-    }
-    return $resarr;  
+    return $this->priceDirectory->filter($filters);
   }
-  /* liefert die Preisentry zu einem artikel aus der preisliste selektiert nach sql
+  /* Liefert den zugeordneten Preiseintrag zu einer Artikelbezeichnung.
    */
   public function getPreis( string $artikel): array
   {
-    $resarr=[];
-    $sql = "SELECT * FROM tl_heike_preisliste WHERE Artikel ='$artikel'";
-    $stmt = $this->connection->executeQuery ($sql);
-
-    $num_rows = $stmt->rowCount();    
-      
-    $resarr=[];
-    if ($num_rows > 0) {
-      $resarr = $stmt->fetchAssociative();
-    }
-    return $resarr;
-  }  
- /* 
+    return $this->priceDirectory->get($artikel);
+  }
+  /*
    * erzeugt eine gerenderte Preisliste 
    *              für den $schmuckartikel
    *              und macht evtl. die deserialize für die zusatzartikel
