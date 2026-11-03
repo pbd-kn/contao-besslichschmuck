@@ -53,10 +53,9 @@ class ImportHeikePreislisteController extends AbstractBackendController
 
     }
     /**
-     * @Route("/contao/besslich/importCSV",
+     * @Route("/besslich/importCSV", 
      * name="ImportHeikePreislisteController::importAction",
-     * methods={"GET", "POST"},
-     * defaults={"_scope"="backend", "_token_check"=true})
+     * methods={"GET", "POST"})
      * @throws \Exception
      */
 
@@ -130,16 +129,15 @@ class ImportHeikePreislisteController extends AbstractBackendController
         return new Response($strT);
     }
     /**
-     * @Route("/contao/besslich/importFromCheckbox",
+     * @Route("/besslich/importFromCheckbox", 
      * name="ImportHeikePreislisteController::importFromCheckbox",
-     * methods={"GET", "POST"},
-     * defaults={"_scope"="backend", "_token_check"=true})
+     * methods={"GET", "POST"})
      * @throws \Exception
      */
 
     public function importFromCheckbox(Request $request): Response
     {
-        $this->strTable='tl_heike_preisliste_odt';
+        $this->strTable='tl_heike_preisliste';
         if ($request->query->get('table')) {
            $this->strTable=$request->query->get('table'); 
         }
@@ -165,7 +163,7 @@ class ImportHeikePreislisteController extends AbstractBackendController
           $attributes['options'][]=['value' => $v, 'label' => basename($v)];
         }
         $redirekturl = $this->router->generate('contao_backend', [
-            'do' => 'PreislisteOdt', // ODT-Arbeitstabelle getrennt von der echten Preisliste halten
+            'do' => 'Preisliste', // Verwende hier den Namen, den du im BE_MOD-Array definiert hast
             'table' => "$this->strTable", // Optional: wenn du eine bestimmte Tabelle direkt ansprechen möchtest
         ]);
 
@@ -223,7 +221,7 @@ class ImportHeikePreislisteController extends AbstractBackendController
                 if ($ausgabe>=1)if (count($resArr['error'])>0){$strResp.="<br>Fehler<br>";foreach ($resArr['error'] as $k=>$s) $strResp.="$s<br>";}
                 if ($ausgabe>=2)if (count($resArr['warning'])>0){$strResp.="<br>Warnungen<br>";foreach ($resArr['warning'] as $k=>$s) $strResp.="$s<br>";}
                 if ($ausgabe>=3)if (count($resArr['debug'])>0) { $strResp.="<br>Debug<br>"; foreach ($resArr['debug'] as $k=>$s) $strResp.="$s<br>";}
-                $url=$this->generateUrl('ImportHeikePreislisteController::importFromCheckbox', array('table' => 'tl_heike_preisliste_odt'));
+                $url="importFromCheckbox?table=tl_heike_preisliste";
                 $strResp.="<a href = $url > Zurück </a>";
 
                 return new Response($strResp);
@@ -236,10 +234,9 @@ class ImportHeikePreislisteController extends AbstractBackendController
 
 
     /**
-     * @Route("/contao/besslich/showSupportedContexts",
+     * @Route("/besslich/showSupportedContexts", 
      * name="ImportHeikePreislisteController::showSupportedContexts",
-     * methods={"GET"},
-     * defaults={"_scope"="backend", "_token_check"=true})
+     * methods={"GET"})
      * @throws \Exception
      */
      
@@ -264,7 +261,7 @@ class ImportHeikePreislisteController extends AbstractBackendController
       // liest die daten aus der dca
       $attributes = \Widget::getAttributesFromDca(
         $GLOBALS['TL_DCA'][$this->strTable]['fields']['import_source'], 'import_source', 
-        null, 'import_source', 'tl_heike_preisliste_odt'
+        null, 'import_source', 'tl_heike_preisliste'
       );
       $attributes['eval']['path'] = 'files/heike-files';  // Beispielpfad
       $objWidget = new \FileTree($attributes);
