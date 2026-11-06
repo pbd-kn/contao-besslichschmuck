@@ -129,7 +129,7 @@ $GLOBALS['TL_DCA'][$strName]['fields']['zusatzinfo'] = array
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class article_template_listing extends Backend
+class article_template_listing extends \Contao\Backend
 {
 
 	/**
@@ -165,7 +165,7 @@ class article_template_listing extends Backend
 	}
 }
 
-class checkSchmuck extends Backend {
+class checkSchmuck extends \Contao\Backend {
 
   public  $schmuckartikelname = '';  
   public  $uuid = '';  

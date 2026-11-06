@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Pbdkn\ContaoBesslichschmuck\Util;
 use Doctrine\DBAL\Connection;
 
-/** Uses the legacy table until the checked directory has explicitly been activated. */
+/** Reads published prices exclusively from the configured directory. */
 final class PriceDirectory
 {
     private Connection $db;
@@ -19,7 +19,7 @@ final class PriceDirectory
         $columns = $this->db->createSchemaManager()->listTableColumns('tl_directory');
         if ((!isset($columns['besslichpriceactive']) && !isset($columns['besslichPriceActive'])) || (!isset($columns['besslichpricepreferred']) && !isset($columns['besslichPricePreferred']))) { $this->source=[]; return null; }
         $active = $this->db->fetchAllAssociative('SELECT * FROM tl_directory WHERE besslichPriceActive=?',['1']);
-        if (count($active)>1) { throw new \RuntimeException('Mehrere Preislisten sind aktiv. Bitte die Preisquelle im Backend prüfen.'); }
+        if (count($active)>1) { throw new \RuntimeException('Mehrere Preislisten sind aktiv. Bitte die Preislisten-Konfiguration prüfen.'); }
         $this->source=$active[0]??[];
         return $this->source ?: null;
     }
@@ -28,7 +28,7 @@ final class PriceDirectory
         if ($this->rows !== null) { return $this->rows; }
         $directory = $this->activeDirectory();
         if ($directory === null) {
-            return $this->rows = $this->db->fetchAllAssociative('SELECT * FROM tl_heike_preisliste ORDER BY id');
+            throw new \RuntimeException('Keine Tabellenverwaltung als Preisliste eingerichtet.');
         }
         $rows = [];
         foreach ($this->db->fetchAllAssociative('SELECT legacyId,data FROM tl_directory_entry WHERE pid=? AND published=? ORDER BY legacyId,id', [$directory['id'], '1']) as $entry) {
@@ -50,7 +50,7 @@ final class PriceDirectory
     {
         $directory = $this->activeDirectory();
         if ($directory === null) {
-            return $this->db->fetchAssociative('SELECT * FROM tl_heike_preisliste WHERE Artikel=?',[$article]) ?: [];
+            throw new \RuntimeException('Keine Tabellenverwaltung als Preisliste eingerichtet.');
         }
         $matches = array_values(array_filter($this->all(), static fn(array $row): bool => mb_strtolower(rtrim((string)$row['Artikel'])) === mb_strtolower(rtrim($article))));
         $preferred = @unserialize((string)($directory['besslichPricePreferred']??''), ['allowed_classes'=>false]);
@@ -60,15 +60,6 @@ final class PriceDirectory
     }
     public function filter(array $filters = []): array
     {
-        if ($this->activeDirectory() === null) {
-            $where = $params = [];
-            foreach ($filters as $key=>$pattern) {
-                if (!in_array($key,['Artikel','Kategorie','Subkategorie'],true) || !is_string($pattern)) { throw new \InvalidArgumentException('Ungültiger Preislistenfilter.'); }
-                if ($pattern === '') { $where[] = '('.$key.' IS NULL OR '.$key."='')"; }
-                else { $where[] = $key.' LIKE ?'; $params[]=$pattern; }
-            }
-            return $this->db->fetchAllAssociative('SELECT * FROM tl_heike_preisliste'.($where?' WHERE '.implode(' AND ',$where):'').' ORDER BY id',$params);
-        }
         $rows = $this->all();
         foreach ($filters as $key => $pattern) {
             if (!in_array($key, ['Artikel','Kategorie','Subkategorie'], true) || !is_string($pattern)) {
@@ -78,7 +69,7 @@ final class PriceDirectory
                 $rows = array_values(array_filter($rows, static fn(array $row): bool => ($row[$key] ?? null) === null || $row[$key] === ''));
                 continue;
             }
-            // Preserve the legacy MySQL collation, including accent-insensitive LIKE matching.
+            // Preserve the MySQL collation, including accent-insensitive LIKE matching.
             $values = array_values(array_unique(array_map(static fn(array $row) => $row[$key] ?? null, $rows), SORT_REGULAR));
             $expressions = $params = [];
             foreach ($values as $index => $value) {

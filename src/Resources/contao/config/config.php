@@ -1,6 +1,6 @@
 <?php
 
-array_insert($GLOBALS['TL_CTE'], 2, array('besslichschmuck' => array('schmuckartikel' => 'Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\elements\ContentSchmuckartikel')));
+\Contao\ArrayUtil::arrayInsert($GLOBALS['TL_CTE'], 2, array('besslichschmuck' => array('schmuckartikel' => 'Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\elements\ContentSchmuckartikel')));
 
 
 /* festlegen von inputtypes (klassen) die bei DCA als inputtype angegeben werden können */
@@ -8,9 +8,9 @@ $GLOBALS['BE_FFL']['schmuckartikel'] = 'schmuckartikel';
 $GLOBALS['BE_FFL']['comment'] = 'comment';
 
 
-if (TL_MODE == 'BE') {
+unset($GLOBALS['BE_MOD']['table_management']['directory_heike_import']);
+if (defined('TL_MODE') && TL_MODE === 'BE') {
 $GLOBALS['BE_MOD']['table_management']['heike_price_csv'] = ['callback' => \Pbdkn\ContaoBesslichschmuck\Backend\PriceCsvBackend::class];
-$GLOBALS['BE_MOD']['table_management']['heike_price_source'] = ['callback' => \Pbdkn\ContaoBesslichschmuck\Backend\PriceSourceBackend::class];
 }
 
 /**
@@ -32,12 +32,9 @@ $GLOBALS['FE_MOD']['BesslichSchmuck']['displayArikelDetail'] = '\Pbdkn\ContaoBes
 
 
 /* css js einbinden */
-if (TL_MODE == 'FE') {
+if (defined('TL_MODE') && TL_MODE === 'FE') {
 /*    $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/print2.css|static'; nach festyle migriert */
     $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/festyle.css|static';
     $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/contaobesslichschmuck/js/gallery-touch.js|static|v=' . time();
 /*    $GLOBALS['TL_JAVASCRIPT'][] = '/bundles/contaobesslichschmuck/js/schriftart-select.js'; */
 }
-
-
-

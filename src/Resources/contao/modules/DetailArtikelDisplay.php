@@ -43,9 +43,9 @@ class DetailArtikelDisplay extends Module
      */
     protected function compile(): void
     {
-        if (TL_MODE == 'BE') {
+        if (System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest())) {
             // Backend-Ausgabe definieren
-            $this->Template = new \BackendTemplate('be_detail_artikel_module');
+            $this->Template = new \Contao\BackendTemplate('be_detail_artikel_module');
             $this->Template->message = 'Detaildarstellung Schmuckartikel';
             return;
         }
@@ -70,7 +70,7 @@ class DetailArtikelDisplay extends Module
 */        
         // Pfad original Bild
         $arrPiclistPaths = array();
-        $objFile = \FilesModel::findByUuid($schmuckArtikel->singleSRC);
+        $objFile = FilesModel::findByUuid($schmuckArtikel->singleSRC);
         $schmuckArtikelPfad="";
         if ($objFile !== null) {
           $arrPiclistPaths[] = $objFile->path;
@@ -201,7 +201,7 @@ class DetailArtikelDisplay extends Module
       }  // ende page full
       // Kontakt ausgeben
       $spalte="";
-      $m =  $this->replaceInsertTags("{{insert_form::1}}");      // artikel anfrage formular
+      $m =  System::getContainer()->get('contao.insert_tag.parser')->replaceInline("{{insert_form::1}}");      // artikel anfrage formular
       if ($m == "") {
         $spalte.="<p>FormulR für Konaktanfrage derzeit nicht vorhanden</p>";
       } else {
@@ -216,7 +216,7 @@ class DetailArtikelDisplay extends Module
       $preisArtikelNamen[]=$name;
       
       if (isset($preisListenArray) &&  ($preisListenArray!= '')) {  // prüfen ob zusaetzliche Preise  da  
-            $arr =  deserialize($preisListenArray, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
+            $arr =  \Contao\StringUtil::deserialize($preisListenArray, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
             foreach ($arr as $k=>$v) {
               $preisArtikelNamen[]=$v;
             }   

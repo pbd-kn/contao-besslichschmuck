@@ -51,7 +51,7 @@ class ContentSchmuckartikel extends \Contao\ContentElement
     protected function compile()
     {
  //\System::log('PBD Besslich Artikel compile gerufen', __METHOD__, TL_GENERAL);
-        if (TL_MODE == 'BE') {
+        if (System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest())) {
             $this->genBeOutput();
         } else {
             $this->genFeOutput();
@@ -67,7 +67,7 @@ class ContentSchmuckartikel extends \Contao\ContentElement
     //\System::log('PBD Besslich Artikel compile gerufen singleSrc ' . $this->singleSRC , __METHOD__, TL_GENERAL);
     //\System::log('PBD Besslich Artikel compile gerufen singleSrc path ' . checkSchmuck::$schmuckpath , __METHOD__, TL_GENERAL);
         $this->strTemplate          = 'be_wildcard';
-        $this->Template             = new \BackendTemplate($this->strTemplate);
+        $this->Template             = new \Contao\BackendTemplate($this->strTemplate);
         $imgtxt="";
         $gch=new GC_Helper();
         $objPicElement=$gch->getPicture($this->schmuckartikelname);
@@ -106,7 +106,7 @@ class ContentSchmuckartikel extends \Contao\ContentElement
     {
       // Bild erzeugen
       $c=$this->cgi;                    // create cgi
-      $objFile = \FilesModel::findByUuid($this->singleSRC);
+      $objFile = \Contao\FilesModel::findByUuid($this->singleSRC);
       if ($objFile !== null)
 	  {
 	    $path = $objFile->path;

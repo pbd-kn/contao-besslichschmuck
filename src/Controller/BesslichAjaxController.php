@@ -19,7 +19,7 @@ use Doctrine\DBAL\Exception as DoctrineDBALException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Pbdkn\ContaoBesslichschmuck\Util\BesslichUtil;
@@ -67,9 +67,6 @@ class BesslichAjaxController extends AbstractController
 
     }
     /**
-     * @Route("/besslich/getPreislistePath/{schmuckartikel}/{kategorie}/{subkategorie}", 
-     * name="BesslichAjaxController::getPreislistePath",
-     * defaults={"kategorie": "none","subkategorie":"none"})
      * @throws \Exception
      */
           
@@ -80,6 +77,7 @@ class BesslichAjaxController extends AbstractController
       * Beispiel: /besslich/getPreislistePath/ab1s führt zum like %ab1s%
       */
 
+    #[Route("/besslich/getPreislistePath/{schmuckartikel}/{kategorie}/{subkategorie}", name: "BesslichAjaxController::getPreislistePath", defaults: ["kategorie" => "none", "subkategorie" => "none"])]
     public function getPreislistePath(string $schmuckartikel,string $kategorie, string $subkategorie ): JsonResponse
     {
       $debugArr[]=utf8_encode("debug von getPreisliste like (% $schmuckartikel  %)");
@@ -100,8 +98,6 @@ class BesslichAjaxController extends AbstractController
     
     
     /**
-     * @Route("/besslich/getPreisliste", 
-     * name="BesslichAjaxController::getPreisliste")
      * @throws \Exception
      */
      
@@ -113,6 +109,7 @@ class BesslichAjaxController extends AbstractController
       * /besslich/getPreisliste&schmuckartikel=%25ab1s%25  führt zum like %ab1s%
       * /besslich/getPreisliste?schmuckartikel=&subkategorie=   liefert alle bei denen Schmuckartikel und subkategorie leer ist
       */
+    #[Route("/besslich/getPreisliste", name: "BesslichAjaxController::getPreisliste")]
     public function getPreisliste(Request $request)
     {
       $debugArr[]=utf8_encode("debug von getPreisliste");
@@ -139,18 +136,15 @@ class BesslichAjaxController extends AbstractController
        return new JsonResponse($arr);
    }
     /**
-     * @Route("/besslich/schmuckartikel/{alias}", 
-     * name="BesslichAjaxController::getSchmuckartikel")
      * @throws \Exception
      */
+    #[Route("/besslich/schmuckartikel/{alias}", name: "BesslichAjaxController::getSchmuckartikel")]
     public function getSchmuckartikel($alias): Response
     {
       $resarr=$this->besslichUtil->getSchmuckartikelFromAlias($alias);
       return new JsonResponse($resarr);
     }
     /**
-     * @Route("/besslich/getPreisListeRender/{art}", 
-     * name="BesslichAjaxController::getPreisListeRender")
      * @throws \Exception
      */
      /* 
@@ -163,6 +157,7 @@ class BesslichAjaxController extends AbstractController
       *  
       * z.b. /besslich/getPreisListeRender/23?artikel[]=ka1s-s-1,4-45cm&artikel[]=ka1s-s-1,4-60cm
       */
+    #[Route("/besslich/getPreisListeRender/{art}", name: "BesslichAjaxController::getPreisListeRender")]
     public function getPreisListeRender($art, Request $request): Response
     {
       if (!$this->framework->isInitialized()) {   // sollte ich das evtl. im construktor machen

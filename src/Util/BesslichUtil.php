@@ -53,7 +53,7 @@ class BesslichUtil
       $preisArtikelNamen[]=$schmuckartikel;  // preis des schmuckartikel selbst
       
       if (isset($serialarrNamen) &&  ($serialarrNamen!= '')) {  // prüfen ob zusaetzliche Preise  da  
-            $arr =  deserialize($serialarrNamen, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
+            $arr =  \Contao\StringUtil::deserialize($serialarrNamen, true);  // preisliste ist die eingabe von mehreren Namen fuer die die Preise angezeigtwerden soll
             foreach ($arr as $k=>$v) {
               $preisArtikelNamen[]=$v;  // zusatzartikel übenehmen
             }   

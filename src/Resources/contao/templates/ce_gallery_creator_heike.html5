@@ -6,7 +6,6 @@
 //echo "ce_galerie_creator_heike.html5 <br>";
 /* CSS for the frontend-output */
 
-use Markocupic\GalleryCreatorBundle\Model\GalleryCreatorAlbumsModel;
 use Markocupic\GalleryCreatorBundle\Model\GalleryCreatorPicturesModel;
 
 global $objPage;
@@ -104,7 +103,7 @@ EOT;
         $detailseite='detail-schmuckartikel';  // globale Detail seite
         // untersuchen ob Detailseite da ist
         $ps="{{link::" . $detailseite . "}}";                // inserttag davon bilden
-        $urldetail =\Controller::replaceInsertTags( $ps );   // insertag umwandeln
+        $urldetail =\Contao\System::getContainer()->get('contao.insert_tag.parser')->replaceInline( $ps );   // insertag umwandeln
         // Lade das Seitenmodell basierend auf dem Alias
         $detailseite_da = true;
         if ( $urldetail == "") {
@@ -116,7 +115,7 @@ EOT;
         foreach ($arrPictures as $Picture) { 
 //        echo "name: ".$Picture['name']."<br>";   
           $name = $Picture['name'];   // artikelName  artikel_detail enthält den gerenderten artikel
-          $artikel_detail =  \Controller::replaceInsertTags("{{insert_article::" . $name . "}}",false);
+          $artikel_detail =  \Contao\System::getContainer()->get('contao.insert_tag.parser')->replaceInline("{{insert_article::" . $name . "}}");
           if (strlen($artikel_detail) == 0 || (strpos($artikel_detail, "existiert leider nicht")) !== FALSE) 
           { 
 //echo "artikel nicht da";
@@ -140,8 +139,7 @@ EOT;
           } else {  
             $onc = "";   // onClick auf image
           }
-          $hourglass='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALDAAACwwBP0AiyAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGzSURBVEiJ1da/alVBEAbw314FCwtRrCwsrKxslaCoMWJjIaaJWguiFikE8Ql8AUEfQAhYGEwZMJUEQrAxKILWNirGQtDmjsXdg3uTPefc+KdwYGF3Zvb7ZnbOzh4RoRnYRPzh2CwxB/6x7N6yfojL+IGVHWJNYw+elsqUj+aXIqUFfI2IGztBTyk9wr6IuFLqt2YAb3EtpTTAQRzqwf6ATziHx9usZUFyNlNGxbqEef1Fncdsnk9tw6sQDPAGL3AAnzvAP2I/1vAag16CTHI1A5zAzQ6C6zid53NVrBaCJosl7MKrCvh69lvGRi36VoJMcqHI4iyGBfgQx3Emr6dbcdoMmeQZVvL8bkFwJ+tW8aQTo4fgCL5jJq9v41aeX8Q3HO7CqN2DVomIBzV136auDBabI2qxr2Lht44IM02RO3yaIp/aEYHR57eBpa7osu8yXsp9bVKCub7oC9/mos3W7LVu2kT/JSJOTlL8lNIa9uJYRAw7i6xodn3RF3tam13tRTuPd0ZtYlJZxPu8d0xqBEeNPs1hxVaV7Ps87x2TsRqklO77C09mRNwr2cuz/P/+Kn4CKfnP9a2yiFsAAAAASUVORK5CYII=';
-          echo "<img   class='detail-img-zoom' src='$hourglass' data-src='" . $Picture['path'] . "' alt='" . $Picture['alt'] . "'  $onc/>\n";
+          echo "<img   class='detail-img-zoom' loading='lazy' src='" . $Picture['path'] . "' alt='" . $Picture['alt'] . "'  $onc/>\n";
           // versteckter div für die Detail Darstellung ausgeben div wird per hover js s. oben auf .logo eingeblendet
           $atd=str_replace ( "schmuck-detail" , "schmuck-detail-inside" , $artikel_detail );   //  dient dazu, dass durch die versteckten divs kein zoom ausgelöst wird
           echo "<div class='article-detail' style='display:none'>$atd</div>";
@@ -152,33 +150,33 @@ EOT;
     //echo "jsexist true <br>";
   }
 
-  if (!\Input::get('items')) {              // kein autoitem und keine weiterleitung wenn nur ein album 
+  if ($this->showAlbumListing) {              // kein autoitem und keine weiterleitung wenn nur ein album 
   
 //\PBDKN\Efgco4\Resources\contao\classes\EfgLog::setEfgDebugmode(255);
 //\PBDKN\Efgco4\Resources\contao\classes\EfgLog::EfgwriteLog(1, 'ce_gc_galerie_heike', 4711, 'list page alias ' . $objPage->alias);
-    $this->import('Database');
+
     if ($this->style) {
       $mystyle = "style='" . $this->style . "'";
     }
-    $gcPictureSorting=$this->gcPictureSorting;
-    $gcPictureSortingDirection=$this->gcPictureSortingDirection;
+    $gcPictureSorting=($this->data['gcPictureSorting'] ?? null) ?: 'sorting';
+    $gcPictureSortingDirection=($this->data['gcPictureSortingDirection'] ?? null) === 'DESC' ? 'DESC' : 'ASC';
 //echo 'gcPictureSorting: '.$gcPictureSorting.' gcPictureSortingDirection: '.$gcPictureSortingDirection.'<br>';
     
-    echo "<div class='".$this->class." gallery_creator block ". $this->cssID. "' ".$mystyle.">\n";    // div über alle alben
+    echo '<div class="' . \Contao\StringUtil::specialchars($this->element_css_classes . ' gallery_creator block') . '"' . ($this->element_html_id ? ' id="' . \Contao\StringUtil::specialchars($this->element_html_id) . '"' : '') . '>';
 
-      if ($this->headline) {
-        echo "<" . $this->hl . ">" . $this->headline . "</" . $this->hl . ">";
+      if (!empty($this->headline['text'])) {
+        echo "<" . $this->headline['tag_name'] . ">" . $this->headline['text'] . "</" . $this->headline['tag_name'] . ">";
       }
-      if (count($this->albums)>0){              // schleife über alle Alben
+      if (count(($this->albums ?? []))>0){              // schleife über alle Alben
       echo "<ul class='list_albums'>\n";         // alben werden noch in einer liste abgelegt
       foreach ($this->albums as $Album) {
-//echo '<p>Albumname: '.$Album['name'].' Albumcaption: '.$Album['caption'].' AlbumId '.$Album['id'].'</p>';
+//echo '<p>Albumname: '.$Album->data['name'].' Albumcaption: '.$Album->data['caption'].' AlbumId '.$Album->data['id'].'</p>';
           echo "<li>";
-            $atext =  $Album['caption'] != "" ? $Album['caption']:$Album['name'];
+            $atext =  $Album->data['caption'] != "" ? $Album->data['caption']:$Album->data['name'];
             echo "<h2>" . mb_strtolower ($atext) . "</h2>\n";
             echo "<div class='album_preview'>\n";       // div um ein album
             // Bilder zum Album einlesen
-              $pictures = GalleryCreatorPicturesModel::findBy('pid', $Album['id'], array('order' => $gcPictureSorting.' '.$gcPictureSortingDirection)); // 'pid' ist die Album-ID (Parent-ID)
+              $pictures = GalleryCreatorPicturesModel::findBy('pid', $Album->data['id'], array('order' => $gcPictureSorting.' '.$gcPictureSortingDirection)); // 'pid' ist die Album-ID (Parent-ID)
               $arrPictures = array();
               if ($pictures !== null) {
                 // Durch alle Bilder iterieren
@@ -186,7 +184,7 @@ EOT;
                 while ($pictures->next()) {
                   // build up $arrPictures
                   if ($pictures->published) {
-                    $fileModel = \FilesModel::findByUuid($pictures->uuid);
+                    $fileModel = \Contao\FilesModel::findByUuid($pictures->uuid);
                     if ($fileModel === null || !$fileModel->path) {
                       continue;
                     }
@@ -195,9 +193,8 @@ EOT;
                     if (!is_file($projectDir . '/' . $filePath)) {
                       continue;
                     }
-                    $objFile = new \File($filePath, true);
+                    $objFile = new \Contao\File($filePath, true);
                     $strImageSrc = $objFile->filename;
-                    $href = \System::urlEncode($strImageSrc);
                     // daten des Bildes in Array uebernehmen
                     $arrPicture = array( //[int] id picture_id
                       'id'               => $pictures->id,    //[int] pid parent Album-Id
@@ -205,12 +202,11 @@ EOT;
                       'album_id'         => $pictures->pid,  //[int] album_id oder pid                             
                       'name'             => $objFile->filename, // ohne extension
                       'path'             => $objFile->path,   //[string] Pfad zur Datei
-                      'alt'              => specialchars($pictures->title ? $pictures->title : $pictures->name),//[string] alt-attribut
-                      'title'            => specialchars($pictures->title), //[string] title-attribut
-                      'comment'          => specialchars($pictures->comment),//[string] Bildkommentar oder Bildbeschreibung
+                      'alt'              => \Contao\StringUtil::specialchars($pictures->title ? $pictures->title : $pictures->name),//[string] alt-attribut
+                      'title'            => \Contao\StringUtil::specialchars($pictures->title), //[string] title-attribut
+                      'comment'          => \Contao\StringUtil::specialchars($pictures->comment),//[string] Bildkommentar oder Bildbeschreibung
                       'image_src'        => $strImageSrc, //[string] path to the image,
                       'published'        => $pictures->published, //[boolean] veroeffentlicht (true/false)
-                      'href'             => TL_FILES_URL . $href, //[string] path to media (video, picture, sound...)
                       'filename'         => $objFile->filename,  //[string] filename without extension
                     );
                     $arrPictures[$pictures->id] = $arrPicture;
@@ -245,4 +241,4 @@ EOT;
 
 <!-- Variante A – Long-Touch-Script aus dem Bundle contaobesslichschmuck 
 dieses script soll verhindern, dass beim smartphone beim srollen nicht aus versehen ein touch event ausgelöst wird -->
-<script src="<?= $this->asset('bundles/contaobesslichschmuck/js/gallery-touch.js'); ?>"></script>
+<script src="<?= 'bundles/contaobesslichschmuck/js/gallery-touch.js'; ?>"></script>

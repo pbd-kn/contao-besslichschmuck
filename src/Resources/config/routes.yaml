@@ -1,7 +1,7 @@
 # src/Resources/config/routes.yaml
 ContaoBesslichschmuck:
     resource: '../../Controller/'
-    type: annotation
+    type: attribute
     
     
 

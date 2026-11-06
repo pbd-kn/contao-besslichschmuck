@@ -14,13 +14,9 @@ final class PriceCsvImport
 
     private function target(): array
     {
-        $found = [];
-        foreach ($this->db->fetchAllAssociative('SELECT * FROM tl_directory') as $directory) {
-            $columns = $this->decode($directory['columns']);
-            if (in_array('HeikeQuellId', array_column($columns,'key'), true)) { $found[] = $directory; }
-        }
-        if (count($found) !== 1) { throw new \RuntimeException('Es muss genau eine übernommene Heike-Preisliste existieren.'); }
-        return $found[0];
+        $directory = (new PriceDirectory($this->db))->activeDirectory();
+        if ($directory === null) { throw new \RuntimeException('Keine aktive Preisliste in der Tabellenverwaltung eingerichtet.'); }
+        return $directory;
     }
     private function decode($blob): array
     {
@@ -38,7 +34,7 @@ final class PriceCsvImport
         if (!in_array($mode, ['append','replace'], true)) { throw new \InvalidArgumentException('Ungültiger Importmodus.'); }
         $directory = $this->target();
         $active = (new PriceDirectory($this->db))->activeDirectory();
-        if ($active === null || (int)$active['id'] !== (int)$directory['id']) { throw new \RuntimeException('Bitte zuerst die übernommene Preisliste unter Preisquelle umstellen prüfen und aktivieren.'); }
+        if ($active === null || (int)$active['id'] !== (int)$directory['id']) { throw new \RuntimeException('Keine aktive Preisliste in der Tabellenverwaltung eingerichtet.'); }
         $csv = (new CsvTransfer($this->db))->parse($contents, $delimiter);
         if (!in_array('Artikel', $csv['header'], true)) { throw new \RuntimeException('Die CSV-Kopfzeile muss Artikel enthalten (Schreibweise beachten).'); }
         if ($mode === 'replace') {
@@ -98,7 +94,7 @@ final class PriceCsvImport
             $db->fetchOne('SELECT id FROM tl_directory WHERE id=?'.$lock, [$plan['directory']]);
             $directory = $this->target();
         $active = (new PriceDirectory($this->db))->activeDirectory();
-        if ($active === null || (int)$active['id'] !== (int)$directory['id']) { throw new \RuntimeException('Bitte zuerst die übernommene Preisliste unter Preisquelle umstellen prüfen und aktivieren.'); }
+        if ($active === null || (int)$active['id'] !== (int)$directory['id']) { throw new \RuntimeException('Keine aktive Preisliste in der Tabellenverwaltung eingerichtet.'); }
             $db->fetchAllAssociative('SELECT id FROM tl_directory_entry WHERE pid=?'.$lock, [$plan['directory']]);
             if ((int)$directory['id'] !== $plan['directory'] || !hash_equals($plan['schema'], hash('sha256',serialize($directory))) || !hash_equals($plan['before'],hash('sha256',serialize($this->snapshot($plan['directory']))))) {
                 throw new \RuntimeException('Die Preisliste wurde seit der Vorschau geändert. Bitte eine neue Vorschau erstellen.');
