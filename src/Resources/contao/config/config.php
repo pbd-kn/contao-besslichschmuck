@@ -9,9 +9,7 @@ $GLOBALS['BE_FFL']['comment'] = 'comment';
 
 
 unset($GLOBALS['BE_MOD']['table_management']['directory_heike_import']);
-if (defined('TL_MODE') && TL_MODE === 'BE') {
 $GLOBALS['BE_MOD']['table_management']['heike_price_csv'] = ['callback' => \Pbdkn\ContaoBesslichschmuck\Backend\PriceCsvBackend::class];
-}
 
 /**
  * -------------------------------------------------------------------------
