@@ -183,7 +183,7 @@ class checkSchmuck extends \Contao\Backend {
     if ($varValue) {
 //      \System::log("PBD Besslich loadSchmuckartikel Value $varValue", __METHOD__, TL_GENERAL);
     } else {
-      \System::log("PBD Besslich loadSchmuckartikel no Value (Schmuckartikelname)", __METHOD__, TL_GENERAL);
+      \Contao\System::getContainer()->get('monolog.logger.contao')->info('Schmuckartikelname ist leer.');
     }
     $gch=new Pbdkn\ContaoBesslichschmuck\Resources\contao\classes\GC_Helper();
     $objPicElement=$gch->getPicture($varValue);
@@ -236,7 +236,7 @@ class checkSchmuck extends \Contao\Backend {
    */
    
   public function checkPreise ($varValue, DataContainer $dc) {  
-    $pr = deserialize($varValue, true);           // alle Eintraege dews listwizards
+    $pr = \Contao\StringUtil::deserialize($varValue, true);           // alle Eintraege dews listwizards
     if (count($pr) > 0) {
       foreach ($pr as $a) {
           $res=$this->checkPreis ($a);   // evtl. exception.

@@ -27,12 +27,3 @@ array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['applic
 */
 $GLOBALS['FE_MOD']['application']['Heike_Preisliste'] = \Pbdkn\ContaoBesslichschmuck\Resources\contao\modules\ModuleHeikePreisliste::class;
 $GLOBALS['FE_MOD']['BesslichSchmuck']['displayArikelDetail'] = '\Pbdkn\ContaoBesslichschmuck\Resources\contao\modules\DetailArtikelDisplay';
-
-
-/* css js einbinden */
-if (defined('TL_MODE') && TL_MODE === 'FE') {
-/*    $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/print2.css|static'; nach festyle migriert */
-    $GLOBALS['TL_CSS'][] = '/bundles/contaobesslichschmuck/css/festyle.css|static';
-    $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/contaobesslichschmuck/js/gallery-touch.js|static|v=' . time();
-/*    $GLOBALS['TL_JAVASCRIPT'][] = '/bundles/contaobesslichschmuck/js/schriftart-select.js'; */
-}

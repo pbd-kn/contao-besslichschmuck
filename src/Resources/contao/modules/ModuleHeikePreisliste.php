@@ -93,7 +93,7 @@ class ModuleHeikePreisliste extends Module
     protected function compile()
     {
         // Lädt die Sprachdatei für 'tl_module'
-        \System::loadLanguageFile('tl_module');
+        System::loadLanguageFile('tl_module');
 
         // Anzahl der Elemente pro Seite (aus dem Backend-Feld), 0 bedeutet alle
         $errArray=[];              // errors aufsammeln

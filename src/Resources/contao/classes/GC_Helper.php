@@ -16,7 +16,7 @@ class GC_Helper extends \contao\System
       //$this->import('Database');
   }
 
-  /* ueberprüft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
+  /* ueberprï¿½ft ob zu dem Namen ein Bild im Gallerygenerator vorhanden ist
   */
   public function getPicture ($name) {
 //\System::log("PBD Besslich getPicture name $name", __METHOD__, TL_GENERAL);
@@ -26,7 +26,7 @@ class GC_Helper extends \contao\System
 //\System::log("PBD Besslich pictures array len: ".count($pictures), __METHOD__, TL_GENERAL);
     foreach ($pictures as $k=>$value)
     {
-      $file = \FilesModel::findByUuid($value->uuid);
+      $file = \Contao\FilesModel::findByUuid($value->uuid);
       $arrbasename=explode(".",basename($file->path));
       if (count($arrbasename) == 0) continue;
       if (trim(strtolower($name)) == $arrbasename[0]) {
