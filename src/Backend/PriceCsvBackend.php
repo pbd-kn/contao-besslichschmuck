@@ -41,7 +41,27 @@ final class PriceCsvBackend extends BackendModule
                     $message = $count.' Datensätze importiert und veröffentlicht. Die neue Preisliste ist sofort für die Website verfügbar.';
                 } else {
                     $session->remove('heike_price_csv_preview');
-                    $contents = WebsiteCsvFiles::read($projectDir, $selectedFile);
+                    $upload = $request->files->get('price_file');
+                    if ($upload !== null && $selectedFile !== '') {
+                        throw new \RuntimeException('Bitte entweder eine lokale Datei oder eine Serverdatei auswählen.');
+                    }
+                    if ($upload !== null) {
+                        if (!$upload instanceof \Symfony\Component\HttpFoundation\File\UploadedFile || !$upload->isValid()) {
+                            throw new \RuntimeException('Die Datei konnte nicht übertragen werden. Bitte die Upload-Größenbegrenzung des Servers prüfen.');
+                        }
+                        $extension = strtolower(pathinfo($upload->getClientOriginalName(), PATHINFO_EXTENSION));
+                        if (!in_array($extension, ['csv', 'ods'], true)) {
+                            throw new \RuntimeException('Bitte eine CSV- oder ODS-Datei auswählen.');
+                        }
+                        if ($upload->getSize() > 5242880) {
+                            throw new \RuntimeException('Die Datei darf höchstens 5 MB groß sein.');
+                        }
+                        $contents = file_get_contents($upload->getPathname());
+                        if ($contents === false) { throw new \RuntimeException('Die übertragene Datei ist nicht lesbar.'); }
+                        $selectedFile = basename(str_replace('\\', '/', $upload->getClientOriginalName()));
+                    } else {
+                        $contents = WebsiteCsvFiles::read($projectDir, $selectedFile);
+                    }
                     $ods = null;
                     if (strtolower(pathinfo($selectedFile, PATHINFO_EXTENSION)) === 'ods') {
                         $ods = PriceOdsReader::read($contents, $odsRange);

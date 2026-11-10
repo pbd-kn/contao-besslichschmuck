@@ -45,12 +45,15 @@
 <?php if (!$this->preview): ?>
 <section class="hi-section">
 <h2><span class="hi-step">1</span>Datei und Importart auswählen</h2>
-<form method="post" action="contao?do=heike_price_csv" data-turbo="false">
+<form enctype="multipart/form-data" method="post" action="contao?do=heike_price_csv" data-turbo="false">
 <input type="hidden" name="FORM_SUBMIT" value="heike_price_csv">
 <input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
 
+<div class="hi-field"><label class="hi-label" for="price_local_file">Datei vom Computer auswählen</label>
+<input type="file" id="price_local_file" name="price_file" accept=".csv,.ods">
+<p class="hi-help">CSV oder ODS, höchstens 5 MB. Die Datei wird nur vorübergehend für die Vorschau übertragen und nicht im files-Verzeichnis gespeichert. Alternativ unten eine Serverdatei wählen. Bitte nur eine der beiden Möglichkeiten verwenden.</p></div>
 <div class="hi-field"><label class="hi-label" for="price_csv_file">CSV-/ODS-Datei aus der Website</label>
-<select class="tl_select" id="price_csv_file" name="csv_path" required><option value="">Bitte eine Datei auswählen</option>
+<select class="tl_select" id="price_csv_file" name="csv_path"><option value="">Bitte eine Datei auswählen</option>
 <?php foreach ($this->csvFiles as $path): ?><option value="<?= $escape($path) ?>"<?= $this->selectedFile===$path ? ' selected' : '' ?>><?= $escape($path) ?><?= strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'ods' ? ' (ODS)' : '' ?></option><?php endforeach; ?>
 </select>
 <p class="hi-help">Dateien aus dem Website-Verzeichnis files. Der Ordner files/heike-files/downloads/CSV wird zuerst angezeigt. Neue Dateien vorher über die Contao-Dateiverwaltung hochladen.</p>
